@@ -4,8 +4,11 @@ import {
   Phone,
   MessageCircle,
 } from "lucide-react";
+import { useState } from "react";
+import Whatsapp from "../sections/home/Whatsapp";
 
 const Footer = () => {
+  const [showWhatsapp, setShowWhatsapp] = useState(false);
   return (
     <footer className="bg-[#08261b] text-white">
 
@@ -293,7 +296,7 @@ const Footer = () => {
 
 
             {/* Chat Button */}
-            <button className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-[#86efac] px-5 py-3 text-sm font-bold text-[#08261b] transition hover:bg-white">
+            <button className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-[#86efac] px-5 py-3 text-sm font-bold text-[#08261b] transition hover:bg-white"  onClick={() => setShowWhatsapp(true)}>
 
               <MessageCircle size={18} />
 
@@ -341,6 +344,12 @@ const Footer = () => {
         </div>
 
       </div>
+       {showWhatsapp && (
+        <Whatsapp
+          
+          onClose={() => setShowWhatsapp(false)}
+        />
+      )}
 
     </footer>
   );

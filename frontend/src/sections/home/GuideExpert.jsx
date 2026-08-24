@@ -4,6 +4,8 @@ import {
   BadgeCheck,
   Leaf,
   Headphones,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const GuideExpert = () => {
@@ -182,150 +184,16 @@ const GuideExpert = () => {
     <section className="bg-gray-100 px-4 py-5 sm:px-6 lg:px-8">
 
       {/* ========================================= */}
-      {/* TOP SECTION - IMAGE + EXPERT INFORMATION */}
+      {/* TOP SECTION - EXPERT INFORMATION + IMAGE SLIDER */}
       {/* ========================================= */}
 
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5 lg:flex-row lg:gap-8">
 
         {/* ================================= */}
-        {/* LEFT SIDE - IMAGE SLIDER */}
+        {/* LEFT SIDE - EXPERT INFORMATION */}
         {/* ================================= */}
 
-        <div className="flex w-full justify-center lg:w-1/2">
-
-          <div className="relative h-[340px] w-full max-w-[480px] sm:h-[380px] lg:h-[420px]">
-
-            {experts.map((item, index) => {
-              let distance = index - current;
-
-              // Circular positioning
-              if (distance > experts.length / 2) {
-                distance -= experts.length;
-              }
-
-              if (distance < -experts.length / 2) {
-                distance += experts.length;
-              }
-
-              return (
-                <img
-                  key={item.image}
-                  src={item.image}
-                  alt={item.name}
-                  className="
-                    absolute
-                    left-1/2
-                    top-1/2
-                    h-[190px]
-                    w-[270px]
-                    rounded-2xl
-                    object-cover
-                    shadow-xl
-                    transition-all
-                    duration-500
-                    ease-out
-                    sm:h-[220px]
-                    sm:w-[320px]
-                    lg:h-[250px]
-                    lg:w-[360px]
-                  "
-                  style={{
-                    transform: `
-                      translate(-50%, -50%)
-                      translateY(${distance * 70}px)
-                      scale(${distance === 0 ? 1 : 0.82})
-                    `,
-
-                    opacity:
-                      Math.abs(distance) > 1
-                        ? 0
-                        : distance === 0
-                        ? 1
-                        : 0.45,
-
-                    zIndex: 10 - Math.abs(distance),
-
-                    pointerEvents:
-                      distance === 0 ? "auto" : "none",
-                  }}
-                />
-              );
-            })}
-
-            {/* ================================= */}
-            {/* ARROWS */}
-            {/* ================================= */}
-
-            <div
-              className="
-                absolute
-                right-1
-                top-1/2
-                z-50
-                flex
-                -translate-y-1/2
-                flex-col
-                gap-2
-              "
-            >
-
-              {/* UP */}
-              <button
-                onClick={nextImage}
-                aria-label="Previous expert"
-                className="
-                  flex
-                  h-10
-                  w-10
-                  items-center
-                  justify-center
-                  rounded-full
-                  bg-white
-                  text-lg
-                  shadow-lg
-                  transition
-                  duration-200
-                  hover:scale-110
-                  hover:bg-gray-200
-                "
-              >
-                ↑
-              </button>
-
-              {/* DOWN */}
-              <button
-                onClick={previousImage}
-                aria-label="Next expert"
-                className="
-                  flex
-                  h-10
-                  w-10
-                  items-center
-                  justify-center
-                  rounded-full
-                  bg-white
-                  text-lg
-                  shadow-lg
-                  transition
-                  duration-200
-                  hover:scale-110
-                  hover:bg-gray-200
-                "
-              >
-                ↓
-              </button>
-
-            </div>
-
-          </div>
-        </div>
-
-
-        {/* ================================= */}
-        {/* RIGHT SIDE - EXPERT INFORMATION */}
-        {/* ================================= */}
-
-        <div className="w-full lg:w-1/2">
+        <div className="order-2 w-full lg:order-1 lg:w-1/2">
 
           {/* Small Heading */}
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#4f8f3a] sm:text-sm">
@@ -372,6 +240,196 @@ const GuideExpert = () => {
                 Local Himalayan expert
               </p>
 
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* ================================= */}
+        {/* RIGHT SIDE - IMAGE SLIDER (HORIZONTAL) */}
+        {/* ================================= */}
+
+        <div className="order-1 flex w-full justify-center lg:order-2 lg:w-1/2">
+
+          <div className="w-full max-w-[420px]">
+
+            {/* Outer wrapper — NOT clipped, so the name card can overlap the image edge */}
+            <div className="relative">
+
+              {/* Slider viewport (clipped) */}
+              <div className="relative h-[240px] w-full overflow-hidden rounded-[28px] bg-gradient-to-b from-[#eaf6df] to-[#d9ecc9] shadow-[0_20px_45px_-15px_rgba(11,36,24,0.35)] sm:h-[280px] lg:h-[300px]">
+
+                {experts.map((item, index) => {
+                  let distance = index - current;
+
+                  // Circular positioning
+                  if (distance > experts.length / 2) {
+                    distance -= experts.length;
+                  }
+
+                  if (distance < -experts.length / 2) {
+                    distance += experts.length;
+                  }
+
+                  return (
+                    <img
+                      key={item.image}
+                      src={item.image}
+                      alt={item.name}
+                      className="
+                        absolute
+                        left-1/2
+                        top-1/2
+                        h-[200px]
+                        w-[290px]
+                        rounded-2xl
+                        object-cover
+                        shadow-xl
+                        ring-1
+                        ring-white/60
+                        transition-all
+                        duration-500
+                        ease-out
+                        sm:h-[235px]
+                        sm:w-[345px]
+                        lg:h-[250px]
+                        lg:w-[365px]
+                      "
+                      style={{
+                        transform: `
+                          translate(-50%, -50%)
+                          translateX(${distance * 90}px)
+                          scale(${distance === 0 ? 1 : 0.8})
+                        `,
+
+                        opacity:
+                          Math.abs(distance) > 1
+                            ? 0
+                            : distance === 0
+                            ? 1
+                            : 0.4,
+
+                        zIndex: 10 - Math.abs(distance),
+
+                        pointerEvents:
+                          distance === 0 ? "auto" : "none",
+                      }}
+                    />
+                  );
+                })}
+
+              </div>
+
+              {/* ================================= */}
+              {/* ARROWS — sides of the frame, vertically centered */}
+              {/* ================================= */}
+
+              <button
+                onClick={previousImage}
+                aria-label="Previous expert"
+                className="
+                  absolute
+                  left-3
+                  top-1/2
+                  z-30
+                  flex
+                  h-10
+                  w-10
+                  -translate-y-1/2
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-white/90
+                  text-[#0b2418]
+                  shadow-lg
+                  backdrop-blur
+                  transition
+                  duration-200
+                  hover:scale-110
+                  hover:bg-white
+                "
+              >
+                <ChevronLeft size={20} />
+              </button>
+
+              <button
+                onClick={nextImage}
+                aria-label="Next expert"
+                className="
+                  absolute
+                  right-3
+                  top-1/2
+                  z-30
+                  flex
+                  h-10
+                  w-10
+                  -translate-y-1/2
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-white/90
+                  text-[#0b2418]
+                  shadow-lg
+                  backdrop-blur
+                  transition
+                  duration-200
+                  hover:scale-110
+                  hover:bg-white
+                "
+              >
+                <ChevronRight size={20} />
+              </button>
+
+              {/* ================================= */}
+              {/* NAME CARD — straddles the image's bottom edge */}
+              {/* half sits on the image, half on the page below */}
+              {/* ================================= */}
+
+              <div
+                className="
+                  relative
+                  z-20
+                  mx-8
+                  -mt-9
+                  rounded-2xl
+                  border
+                  border-white/70
+                  bg-white/95
+                  px-5
+                  py-4
+                  text-center
+                  shadow-[0_12px_30px_-10px_rgba(11,36,24,0.3)]
+                  backdrop-blur
+                  sm:mx-10
+                  sm:-mt-10
+                "
+              >
+                <p className="text-base font-bold text-[#0b2418] sm:text-lg">
+                  {expert.name}
+                </p>
+                <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-[#4f8f3a] sm:text-sm">
+                  {expert.role}
+                </p>
+              </div>
+
+            </div>
+
+            {/* Dot indicators */}
+            <div className="mt-4 flex items-center justify-center gap-2">
+              {experts.map((item, index) => (
+                <button
+                  key={item.image}
+                  onClick={() => setCurrent(index)}
+                  aria-label={`Show ${item.name}`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    index === current
+                      ? "w-6 bg-[#4f8f3a]"
+                      : "w-1.5 bg-gray-300 hover:bg-gray-400"
+                  }`}
+                />
+              ))}
             </div>
 
           </div>

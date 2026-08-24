@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Mountain, Compass, LayoutGrid, ArrowUpRight } from "lucide-react";
 
 const TourCategories = () => {
   const [category, setCategory] = useState("all");
@@ -23,7 +24,7 @@ const TourCategories = () => {
       title: "Langtang Valley",
       category: "Trek",
       image: "/images/LangtangTour.jpg",
-      size: "medium",
+      size: "small",
     },
   ];
 
@@ -35,7 +36,7 @@ const TourCategories = () => {
       title: "City Tour",
       category: "Tour",
       image: "/images/CityTour.jpg",
-      size: "medium",
+      size: "small",
     },
     {
       title: "UNESCO World Heritage",
@@ -65,14 +66,20 @@ const TourCategories = () => {
       title: "Chitwan Safari",
       category: "Tour",
       image: "/images/CHITWAN.jpg",
-      size: "large",
+      size: "medium",
     },
     {
       title: "Kailash Mansarovar Yatra",
       category: "Tour",
       image: "/images/KailashTour.jpg",
-      size: "medium",
+      size: "small",
     },
+  ];
+
+  const categoryOptions = [
+    { key: "all", label: "All", icon: LayoutGrid, count: treks.length + tours.length },
+    { key: "trek", label: "Treks", icon: Mountain, count: treks.length },
+    { key: "tour", label: "Tours", icon: Compass, count: tours.length },
   ];
 
   // =========================
@@ -89,8 +96,13 @@ const TourCategories = () => {
     cards = tours;
   }
 
+  // Row-span height reference: base row = 150px, gap = 16px
+  // small  -> 1 row  = 150px
+  // medium -> 1 row, 2 cols wide = 150px
+  // large  -> 2 rows, 2 cols wide = 316px
+
   return (
-    <section className="bg-[#FBF9F4] px-6 py-14 md:px-10 lg:px-16">
+    <section className="bg-[#FBF9F4] px-6 py-16 md:px-10 lg:px-16">
 
       {/* ========================= */}
       {/* HEADING */}
@@ -98,8 +110,10 @@ const TourCategories = () => {
 
       <div className="mx-auto mb-10 max-w-3xl text-center">
 
-        <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#4f8f3a]">
-          - TOURS & TRAVEL CATEGORIES
+        <h3 className="mb-3 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-[#4f8f3a]">
+          <span className="h-px w-6 bg-[#4f8f3a]" />
+          Tours &amp; Travel Categories
+          <span className="h-px w-6 bg-[#4f8f3a]" />
         </h3>
 
         <h1 className="mb-4 text-3xl font-bold text-[#0b2418] sm:text-4xl lg:text-5xl">
@@ -118,47 +132,58 @@ const TourCategories = () => {
       {/* CATEGORY BUTTONS */}
       {/* ========================= */}
 
-      <div className="mb-10 flex flex-wrap items-center justify-center gap-3">
+      <div className="mb-12 flex justify-center">
 
-        <span className="mr-2 text-sm font-semibold text-[#0b2418]">
-          Category:
-        </span>
+        <div className="inline-flex flex-wrap items-center gap-1.5 rounded-full border border-[#0b2418]/10 bg-white p-1.5 shadow-sm">
 
-        {/* TOURS BUTTON */}
-        <button
-          onClick={() => setCategory("tour")}
-          className={`rounded-full px-6 py-2.5 text-sm font-semibold transition duration-300 ${
-            category === "tour"
-              ? "bg-[#0b2418] text-white shadow-md"
-              : "border border-[#0b2418]/20 bg-white text-[#0b2418] hover:bg-[#0b2418] hover:text-white"
-          }`}
-        >
-          Tours
-        </button>
+          {categoryOptions.map(({ key, label, icon: Icon, count }) => {
+            const isActive = category === key;
 
-        {/* TREKS BUTTON */}
-        <button
-          onClick={() => setCategory("trek")}
-          className={`rounded-full px-6 py-2.5 text-sm font-semibold transition duration-300 ${
-            category === "trek"
-              ? "bg-[#0b2418] text-white shadow-md"
-              : "border border-[#0b2418]/20 bg-white text-[#0b2418] hover:bg-[#0b2418] hover:text-white"
-          }`}
-        >
-          Treks
-        </button>
+            return (
+              <button
+                key={key}
+                onClick={() => setCategory(key)}
+                className={`
+                  flex
+                  items-center
+                  gap-2
+                  rounded-full
+                  px-5
+                  py-2.5
+                  text-sm
+                  font-semibold
+                  transition
+                  duration-300
+                  ${
+                    isActive
+                      ? "bg-[#0b2418] text-white shadow-md"
+                      : "text-[#0b2418]/70 hover:bg-[#0b2418]/5 hover:text-[#0b2418]"
+                  }
+                `}
+              >
+                <Icon size={16} strokeWidth={2.25} />
+                {label}
+                <span
+                  className={`
+                    rounded-full
+                    px-1.5
+                    py-0.5
+                    text-xs
+                    font-bold
+                    ${
+                      isActive
+                        ? "bg-white/20 text-white"
+                        : "bg-[#0b2418]/5 text-[#0b2418]/50"
+                    }
+                  `}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
 
-        {/* ALL BUTTON */}
-        <button
-          onClick={() => setCategory("all")}
-          className={`rounded-full px-6 py-2.5 text-sm font-semibold transition duration-300 ${
-            category === "all"
-              ? "bg-[#4f8f3a] text-white shadow-md"
-              : "border border-[#4f8f3a]/30 bg-white text-[#4f8f3a] hover:bg-[#4f8f3a] hover:text-white"
-          }`}
-        >
-          All
-        </button>
+        </div>
 
       </div>
 
@@ -167,7 +192,19 @@ const TourCategories = () => {
       {/* MOSAIC CARD GRID */}
       {/* ========================= */}
 
-      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 md:grid-cols-4">
+      <div
+        className="
+          mx-auto
+          grid
+          max-w-6xl
+          auto-rows-[150px]
+          grid-cols-2
+          gap-4
+          [grid-auto-flow:dense]
+          sm:auto-rows-[160px]
+          md:grid-cols-4
+        "
+      >
 
         {cards.map((card, index) => (
 
@@ -178,13 +215,19 @@ const TourCategories = () => {
               relative
               overflow-hidden
               rounded-2xl
+              bg-gray-200
               shadow-md
+              ring-1
+              ring-black/5
+              transition
+              duration-300
+              hover:shadow-xl
               ${
                 card.size === "large"
-                  ? "col-span-2 row-span-2 h-[420px]"
+                  ? "col-span-2 row-span-2"
                   : card.size === "medium"
-                  ? "col-span-2 h-[260px]"
-                  : "col-span-1 h-[260px]"
+                  ? "col-span-2 row-span-1"
+                  : "col-span-1 row-span-1"
               }
             `}
           >
@@ -213,14 +256,43 @@ const TourCategories = () => {
                 absolute
                 inset-0
                 bg-gradient-to-t
-                from-black/70
-                via-black/20
+                from-black/80
+                via-black/10
                 to-transparent
                 transition
                 duration-300
-                group-hover:from-black/80
+                group-hover:from-black/85
               "
             />
+
+
+            {/* HOVER ARROW */}
+
+            <div
+              className="
+                absolute
+                right-4
+                top-4
+                flex
+                h-9
+                w-9
+                translate-y-1
+                items-center
+                justify-center
+                rounded-full
+                bg-white/90
+                text-[#0b2418]
+                opacity-0
+                shadow-md
+                backdrop-blur
+                transition-all
+                duration-300
+                group-hover:translate-y-0
+                group-hover:opacity-100
+              "
+            >
+              <ArrowUpRight size={18} strokeWidth={2.5} />
+            </div>
 
 
             {/* CONTENT */}
@@ -231,7 +303,7 @@ const TourCategories = () => {
                 {card.category}
               </span>
 
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="text-xl font-bold leading-snug text-white drop-shadow-sm">
                 {card.title}
               </h3>
 

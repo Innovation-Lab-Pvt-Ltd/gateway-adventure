@@ -160,7 +160,7 @@ const Navbar = () => {
                 : "bg-[#9be564] text-[#0b2418] hover:bg-[#b5f27d]"
             }`}
           >
-            Plan Your Trip
+            Contact Us
           </a>
 
           {/* Mobile Button */}

@@ -32,6 +32,22 @@ const PackageDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // =====================================================
+  // SCROLL TO TOP
+  // =====================================================
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+  }, [id]);
+
+  // =====================================================
+  // PACKAGE STATE
+  // =====================================================
+
   // If PopularPackages passes the package through state,
   // we can display it immediately.
   const [trip, setTrip] = useState(
@@ -620,8 +636,8 @@ const PackageDetail = () => {
 
                 <p>
                   Weather and trail conditions can change
-                  quickly in the mountains, so flexibility is
-                  essential.
+                  quickly in the mountains, so flexibility
+                  is essential.
                 </p>
 
                 <p>
