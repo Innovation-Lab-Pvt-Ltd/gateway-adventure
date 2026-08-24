@@ -153,7 +153,7 @@ const Navbar = () => {
         {/* CTA */}
         <div className="flex items-center gap-3">
           <a
-            href="#contact"
+            href="/ContactUs"
             className={`hidden rounded-full px-5 py-2.5 text-sm font-semibold transition sm:block ${
               navbarSolid
                 ? "bg-[#0b2418] text-[#9be564] hover:bg-[#4f8f3a] hover:text-white"
