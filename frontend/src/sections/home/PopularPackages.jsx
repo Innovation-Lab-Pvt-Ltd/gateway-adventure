@@ -9,14 +9,17 @@ import {
   Gauge,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import PopularPackage from "./PopularPackage";
 
 // Gateway Treks API
-const API_URL = "/gateway-api/api/v1/popular-packages";
+const API_URL = "/api/v1/popular-packages";
 
 const PopularPackages = () => {
   const [packages, setPackages] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -85,7 +88,7 @@ const PopularPackages = () => {
   };
 
   // =====================================================
-  // VIEW TRIP
+  // VIEW FULL TRIP
   // =====================================================
 
   const handleViewTrip = (pkg) => {
@@ -158,7 +161,9 @@ const PopularPackages = () => {
   return (
     <section className="px-6 py-16 md:px-10 lg:px-16">
 
-      {/* WISHLIST POPUP */}
+      {/* =================================================
+          WISHLIST POPUP
+      ================================================= */}
 
       {showPopup && (
         <div className="fixed right-6 top-24 z-[100] flex items-center gap-2 rounded-xl bg-[#0b2418] px-5 py-3 text-sm font-medium text-white shadow-xl">
@@ -171,7 +176,9 @@ const PopularPackages = () => {
         </div>
       )}
 
-      {/* HEADING */}
+      {/* =================================================
+          HEADING
+      ================================================= */}
 
       <div className="mb-10 max-w-2xl">
         <h5 className="mb-3 text-sm font-semibold uppercase tracking-widest text-[#4f8f3a]">
@@ -188,7 +195,9 @@ const PopularPackages = () => {
         </p>
       </div>
 
-      {/* EMPTY */}
+      {/* =================================================
+          EMPTY
+      ================================================= */}
 
       {packages.length === 0 ? (
         <div className="py-10 text-center">
@@ -198,14 +207,18 @@ const PopularPackages = () => {
         </div>
       ) : (
 
-        /* PACKAGE GRID */
+        /* =================================================
+           PACKAGE GRID
+        ================================================= */
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
           {packages.map((pkg) => {
 
-            
+            // =================================================
             // DATA FROM GATEWAY API
+            // =================================================
+
             const id = pkg.id;
 
             const title =
@@ -277,11 +290,10 @@ const PopularPackages = () => {
               );
 
             // =================================================
-            // IMAGE FROM API
+            // IMAGE
             // =================================================
 
-            const image = pkg.image
-              
+            const image = pkg.image;
 
             // =================================================
             // CARD
@@ -293,7 +305,9 @@ const PopularPackages = () => {
                 className="overflow-hidden rounded-2xl bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
 
-                {/* IMAGE */}
+                {/* =================================================
+                    IMAGE
+                ================================================= */}
 
                 <div className="group relative h-60 overflow-hidden">
 
@@ -308,13 +322,36 @@ const PopularPackages = () => {
                       );
 
                       e.currentTarget.onerror = null;
-                      
+                      e.currentTarget.src =
+                        "/images/MOUNT.jpg";
                     }}
                   />
 
+                  {/* DARK OVERLAY */}
+
                   <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/30" />
 
-                  {/* DISCOUNT */}
+                  {/* =================================================
+                      VIEW DETAIL BUTTON
+                  ================================================= */}
+
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedPackage(pkg)
+                      }
+                      className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#0b2418] shadow-lg transition duration-300 hover:scale-105 hover:bg-[#9be564]"
+                    >
+                      View Detail
+                    </button>
+
+                  </div>
+
+                  {/* =================================================
+                      DISCOUNT
+                  ================================================= */}
 
                   {discountText && (
                     <div className="absolute left-4 top-4 rounded-full bg-[#9be564] px-3 py-1.5 text-xs font-bold text-[#0b2418] shadow-md">
@@ -322,7 +359,9 @@ const PopularPackages = () => {
                     </div>
                   )}
 
-                  {/* WISHLIST */}
+                  {/* =================================================
+                      WISHLIST
+                  ================================================= */}
 
                   <button
                     type="button"
@@ -347,7 +386,9 @@ const PopularPackages = () => {
 
                 </div>
 
-                {/* INFORMATION */}
+                {/* =================================================
+                    INFORMATION
+                ================================================= */}
 
                 <div className="p-4">
 
@@ -432,7 +473,9 @@ const PopularPackages = () => {
 
                   </div>
 
-                  {/* PRICE + VIEW */}
+                  {/* =================================================
+                      PRICE + VIEW TRIP
+                  ================================================= */}
 
                   <div className="flex items-end justify-between border-t border-gray-100 pt-3">
 
@@ -465,12 +508,25 @@ const PopularPackages = () => {
                   </div>
 
                 </div>
+
               </div>
             );
           })}
 
         </div>
       )}
+
+      {/* =================================================
+          POPULAR PACKAGE MODAL
+      ================================================= */}
+
+      {selectedPackage && (
+        <PopularPackage
+          packageData={selectedPackage}
+          onClose={() => setSelectedPackage(null)}
+        />
+      )}
+
     </section>
   );
 };

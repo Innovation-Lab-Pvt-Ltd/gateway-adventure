@@ -10,20 +10,12 @@ export default defineConfig({
 
   server: {
     proxy: {
-      // Makalu Adventure API
-      "/api": {
-        target: "https://makaluadventure.com",
-        changeOrigin: true,
-        secure: true,
-      },
-
       // Gateway Treks API
-      "/gateway-api": {
+      "/api": {
         target: "https://gatewaytreks.com",
         changeOrigin: true,
         secure: true,
-        rewrite: (path) =>
-          path.replace(/^\/gateway-api/, ""),
+       
       },
     },
   },
