@@ -127,7 +127,7 @@ const Navbar = () => {
 
           {/* About Us */}
           <a
-            href="/Aboutus"
+            href="/AboutUs"
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
               navbarSolid
                 ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"

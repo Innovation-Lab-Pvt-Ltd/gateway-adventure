@@ -15,7 +15,7 @@ import {
 
 const Hero = () => {
   return (
-    <div className="bg-white">
+    <div className="bg-white overflow-x-hidden">
 
       {/* ================= HERO ================= */}
       <section
@@ -24,7 +24,7 @@ const Hero = () => {
       >
 
         {/* Homepage Slider */}
-        <HomepageSlider />
+        <HomepageSlider/>
 
         {/* Hero Content */}
         <div className="relative z-20 flex min-h-[750px] items-center justify-center px-6 pt-24">

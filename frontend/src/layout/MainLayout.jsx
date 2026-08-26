@@ -8,7 +8,7 @@ const MainLayout = ({ children }) => {
   const isPackageDetail = location.pathname.startsWith("/packages/");
 
   return (
-    <div>
+    <div className="w-full overflow-x-hidden">
       <Navbar />
 
       <main className={isPackageDetail ? "pt-20" : ""}>

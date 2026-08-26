@@ -5,5 +5,4 @@ const Itinerary = () => {
     <div>Itinerary</div>
   )
 }
-
 export default Itinerary
