@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Trek Title] — Gateway Treks</title>
+    <meta name="description" content="[Trek description]">
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TouristTrip",
+        "name": "[Trek Title]",
+        "description": "[Description]",
+        "duration": "P[trek.duration]D",
+        "maximumAttendeeCapacity": [trek.groupSize],
+        "offers": {
+            "@type": "Offer",
+            "price": "[trek.price]",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/treks.css">
+    <link rel="stylesheet" href="css/trek-detail.css">
+</head>
+<body>
+    <!-- Header (same as other pages) -->
+    
+    <!-- Hero (50vh) -->
+    <section class="detail-hero">
+        <img src="[trek.images[0]]" alt="[Trek Title]">
+        <div class="detail-hero-shade"></div>
+        <div class="detail-hero-content">
+            <h1>[Trek Title]</h1>
+            <div class="detail-meta">
+                <span>[trek.duration] Days</span>
+                <span class="difficulty-badge">[trek.difficulty]</span>
+                <span>[trek.maxAltitude]m</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <div class="detail-layout">
+        <main class="detail-main">
+            <!-- Overview -->
+            <section class="detail-section">
+                <h2>Overview</h2>
+                <p>[trek.description]</p>
+            </section>
+            
+            <!-- Itinerary Accordion -->
+            <section class="detail-section">
+                <h2>Day-by-Day Itinerary</h2>
+                <div class="itinerary-accordion">
+                    <!-- Accordion items -->
+                </div>
+            </section>
+            
+            <!-- Inclusions/Exclusions -->
+            <section class="detail-section">
+                <div class="inclusions-grid">
+                    <div>
+                        <h3>What's Included</h3>
+                        <ul class="checklist">
+                            <!-- Inclusions -->
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>What's Not Included</h3>
+                        <ul class="checklist exclusions">
+                            <!-- Exclusions -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Gallery -->
+            <section class="detail-section">
+                <h2>Gallery</h2>
+                <div class="gallery-grid">
+                    <!-- Images -->
+                </div>
+            </section>
+            
+            <!-- Map -->
+            <section class="detail-section">
+                <h2>Route Map</h2>
+                <div id="trekMap"></div>
+            </section>
+            
+            <!-- Related Treks -->
+            <section class="detail-section">
+                <h2>Related Treks</h2>
+                <div class="trek-grid">
+                    <!-- Related cards -->
+                </div>
+            </section>
+        </main>
+        
+        <!-- Sticky Sidebar -->
+        <aside class="detail-sidebar">
+            <div class="sidebar-sticky">
+                <div class="price-card">
+                    <div class="price-row">
+                        <span class="price-label">From</span>
+                        <div class="price-value">
+                            <strong>$[trek.price]</strong>
+                            <span>/ person</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-pine btn-lg">Book Now</button>
+                    <button class="btn btn-ghost-dark btn-lg">Enquire</button>
+                </div>
+                
+                <div class="trip-facts">
+                    <h3>Trip Facts</h3>
+                    <dl>
+                        <dt>Duration</dt>
+                        <dd>[trek.duration] Days</dd>
+                        
+                        <dt>Difficulty</dt>
+                        <dd>[trek.difficulty]</dd>
+                        
+                        <dt>Max Altitude</dt>
+                        <dd>[trek.maxAltitude]m</dd>
+                        
+                        <dt>Group Size</dt>
+                        <dd>Max [trek.groupSize]</dd>
+                        
+                        <dt>Best Season</dt>
+                        <dd>[trek.bestSeason]</dd>
+                        
+                        <dt>Accommodation</dt>
+                        <dd>[trek.accommodation]</dd>
+                        
+                        <dt>Meals</dt>
+                        <dd>[trek.meals]</dd>
+                    </dl>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- Footer -->
+    
+    <script src="js/index.js"></script>
+    <script src="treks-data.js"></script>
+    <script src="js/trek-detail.js"></script>
+</body>
+</html>

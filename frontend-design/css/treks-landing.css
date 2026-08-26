@@ -1,0 +1,848 @@
+/* ============================================================
+   Treks Landing Page — page-specific styles only.
+   Reuses variables + utility classes already defined in style.css:
+   --pine, --pine-dark, --pine-soft, --paper, --cream, --muted,
+   --line, --ink, --shadow-card, --shadow-lift, .btn, .btn-pine,
+   .btn-ghost-dark, .btn-light, .btn-ghost, .eyebrow, .eyebrow-light,
+   .h2, .section, .section-head, .sub, .container
+   ============================================================ */
+
+:root {
+    --gold: #c9973f;
+    --gold-soft: #faf3e2;
+}
+
+/* ---------- 1. Full-page hero ---------- */
+.tl-hero {
+    position: relative;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.tl-hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tl-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #fff;
+    padding: 40px 28px;
+    max-width: 780px;
+}
+
+.tl-hero-title {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin: 14px 0 16px;
+}
+
+.tl-hero-sub {
+    font-size: 17px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.88);
+    max-width: 560px;
+    margin: 0 auto 32px;
+}
+
+.tl-hero-ctas {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tl-scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: #fff;
+    opacity: 0.85;
+    animation: tl-bounce 2.2s ease-in-out infinite;
+}
+
+@keyframes tl-bounce {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, 10px); }
+}
+
+/* ---------- 2. Region-wise treks ---------- */
+.tl-region-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 0 40px;
+}
+
+.tl-tab {
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background .25s, color .25s, border-color .25s;
+}
+
+.tl-tab:hover {
+    border-color: var(--pine);
+    color: var(--pine);
+}
+
+.tl-tab[aria-selected="true"] {
+    background: var(--pine);
+    border-color: var(--pine);
+    color: #fff;
+}
+
+.tl-tab:focus-visible {
+    outline: 2px solid var(--pine);
+    outline-offset: 2px;
+}
+
+.tl-region-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.tl-region-card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+    transition: opacity .3s ease, transform .3s ease;
+}
+
+.tl-region-card.tl-fade-out {
+    opacity: 0;
+    transform: scale(.97);
+}
+
+.tl-region-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .8s cubic-bezier(.16,1,.3,1);
+}
+
+.tl-region-card:hover img {
+    transform: scale(1.06);
+}
+
+.tl-region-card-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10,12,10,0.05) 40%, rgba(10,12,10,0.82));
+}
+
+.tl-region-card-body {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 22px;
+    color: #fff;
+}
+
+.tl-region-card-body h3 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 21px;
+    margin-bottom: 4px;
+}
+
+.tl-region-card-count {
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 8px;
+}
+
+.tl-region-card-blurb {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.tl-region-card-link {
+    font-size: 13px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ---------- 3. Insight Nepal ---------- */
+.tl-insight-grid {
+    display: grid;
+    grid-template-columns: .9fr 1.1fr;
+    gap: clamp(40px, 5vw, 80px);
+    align-items: center;
+}
+
+.tl-insight-media img {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: var(--shadow-lift);
+}
+
+.tl-insight-text p {
+    color: var(--muted);
+    font-size: 16.5px;
+    line-height: 1.8;
+    margin-bottom: 18px;
+}
+
+.tl-insight-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.tl-insight-stats .stat-card {
+    padding: 20px 16px;
+}
+
+.tl-insight-stats .stat-number {
+    font-size: 26px;
+}
+
+/* ---------- 4. Best selling treks (carousel) ---------- */
+.tl-carousel {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 4px 4px 16px;
+    scrollbar-width: thin;
+}
+
+.tl-carousel::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tl-carousel::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 999px;
+}
+
+.tl-trek-card {
+    position: relative;
+    flex: 0 0 calc((100% - 48px) / 3);
+    scroll-snap-align: start;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
+}
+
+.tl-trek-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lift);
+}
+
+.tl-trek-media {
+    position: relative;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+}
+
+.tl-trek-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .9s cubic-bezier(.16,1,.3,1);
+}
+
+.tl-trek-card:hover .tl-trek-media img {
+    transform: scale(1.06);
+}
+
+.tl-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(255,255,255,0.95);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 999px;
+}
+
+.tl-badge-difficulty {
+    top: 16px;
+    left: auto;
+    right: 16px;
+    color: #fff;
+}
+
+.tl-badge-difficulty[data-level="easy"] { background: #4a8f5c; }
+.tl-badge-difficulty[data-level="moderate"] { background: #c9973f; }
+.tl-badge-difficulty[data-level="challenging"] { background: #d5722f; }
+.tl-badge-difficulty[data-level="extreme"] { background: #b3402f; }
+
+.tl-ribbon {
+    position: absolute;
+    top: 18px;
+    right: -34px;
+    background: var(--gold);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 5px 40px;
+    transform: rotate(40deg);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.tl-trek-body {
+    padding: 20px 22px 24px;
+}
+
+.tl-trek-body h3 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.25;
+}
+
+.tl-trek-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 12px;
+}
+
+.tl-trek-meta .stars {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.tl-trek-price {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.tl-trek-price strong {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 21px;
+    color: var(--pine);
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.tl-carousel-cta {
+    text-align: center;
+    margin-top: 32px;
+}
+
+/* ---------- 5. Trip of the month ---------- */
+.tl-totm {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    width: 84%;
+    margin: 0 auto;
+}
+
+.tl-totm img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tl-totm-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(10,12,10,0.86) 0%, rgba(10,12,10,0.55) 55%, rgba(10,12,10,0.15) 100%);
+}
+
+.tl-totm-body {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    padding: 48px;
+    max-width: 480px;
+}
+
+.tl-totm-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 7px 16px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+}
+
+.tl-totm-body h3 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.tl-totm-body p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 18px;
+}
+
+.tl-totm-highlights {
+    list-style: none;
+    margin-bottom: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tl-totm-highlights li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.92);
+}
+
+.tl-totm-highlights svg {
+    flex: none;
+    margin-top: 2px;
+    color: var(--gold);
+}
+
+.tl-totm-price {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.tl-totm-price small {
+    font-family: "Manrope", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+}
+
+.tl-totm-note {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 22px;
+}
+
+/* ---------- 6. Best time to visit ---------- */
+.tl-season-tip {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--gold-soft);
+    border: 1px solid rgba(201,151,63,0.35);
+    border-radius: 14px;
+    padding: 14px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 32px;
+}
+
+.tl-season-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+}
+
+.tl-season-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 28px 24px;
+    transition: transform .3s, box-shadow .3s;
+}
+
+.tl-season-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+}
+
+.tl-season-card.tl-featured {
+    background: var(--pine);
+    border-color: var(--pine);
+    color: #fff;
+    position: relative;
+}
+
+.tl-season-featured-badge {
+    position: absolute;
+    top: -12px;
+    right: 18px;
+    background: var(--gold);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: 5px 12px;
+    border-radius: 999px;
+}
+
+.tl-season-icon {
+    font-size: 30px;
+    margin-bottom: 14px;
+}
+
+.tl-season-card h3 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 19px;
+    margin-bottom: 2px;
+}
+
+.tl-season-months {
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    opacity: .75;
+    margin-bottom: 12px;
+}
+
+.tl-season-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+    opacity: .92;
+}
+
+.tl-season-temp {
+    font-size: 13px;
+    font-weight: 700;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding-top: 12px;
+}
+
+.tl-featured .tl-season-temp {
+    border-top-color: rgba(255,255,255,0.25);
+}
+
+/* ---------- 7. Reviews ---------- */
+.tl-reviews-stat {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.tl-reviews-stat .stat-card {
+    padding: 22px 40px;
+}
+
+.tl-review-carousel {
+    position: relative;
+}
+
+.tl-review-track {
+    display: flex;
+    gap: 24px;
+    overflow: hidden;
+}
+
+.tl-review-card {
+    flex: 0 0 calc((100% - 48px) / 3);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 28px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.tl-review-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tl-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: var(--pine-soft);
+    color: var(--pine-dark);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 14px;
+    flex: none;
+}
+
+.tl-review-name strong {
+    display: block;
+    font-size: 14.5px;
+}
+
+.tl-review-name small {
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+.tl-review-stars {
+    color: var(--gold);
+    font-size: 13px;
+}
+
+.tl-review-trek {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--pine);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.tl-review-quote {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--muted);
+}
+
+.tl-review-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.tl-review-arrow {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    color: var(--ink);
+    transition: background .25s, color .25s;
+}
+
+.tl-review-arrow:hover {
+    background: var(--pine);
+    color: #fff;
+    border-color: var(--pine);
+}
+
+.tl-review-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.tl-review-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    border: none;
+    background: var(--line);
+    cursor: pointer;
+    padding: 0;
+}
+
+.tl-review-dot[aria-current="true"] {
+    background: var(--pine);
+    width: 22px;
+    border-radius: 999px;
+}
+
+.tl-reviews-more {
+    text-align: center;
+    margin-top: 28px;
+}
+
+/* ---------- 8. Upcoming departures ---------- */
+.tl-departures-filters {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.tl-select {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    min-width: 160px;
+}
+
+.tl-departures-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.tl-departures-table th {
+    text-align: left;
+    font-size: 12.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    background: var(--cream);
+    padding: 14px 18px;
+}
+
+.tl-departures-table td {
+    padding: 16px 18px;
+    font-size: 14.5px;
+    border-top: 1px solid var(--line);
+}
+
+.tl-seats {
+    font-weight: 700;
+}
+
+.tl-seats.tl-urgent {
+    color: var(--gold);
+}
+
+.tl-departures-cards {
+    display: none;
+}
+
+.tl-departure-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tl-departure-card h4 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 17px;
+}
+
+.tl-departure-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    color: var(--muted);
+}
+
+.tl-departures-note {
+    text-align: center;
+    margin-top: 28px;
+    color: var(--muted);
+    font-size: 14.5px;
+}
+
+.tl-departures-note strong {
+    display: block;
+    color: var(--ink);
+    font-size: 15.5px;
+    margin-bottom: 6px;
+}
+
+/* ---------- Shared: scroll-reveal ---------- */
+.tl-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .7s ease, transform .7s ease;
+}
+
+.tl-reveal.in {
+    opacity: 1;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tl-reveal, .tl-scroll-cue, .tl-region-card, .tl-trek-card, .tl-trek-media img, .tl-region-card img {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1080px) {
+    .tl-region-grid { grid-template-columns: repeat(2, 1fr); }
+    .tl-trek-card { flex-basis: calc((100% - 24px) / 2); }
+    .tl-review-card { flex-basis: calc((100% - 24px) / 2); }
+    .tl-season-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 960px) {
+    .tl-insight-grid { grid-template-columns: 1fr; }
+    .tl-insight-media { max-width: 480px; margin: 0 auto; }
+    .tl-totm { width: 100%; flex-direction: column; align-items: flex-start; }
+    .tl-totm-body { max-width: 100%; }
+}
+
+@media (max-width: 700px) {
+    .tl-region-grid { grid-template-columns: 1fr; }
+    .tl-trek-card, .tl-review-card { flex-basis: 88%; }
+    .tl-season-grid {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: 78%;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 8px;
+    }
+    .tl-season-card { scroll-snap-align: start; }
+    .tl-insight-stats { grid-template-columns: 1fr; }
+    .tl-departures-table { display: none; }
+    .tl-departures-cards { display: block; }
+}
+
+@media (max-width: 560px) {
+    .tl-hero-title { font-size: 2rem; }
+    .tl-totm-body { padding: 32px 24px; }
+}

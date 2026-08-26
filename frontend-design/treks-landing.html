@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trekking Adventures in Nepal — Gateway Treks Adventure And Expedition</title>
+    <meta name="description" content="Explore Nepal's best treks by region — Everest, Annapurna, Langtang, Mustang, Manaslu and Dolpo. Best sellers, seasonal guides, reviews and upcoming group departures.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/treks-landing.css">
+</head>
+<body>
+    <!-- Header (copied verbatim from about-us.html) -->
+    <header class="header" id="header">
+        <div class="container header-inner">
+            <a href="index.html" class="brand" aria-label="Gateway Treks — back to top">
+                <div class="brand-mark">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <strong>Gateway Treks</strong>
+                    <small>Adventure & Expedition</small>
+                </div>
+            </a>
+            <nav class="nav" aria-label="Primary">
+                <a href="treks-landing.html" aria-current="page">Treks</a>
+                <a href="index.html#trip">Tours</a>
+                <a href="index.html#categories">Destinations</a>
+                <a href="about-us.html">About Us</a>
+                <a href="index.html#blog">Blog</a>
+                <a href="contact-us.html">Contact</a>
+            </nav>
+            <div class="header-actions">
+                <a href="#treks" class="wishlist-pill" aria-label="Wishlist">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    <span class="wl-text">Wishlist</span>
+                    <span class="wl-count" id="wlCount">0</span>
+                </a>
+                <button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="mobile-panel" id="mobilePanel">
+            <nav>
+                <a href="treks-landing.html">Treks</a>
+                <a href="index.html#trip">Tours</a>
+                <a href="index.html#categories">Destinations</a>
+                <a href="about-us.html">About Us</a>
+                <a href="index.html#blog">Blog</a>
+                <a href="contact-us.html">Contact</a>
+            </nav>
+            <div class="mobile-panel-ctas">
+                <a href="#regions" class="btn btn-pine btn-sm">Explore Treks</a>
+                <a href="https://wa.me/9779800000000" class="btn btn-ghost-dark btn-sm">Chat on WhatsApp</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 1. Full-Page Hero -->
+    <section class="tl-hero">
+        <img src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=1920&h=1280&fit=crop" alt="Sunrise over the Himalayan range" class="tl-hero-bg">
+        <div class="about-hero-shade"></div>
+        <div class="tl-hero-content">
+            <span class="eyebrow eyebrow-light">Nepal Trekking Adventures</span>
+            <h1 class="tl-hero-title">Walk Into the World's Highest Mountains</h1>
+            <p class="tl-hero-sub">Locally guided treks across Everest, Annapurna, Langtang, Mustang, Manaslu and Dolpo — planned by the people who call these trails home.</p>
+            <div class="tl-hero-ctas">
+                <a href="#regions" class="btn btn-light">Explore Treks</a>
+                <a href="#contact" class="btn btn-ghost">Plan My Trip</a>
+            </div>
+        </div>
+        <a href="#regions" class="tl-scroll-cue" aria-label="Scroll to explore treks">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        </a>
+    </section>
+
+    <!-- 2. Region-Wise Treks (with filter) -->
+    <section class="section" id="regions">
+        <div class="container">
+            <div class="section-head tl-reveal">
+                <span class="eyebrow">Explore By Region</span>
+                <h2 class="h2">Choose Your Himalaya</h2>
+                <p class="sub">Every region has a different trail, a different pace, a different sky.</p>
+            </div>
+
+            <div class="tl-region-tabs" role="tablist" aria-label="Filter treks by region" id="regionTabs">
+                <!-- tabs injected by JS -->
+            </div>
+
+            <div class="tl-region-grid tl-reveal" id="regionGrid">
+                <!-- region cards injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Insight Nepal -->
+    <section class="section" style="background: var(--cream);">
+        <div class="container">
+            <div class="tl-insight-grid">
+                <div class="tl-insight-media tl-reveal">
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1000&fit=crop" alt="Prayer flags over a Himalayan village">
+                </div>
+                <div class="tl-insight-text tl-reveal">
+                    <span class="eyebrow">Insight Nepal</span>
+                    <h2 class="h2">A Country Built From Mountains</h2>
+                    <p>Nepal packs eight of the world's fourteen 8,000m peaks into a country smaller than England, rising from tropical lowlands to the roof of the world in under 200 kilometres.</p>
+                    <p>That compression is what makes trekking here unlike anywhere else — a single trail can pass through subtropical forest, terraced farmland, pine and rhododendron, and high alpine desert in the space of a week.</p>
+                    <p>It's also a living culture: Sherpa, Gurung, Thakali and Tamang communities have shaped these valleys for centuries, and the teahouses, monasteries and mani walls you pass are still very much in use, not museum pieces.</p>
+
+                    <div class="tl-insight-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">8,848m</div>
+                            <div class="stat-label">Highest Peak</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">10+</div>
+                            <div class="stat-label">Trekking Regions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">Oct–Nov</div>
+                            <div class="stat-label">Best Season</div>
+                        </div>
+                    </div>
+
+                    <a href="index.html#blog" class="btn btn-pine" style="margin-top:28px;">Learn More About Nepal</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Best Selling Treks -->
+    <section class="section">
+        <div class="container">
+            <div class="section-head tl-reveal">
+                <span class="eyebrow">Fan Favorites</span>
+                <h2 class="h2">Best Selling Treks</h2>
+                <p class="sub">The routes our trekkers book again and again.</p>
+            </div>
+            <div class="tl-carousel tl-reveal" id="bestSellerCarousel">
+                <!-- cards injected by JS -->
+            </div>
+            <div class="tl-carousel-cta">
+                <a href="#" class="btn btn-pine">View All Treks</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Trip of the Month -->
+    <section class="section" style="background: var(--cream);">
+        <div class="container">
+            <div class="section-head tl-reveal">
+                <span class="eyebrow">Spotlight</span>
+                <h2 class="h2">Trip of the Month</h2>
+            </div>
+            <div class="tl-totm tl-reveal" id="tripOfMonth">
+                <!-- injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Best Time to Visit -->
+    <section class="section">
+        <div class="container">
+            <div class="section-head tl-reveal">
+                <span class="eyebrow">Plan Ahead</span>
+                <h2 class="h2">Best Time To Visit</h2>
+                <p class="sub">Every season opens a different set of trails.</p>
+            </div>
+            <div class="tl-season-tip tl-reveal">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                Pro Tip: Oct–Nov offers the clearest skies of the year.
+            </div>
+            <div class="tl-season-grid tl-reveal" id="seasonGrid">
+                <!-- injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Reviews -->
+    <section class="section" style="background: var(--cream);">
+        <div class="container">
+            <div class="section-head tl-reveal">
+                <span class="eyebrow">Trekker Stories</span>
+                <h2 class="h2">What Our Trekkers Say</h2>
+            </div>
+            <div class="tl-reviews-stat tl-reveal">
+                <div class="stat-card">
+                    <div class="stat-number">4.9/5</div>
+                    <div class="stat-label">Based on 1,200+ Reviews</div>
+                </div>
+            </div>
+
+            <div class="tl-review-carousel tl-reveal">
+                <div class="tl-review-track" id="reviewTrack" aria-live="polite">
+                    <!-- injected by JS -->
+                </div>
+                <div class="tl-review-controls">
+                    <button class="tl-review-arrow" id="reviewPrev" aria-label="Previous reviews">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <div class="tl-review-dots" id="reviewDots"></div>
+                    <button class="tl-review-arrow" id="reviewNext" aria-label="Next reviews">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="tl-reviews-more">
+                <a href="#" class="btn btn-ghost-dark">Read All Reviews</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Upcoming Departures -->
+    <section class="section" id="departures">
+        <div class="container">
+            <div class="section-head tl-reveal">
+                <span class="eyebrow">Join A Group</span>
+                <h2 class="h2">Upcoming Departures</h2>
+                <p class="sub">Fixed dates, guaranteed groups, no minimum booking required.</p>
+            </div>
+
+            <div class="tl-departures-filters tl-reveal">
+                <select class="tl-select" id="filterMonth" aria-label="Filter by month">
+                    <option value="all">All Months</option>
+                </select>
+                <select class="tl-select" id="filterRegion" aria-label="Filter by region">
+                    <option value="all">All Regions</option>
+                </select>
+            </div>
+
+            <table class="tl-departures-table tl-reveal" id="departuresTable">
+                <thead>
+                    <tr>
+                        <th>Trek</th>
+                        <th>Date</th>
+                        <th>Duration</th>
+                        <th>Seats Left</th>
+                        <th>Price</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="departuresBody">
+                    <!-- injected by JS -->
+                </tbody>
+            </table>
+
+            <div class="tl-departures-cards tl-reveal" id="departuresCards">
+                <!-- injected by JS -->
+            </div>
+
+            <div class="tl-departures-note tl-reveal">
+                <strong>Don't see a date that works?</strong>
+                We can run this trek privately on your schedule.
+                <div style="margin-top:14px;">
+                    <a href="contact-us.html" class="btn btn-pine">Request Private Departure</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (copied verbatim from about-us.html) -->
+    <footer class="footer">
+        <div class="footer-ridge">
+            <svg viewBox="0 0 1440 76" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 76C240 50 480 20 720 20C960 20 1200 50 1440 76V76H0V76Z" fill="#fbf9f4"/></svg>
+        </div>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="brand-footer">
+                        <div class="brand-mark">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+                        </div>
+                        <div class="brand-text">
+                            <strong>Gateway Treks</strong>
+                            <small>Adventure & Expedition</small>
+                        </div>
+                    </div>
+                    <p class="footer-blurb">A locally owned Nepali trekking company crafting safe, personal and responsible Himalayan journeys since 2011.</p>
+                    <div class="badges">
+                        <span class="badge-chip">Govt. Licensed</span>
+                        <span class="badge-chip">NMA Member</span>
+                        <span class="badge-chip">TAN Member</span>
+                        <span class="badge-chip">Tripadvisor 4.9/5</span>
+                    </div>
+                    <div class="socials">
+                        <a href="#" class="social-btn" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+                        <a href="#" class="social-btn" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                        <a href="#" class="social-btn" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="about-us.html">About Us</a>
+                    <a href="about-us.html#team">Our Team</a>
+                    <a href="#">Responsible Tourism</a>
+                    <a href="contact-us.html">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <a href="#regions">Everest</a>
+                    <a href="#regions">Annapurna</a>
+                    <a href="#regions">Langtang</a>
+                    <a href="#regions">Mustang</a>
+                    <a href="#regions">Manaslu</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <a href="index.html#blog">Trekking Guide</a>
+                    <a href="#">Travel Information</a>
+                    <a href="index.html#blog">Blog</a>
+                    <a href="#">FAQs</a>
+                </div>
+                <div class="footer-contact" id="contact">
+                    <h4>Contact</h4>
+                    <p class="f-line">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Thamel, Kathmandu, Nepal
+                    </p>
+                    <p class="f-line">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <a href="mailto:info@gatewaytreks.com">info@gatewaytreks.com</a>
+                    </p>
+                    <p class="f-line">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <a href="tel:+9779800000000">+977 9800000000</a>
+                    </p>
+                    <a href="https://wa.me/9779800000000" class="btn btn-wa btn-sm">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                        Chat With Us
+                    </a>
+                    <div class="emergency">
+                        <div class="em-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <div>
+                            <strong>24/7 Emergency Support</strong>
+                            <small>+977 9800000000 · always on call</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© <span id="footerYear">2026</span> Gateway Treks & Expeditions Pvt. Ltd. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms & Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Progressive-enhancement fallback: static content if JS fails, hidden once JS renders -->
+    <noscript>
+        <style>#regionTabs,#regionGrid,#bestSellerCarousel,#tripOfMonth,#seasonGrid,#reviewTrack,#departuresTable,#departuresCards{display:none !important;}</style>
+        <p style="text-align:center;padding:40px;">Please enable JavaScript, or <a href="contact-us.html">contact us directly</a> to see all current treks and departures.</p>
+    </noscript>
+
+    <script src="js/index.js"></script>
+    <script src="js/treks-data.js"></script>
+    <script src="js/treks-landing.js"></script>
+</body>
+</html>
