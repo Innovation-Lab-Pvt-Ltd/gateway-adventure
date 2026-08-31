@@ -805,3 +805,303 @@ To document every query parameter with complete certainty, inspect the `getActiv
 - any additional filters
 
 Until then, parameters not directly visible in the controller should be treated as implementation-dependent.
+
+
+
+# 6. Trip Detail API
+
+## URL
+```
+https://gatewaytreks.com/api/v1/tripdetail/<slug>
+```
+
+## Sample API Call
+```
+https://gatewaytreks.com/api/v1/tripdetail/everest-base-camp-trek
+```
+
+## Method
+```
+GET
+```
+
+## Description
+
+The Trip Detail API returns complete details of a trekking or tour package using a unique package slug.
+
+It provides:
+
+- Package information
+- Destination and activity data
+- Breadcrumbs
+- Includes and excludes
+- Departure dates and prices
+- Difficulty grade
+- Images and sliders
+- FAQs
+- Highlights
+- Itinerary
+- Videos
+- Related packages
+- Reviews and ratings
+- SEO metadata
+- Routes
+- Team members
+
+---
+
+# Request Parameter
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| slug | String | Yes | Unique package slug |
+
+Example:
+
+```
+/tripdetail/everest-base-camp-trek
+```
+
+---
+
+# Request Example
+
+## cURL
+
+```bash
+curl -X GET "https://gatewaytreks.com/api/v1/tripdetail/everest-base-camp-trek" -H "Accept: application/json"
+```
+
+---
+
+# Response Structure
+
+```json
+{
+"package": {},
+"destination": {},
+"activity": {},
+"breadcrumbs": {},
+"add_fields": [],
+"excludes": [],
+"includes": [],
+"dates_prices": [],
+"grade": {},
+"sections": [],
+"images": [],
+"faqs": [],
+"highlights": [],
+"itineraries": [],
+"sliders": [],
+"videos": [],
+"related_packages": [],
+"reviews": [],
+"revCount": 0,
+"rates": {},
+"metaTags": {},
+"meta_title": "",
+"meta_keywords": "",
+"meta_description": "",
+"allRoutes": [],
+"team_members": []
+}
+```
+
+---
+
+# Response Fields
+
+| Key | Description |
+|---|---|
+| package | Main package information |
+| destination | Package destination |
+| activity | Package activity |
+| breadcrumbs | Navigation breadcrumb |
+| add_fields | Additional package fields |
+| includes | Included services |
+| excludes | Excluded services |
+| dates_prices | Departure dates and prices |
+| grade | Difficulty information |
+| sections | CMS sections |
+| images | Gallery images |
+| faqs | Frequently asked questions |
+| highlights | Trip highlights |
+| itineraries | Day-by-day itinerary |
+| sliders | Package slider images |
+| videos | Package videos |
+| related_packages | Similar packages |
+| reviews | Customer reviews |
+| revCount | Total reviews |
+| rates | Rating breakdown |
+| metaTags | Social sharing metadata |
+| allRoutes | Route information |
+| team_members | Guide/team information |
+
+---
+
+# Package Object
+
+Important package fields:
+
+| Field | Description |
+|---|---|
+| id | Package ID |
+| title | Package title |
+| slug | Package URL slug |
+| description | Full description |
+| short_description | Summary |
+| duration | Trip duration |
+| price | Package price |
+| image | Main image |
+| social_image | Social sharing image |
+| meta_title | SEO title |
+| meta_description | SEO description |
+| meta_keywords | SEO keywords |
+
+---
+
+# Images
+
+Images are returned in display order.
+
+Controller logic:
+
+```php
+$package->images()
+->orderBy('display_order','ASC')
+->take(15)
+->get();
+```
+
+Maximum images returned:
+
+```
+15
+```
+
+---
+
+# Itinerary
+
+Returns day-wise travel plan.
+
+Example:
+
+```json
+[
+{
+"day":1,
+"title":"Arrival in Kathmandu",
+"description":"Airport pickup and hotel transfer"
+}
+]
+```
+
+---
+
+# Reviews
+
+Review settings:
+
+```
+Maximum reviews: 3
+Sorting:
+published_date DESC, id DESC
+```
+
+Rating fields:
+
+- rating
+- trip_info_rating
+- accomodation_rating
+- meals_rating
+- transportation_rating
+- staff_rating
+- value_rating
+
+---
+
+# Related Packages
+
+Returns active related packages:
+
+```php
+$package->related()
+->where('packages.is_active',1)
+->get();
+```
+
+---
+
+# SEO Metadata
+
+Returns:
+
+```
+meta_title
+meta_keywords
+meta_description
+```
+
+Social metadata:
+
+```
+og:url
+og:type
+og:title
+og:description
+og:image
+twitter:title
+twitter:description
+twitter:image
+twitter:url
+```
+
+---
+
+# Error Response
+
+When package slug is invalid:
+
+HTTP Status:
+
+```
+404
+```
+
+Response:
+
+```json
+{
+"error":"Package not found"
+}
+```
+
+---
+
+# Frontend Example
+
+```javascript
+fetch(
+"https://gatewaytreks.com/api/v1/tripdetail/everest-base-camp-trek"
+)
+.then(response => response.json())
+.then(data => {
+console.log(data.package);
+console.log(data.itineraries);
+console.log(data.images);
+});
+```
+
+---
+
+# API Summary
+
+| Item | Value |
+|---|---|
+| Endpoint | /api/v1/tripdetail/<slug> |
+| Method | GET |
+| Authentication | Not required |
+| Response Format | JSON |
+| Success Code | 200 |
+| Error Code | 404 |
