@@ -78,22 +78,27 @@
 //           </div>
 //         ))}
 //       </div>
-      
+
 //     </section>
 //   );
 // };
 
 // export default Blogs;
 
-import React from 'react'
-import BlogList from '../sections/blog/BlogList'
+import React from "react";
+import BlogList from "../sections/blog/BlogList";
+import MostReadBlog from "../sections/blog/MostReadBlog";
+
 
 const Blogs = () => {
   return (
-    <div className='p-20'>
-     <BlogList/>
-    </div>
-  )
-}
+    <div className="">
+      <BlogList variant="large"/>
+      <MostReadBlog />
+      
 
-export default Blogs
+    </div>
+  );
+};
+
+export default Blogs;

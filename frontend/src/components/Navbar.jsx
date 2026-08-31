@@ -60,7 +60,7 @@ const Navbar = () => {
             <p
               className={`mt-1 text-[9px] uppercase tracking-[0.2em] ${
                 navbarSolid
-                  ? "text-[#4f8f3a]"
+                  ? "text-[#2F6B4F]"
                   : "text-white/70"
               }`}
             >
@@ -91,27 +91,18 @@ const Navbar = () => {
 
           {/* Trekking */}
           <a
-            href="#trekking"
+            href="#trekking&tours"
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
               navbarSolid
                 ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"
                 : "text-white hover:bg-white/20"
             }`}
           >
-            Trekking
+            Trekking&Tours
           </a>
 
           {/* Tours */}
-          <a
-            href="#tours"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              navbarSolid
-                ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"
-                : "text-white hover:bg-white/20"
-            }`}
-          >
-            Tours
-          </a>
+          
 
           {/* Destinations */}
           <a

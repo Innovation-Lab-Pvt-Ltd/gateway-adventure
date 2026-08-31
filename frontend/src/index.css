@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap');
 @import "tailwindcss";
 html,
 body,
@@ -21,4 +22,41 @@ body,
 
 .animate-spin-slow {
   animation: spinSlow 8s linear infinite;
+}
+.trip-description {
+  font-family: "Fraunces", Georgia, serif;
+  color: #4b5563;
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.trip-description h1,
+.trip-description h2,
+.trip-description h3,
+.trip-description h4 {
+  font-family: "Fraunces", Georgia, serif;
+  color: #0b2418;
+  font-weight: 700;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.trip-description p {
+  margin-bottom: 1rem;
+}
+
+.trip-description ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.trip-description ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.trip-description li {
+  margin-bottom: 0.5rem;
 }

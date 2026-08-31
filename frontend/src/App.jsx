@@ -6,6 +6,8 @@ import MainLayout from "./layout/MainLayout.jsx";
 import PackageDetail from "./pages/PackageDetail.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import AboutUs from "./pages/AboutUs.jsx";
+import BlogDetail from "./sections/blog/BlogDetail.jsx";
+import TripDetail from "./pages/TripDetail.jsx";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
             <Route path="/ContactUs" element={<ContactUs />} />
             <Route path="/packages/:id" element={<PackageDetail />} />
             <Route path="/AboutUs" element={<AboutUs />} />
+            <Route path="/blogs/:id" element={<BlogDetail />} />
+            <Route path="/package/:slug" element={<TripDetail />} />
           </Routes>
         </MainLayout>
       </div>

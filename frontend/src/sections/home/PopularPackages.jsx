@@ -5,7 +5,6 @@ import {
   Mountain,
   Star,
   Heart,
-  MapPin,
   Gauge,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -213,7 +212,7 @@ const PopularPackages = () => {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
-          {packages.map((pkg) => {
+          {packages.map((pkg, index) => {
 
             // =================================================
             // DATA FROM GATEWAY API
@@ -225,10 +224,6 @@ const PopularPackages = () => {
               pkg.title ||
               pkg.name ||
               "Untitled Package";
-
-            const region =
-              pkg.destslug ||
-              "Nepal";
 
             // =================================================
             // DIFFICULTY
@@ -242,6 +237,29 @@ const PopularPackages = () => {
                 : Number(pkg.grade_id) === 3
                 ? "Challenging"
                 : "Moderate";
+
+            // =================================================
+            // DIFFICULTY COLORS
+            // =================================================
+
+            const difficultyColor =
+              difficulty === "Easy"
+                ? {
+                    text: "text-green-600",
+                    border: "border-green-600/30",
+                    bg: "bg-green-50",
+                  }
+                : difficulty === "Moderate"
+                ? {
+                    text: "text-yellow-600",
+                    border: "border-yellow-600/30",
+                    bg: "bg-yellow-50",
+                  }
+                : {
+                    text: "text-red-600",
+                    border: "border-red-600/30",
+                    bg: "bg-red-50",
+                  };
 
             // =================================================
             // DURATION
@@ -335,14 +353,14 @@ const PopularPackages = () => {
                       VIEW DETAIL BUTTON
                   ================================================= */}
 
-                  <div className="absolute bottom-4 left-0 right-0 flex justify-center translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <div className="absolute bottom-4 left-0 right-0 flex translate-y-3 justify-center opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
 
                     <button
                       type="button"
                       onClick={() =>
                         setSelectedPackage(pkg)
                       }
-                      className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#0b2418] shadow-lg transition duration-300 hover:scale-105 hover:bg-[#9be564]"
+                      className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#0b2418] shadow-lg transition duration-300 hover:scale-105 hover:bg-[#2F6B4F] hover:text-white"
                     >
                       View Detail
                     </button>
@@ -351,10 +369,11 @@ const PopularPackages = () => {
 
                   {/* =================================================
                       DISCOUNT
+                      HIDDEN FOR SECOND CARD
                   ================================================= */}
 
-                  {discountText && (
-                    <div className="absolute left-4 top-4 rounded-full bg-[#9be564] px-3 py-1.5 text-xs font-bold text-[#0b2418] shadow-md">
+                  {discountText && index !== 1 && (
+                    <div className="absolute left-4 top-4 rounded-full bg-[#2F6B4F] px-3 py-1.5 text-xs font-bold text-white shadow-md">
                       {discountText}
                     </div>
                   )}
@@ -392,29 +411,16 @@ const PopularPackages = () => {
 
                 <div className="p-4">
 
-                  {/* REGION + DIFFICULTY */}
+                  {/* DIFFICULTY */}
 
-                  <div className="mb-2 flex items-center justify-between gap-2">
+                  <div className="mb-2 flex justify-end">
 
-                    <div className="flex min-w-0 items-center gap-1.5">
-
-                      <MapPin
-                        size={14}
-                        className="shrink-0 text-[#4f8f3a]"
-                      />
-
-                      <span className="truncate text-xs font-semibold uppercase tracking-wide text-[#4f8f3a]">
-                        {region}
-                      </span>
-
-                    </div>
-
-                    <div className="flex shrink-0 items-center gap-1 rounded-full border border-[#4f8f3a]/30 bg-[#eaf6df] px-2 py-1 text-[10px] font-medium text-[#4f8f3a]">
-
+                    <div
+                      className={`flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-medium ${difficultyColor.border} ${difficultyColor.bg} ${difficultyColor.text}`}
+                    >
                       <Gauge size={11} />
 
                       {difficulty}
-
                     </div>
 
                   </div>
@@ -433,7 +439,7 @@ const PopularPackages = () => {
 
                       <CalendarDays
                         size={15}
-                        className="text-[#4f8f3a]"
+                        className="text-[#2F6B4F]"
                       />
 
                       <span>
@@ -446,7 +452,7 @@ const PopularPackages = () => {
 
                       <Mountain
                         size={16}
-                        className="shrink-0 text-[#4f8f3a]"
+                        className="shrink-0 text-[#2F6B4F]"
                       />
 
                       <span className="truncate">
@@ -498,7 +504,7 @@ const PopularPackages = () => {
                       onClick={() =>
                         handleViewTrip(pkg)
                       }
-                      className="flex items-center gap-1 text-sm font-semibold text-[#0b2418] transition hover:text-[#4f8f3a]"
+                      className="flex items-center gap-1 text-sm font-semibold text-[#0b2418] transition hover:text-[#2F6B4F]"
                     >
                       View trip
 

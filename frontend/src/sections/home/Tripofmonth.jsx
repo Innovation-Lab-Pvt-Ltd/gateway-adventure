@@ -89,7 +89,7 @@ const Tripofmonth = () => {
             onClick={() => setSelectedTrip("everest")}
             className={`rounded-lg px-5 py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 ${
               selectedTrip === "everest"
-                ? "bg-green-300 text-green-950 shadow-lg"
+                ? "bg-green-500 text-green-950 shadow-lg"
                 : "text-white/70 hover:bg-white/10 hover:text-white"
             }`}
           >
@@ -169,7 +169,7 @@ const Tripofmonth = () => {
         </div>
 
         {/* Explore Button */}
-        <button className="mt-8 w-fit rounded-full bg-white px-6 py-3 font-bold text-green-950 transition-all duration-300 hover:bg-green-300 hover:shadow-lg hover:shadow-green-300/20">
+        <button className="mt-8 w-fit rounded-full bg-white px-6 py-3 font-bold text-green-950 transition-all duration-300 hover:bg-green-500 hover:shadow-lg hover:shadow-green-300/20">
           Explore This Trek →
         </button>
       </div>
