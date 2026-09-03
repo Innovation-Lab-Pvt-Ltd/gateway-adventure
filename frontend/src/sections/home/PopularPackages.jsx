@@ -13,6 +13,54 @@ import PopularPackage from "./PopularPackage";
 // Gateway Treks API
 const API_URL = "/api/v1/popular-packages";
 
+// =====================================================
+// REGIONS
+// =====================================================
+
+const regions = [
+  { id: 1, name: "Everest Region" },
+  { id: 2, name: "Annapurna Region" },
+  { id: 3, name: "Langtang Region" },
+  { id: 4, name: "Mustang Region" },
+  { id: 7, name: "Manang Region" },
+  { id: 8, name: "Manaslu Region" },
+];
+
+// =====================================================
+// GRADES
+// =====================================================
+
+const grades = [
+  { id: 1, name: "Easy" },
+  { id: 2, name: "Moderate" },
+  { id: 3, name: "Strenuous" },
+  { id: 4, name: "Very Strenuous" },
+];
+
+// =====================================================
+// HELPER FUNCTIONS
+// =====================================================
+
+const getRegionName = (regionId) => {
+  const region = regions.find(
+    (item) => Number(item.id) === Number(regionId)
+  );
+
+  return region?.name || "N/A";
+};
+
+const getGradeName = (gradeId) => {
+  const grade = grades.find(
+    (item) => Number(item.id) === Number(gradeId)
+  );
+
+  return grade?.name || "N/A";
+};
+
+// =====================================================
+// COMPONENT
+// =====================================================
+
 const PopularPackages = () => {
   const [packages, setPackages] = useState([]);
   const [wishlist, setWishlist] = useState([]);
@@ -90,22 +138,18 @@ const PopularPackages = () => {
   // VIEW FULL TRIP
   // =====================================================
 
- // =====================================================
-// VIEW FULL TRIP
-// =====================================================
+  const handleViewTrip = (pkg) => {
+    if (!pkg?.slug) {
+      console.error("Package slug is missing:", pkg);
+      return;
+    }
 
-const handleViewTrip = (pkg) => {
-  if (!pkg?.slug) {
-    console.error("Package slug is missing:", pkg);
-    return;
-  }
-
-  navigate(`/package/${pkg.slug}`, {
-    state: {
-      trip: pkg,
-    },
-  });
-};
+    navigate(`/package/${pkg.slug}`, {
+      state: {
+        trip: pkg,
+      },
+    });
+  };
 
   // =====================================================
   // LOADING
@@ -219,7 +263,7 @@ const handleViewTrip = (pkg) => {
           {packages.map((pkg, index) => {
 
             // =================================================
-            // DATA FROM GATEWAY API
+            // BASIC DATA
             // =================================================
 
             const id = pkg.id;
@@ -230,17 +274,16 @@ const handleViewTrip = (pkg) => {
               "Untitled Package";
 
             // =================================================
-            // DIFFICULTY
+            // REGION
             // =================================================
 
-            const difficulty =
-              Number(pkg.grade_id) === 1
-                ? "Easy"
-                : Number(pkg.grade_id) === 2
-                ? "Moderate"
-                : Number(pkg.grade_id) === 3
-                ? "Challenging"
-                : "Moderate";
+            const region = getRegionName(pkg.region_id);
+
+            // =================================================
+            // GRADE / DIFFICULTY
+            // =================================================
+
+            const difficulty = getGradeName(pkg.grade_id);
 
             // =================================================
             // DIFFICULTY COLORS
@@ -258,6 +301,12 @@ const handleViewTrip = (pkg) => {
                     text: "text-yellow-600",
                     border: "border-yellow-600/30",
                     bg: "bg-yellow-50",
+                  }
+                : difficulty === "Strenuous"
+                ? {
+                    text: "text-orange-600",
+                    border: "border-orange-600/30",
+                    bg: "bg-orange-50",
                   }
                 : {
                     text: "text-red-600",
@@ -415,7 +464,24 @@ const handleViewTrip = (pkg) => {
 
                 <div className="p-4">
 
-                  {/* DIFFICULTY */}
+                  {/* =================================================
+                      REGION
+                  ================================================= */}
+
+                  <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-gray-500">
+                    <Mountain
+                      size={13}
+                      className="text-[#2F6B4F]"
+                    />
+
+                    <span>
+                      {region}
+                    </span>
+                  </div>
+
+                  {/* =================================================
+                      DIFFICULTY
+                  ================================================= */}
 
                   <div className="mb-2 flex justify-end">
 
@@ -429,13 +495,17 @@ const handleViewTrip = (pkg) => {
 
                   </div>
 
-                  {/* TITLE */}
+                  {/* =================================================
+                      TITLE
+                  ================================================= */}
 
                   <h3 className="mb-3 line-clamp-2 text-lg font-bold leading-6 text-[#0b2418]">
                     {title}
                   </h3>
 
-                  {/* DAYS + ALTITUDE */}
+                  {/* =================================================
+                      DAYS + ALTITUDE
+                  ================================================= */}
 
                   <div className="mb-3 flex items-center gap-4 text-sm text-gray-500">
 
@@ -467,7 +537,9 @@ const handleViewTrip = (pkg) => {
 
                   </div>
 
-                  {/* RATING */}
+                  {/* =================================================
+                      RATING
+                  ================================================= */}
 
                   <div className="mb-3 flex items-center gap-2 text-sm">
 
@@ -542,3 +614,4 @@ const handleViewTrip = (pkg) => {
 };
 
 export default PopularPackages;
+

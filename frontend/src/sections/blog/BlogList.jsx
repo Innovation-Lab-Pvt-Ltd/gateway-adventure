@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { ArrowRight, ArrowLeft, Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // =====================================================
@@ -13,6 +13,10 @@ const VISIBLE_COUNT = 4;
 
 // Large mode shows 8 blogs per page
 const CARDS_PER_PAGE = 8;
+
+// How many matches to show in the search dropdown before
+// the list becomes scrollable instead of endless.
+const MAX_SEARCH_RESULTS = 8;
 
 // =====================================================
 // BLOG CATEGORIES
@@ -544,6 +548,14 @@ const BlogList = ({ variant = "compact" }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   // =====================================================
+  // SEARCH (searches blog.title only)
+  // =====================================================
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchContainerRef = useRef(null);
+
+  // =====================================================
   // FETCH BLOGS
   // =====================================================
 
@@ -603,6 +615,35 @@ const BlogList = ({ variant = "compact" }) => {
   useEffect(() => {
     setCurrentPage(0);
   }, [activeCategory]);
+
+  // =====================================================
+  // CLOSE SEARCH DROPDOWN ON OUTSIDE CLICK / ESC
+  // =====================================================
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target)
+      ) {
+        setIsSearchOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsSearchOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
 
   // =====================================================
   // HANDLE BLOG CLICK
@@ -675,6 +716,23 @@ const BlogList = ({ variant = "compact" }) => {
   };
 
   // =====================================================
+  // HANDLE SEARCH RESULT CLICK
+  // Same navigation as a normal card, then reset the search
+  // so the dropdown doesn't stay open on the next page.
+  // =====================================================
+
+  const handleSearchResultClick = (blog) => {
+    handleBlogClick(blog);
+    setSearchQuery("");
+    setIsSearchOpen(false);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    setIsSearchOpen(false);
+  };
+
+  // =====================================================
   // LOADING
   // =====================================================
 
@@ -741,6 +799,20 @@ const BlogList = ({ variant = "compact" }) => {
       </section>
     );
   }
+
+  // =====================================================
+  // SEARCH RESULTS (by blog.title only)
+  // =====================================================
+
+  const normalizedQuery = normalizeText(searchQuery);
+
+  const searchResults = normalizedQuery
+    ? blogs
+        .filter((blog) =>
+          normalizeText(blog.title).includes(normalizedQuery)
+        )
+        .slice(0, MAX_SEARCH_RESULTS)
+    : [];
 
   // =====================================================
   // FILTER BLOGS
@@ -842,6 +914,99 @@ const BlogList = ({ variant = "compact" }) => {
           your next adventure.
         </p>
 
+      </div>
+
+      {/* =================================================
+          SEARCH BAR
+          Searches blog.title only. Results appear in a
+          scrollable dropdown right below the input, and
+          clicking a result navigates to /blogs/:id, same
+          as clicking a card.
+      ================================================= */}
+
+      <div
+        ref={searchContainerRef}
+        className="relative mb-8 max-w-xl"
+      >
+        <div className="relative">
+          <Search
+            size={18}
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+          />
+
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(event) => {
+              setSearchQuery(event.target.value);
+              setIsSearchOpen(true);
+            }}
+            onFocus={() => {
+              if (searchQuery) setIsSearchOpen(true);
+            }}
+            placeholder="Search blog posts by title..."
+            className="w-full rounded-full border border-gray-200 bg-white py-3 pl-11 pr-10 text-sm text-[#171310] shadow-sm outline-none transition focus:border-[#2F6B4F] focus:ring-2 focus:ring-[#2F6B4F]/20"
+          />
+
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              aria-label="Clear search"
+              className="absolute right-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100 hover:text-[#171310]"
+            >
+              <X size={15} />
+            </button>
+          )}
+        </div>
+
+        {/* DROPDOWN */}
+        {isSearchOpen && normalizedQuery && (
+          <div className="absolute left-0 right-0 top-full z-30 mt-2 max-h-96 overflow-y-auto rounded-xl border border-gray-100 bg-white shadow-xl">
+            {searchResults.length > 0 ? (
+              searchResults.map((blog) => (
+                <button
+                  key={blog.id}
+                  type="button"
+                  onClick={() => handleSearchResultClick(blog)}
+                  className="flex w-full items-center gap-3 border-b border-gray-50 p-3 text-left transition last:border-b-0 hover:bg-[#F4F0E7]/60"
+                >
+                  <img
+                    src={`https://gatewaytreks.com/public/uploads/frontend/full/${blog.image}`}
+                    alt={blog.title || "Gateway Treks blog"}
+                    className="h-12 w-14 shrink-0 rounded-lg object-cover"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/images/MOUNT.jpg";
+                    }}
+                  />
+
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-[#0b2418]">
+                      {blog.title}
+                    </p>
+
+                    <p className="mt-0.5 text-xs text-gray-400">
+                      {getCategory(blog)}
+                      {blog.published_at
+                        ? ` · ${formatDate(blog.published_at)}`
+                        : ""}
+                    </p>
+                  </div>
+
+                  <ArrowRight
+                    size={15}
+                    className="shrink-0 text-gray-300"
+                  />
+                </button>
+              ))
+            ) : (
+              <p className="p-4 text-center text-sm text-gray-500">
+                No blog posts found for "{searchQuery}".
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* =================================================

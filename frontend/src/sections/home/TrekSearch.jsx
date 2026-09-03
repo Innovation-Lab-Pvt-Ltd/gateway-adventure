@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -194,11 +193,15 @@ const TrekSearch = () => {
   // =====================================================
 
   const handlePackageClick = (pkg) => {
-    navigate(`/packages/${pkg.id}`, {
-      state: {
-        trip: pkg,
-      },
-    });
+    if (!pkg?.slug) {
+      console.error(
+        "Package slug is missing:",
+        pkg
+      );
+      return;
+    }
+
+    navigate(`/package/${pkg.slug}`);
   };
 
   // =====================================================
@@ -485,13 +488,9 @@ const TrekSearch = () => {
                 Any destination
               </option>
 
-              {/* destination_id 1 = Nepal */}
-
               <option value="1">
                 Nepal
               </option>
-
-              {/* destination_id 2 = Tibet */}
 
               <option value="2">
                 Tibet
@@ -645,28 +644,20 @@ const TrekSearch = () => {
                 Any grade
               </option>
 
-              {/* grade_id 1 = Easy */}
-
               <option value="1">
                 Easy
               </option>
-
-              {/* grade_id 2 = Moderate */}
 
               <option value="2">
                 Moderate
               </option>
 
-              {/* grade_id 3 = Strenuous */}
-
               <option value="3">
                 Strenuous
               </option>
 
-              {/* grade_id 4 = Hard */}
-
               <option value="4">
-                Hard
+                Very Strenuous
               </option>
 
             </select>
@@ -751,4 +742,3 @@ const TrekSearch = () => {
 };
 
 export default TrekSearch;
-

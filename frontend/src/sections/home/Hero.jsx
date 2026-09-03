@@ -23,6 +23,11 @@ const Hero = () => {
         {/* Homepage Slider */}
         <HomepageSlider />
 
+        {/* Overlay — guarantees text stays legible no matter how bright
+            the current slide is. Stronger at the bottom where the search
+            bar and feature icons sit, lighter at the top. */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/50 via-black/40 to-black/70" />
+
         {/* Hero Content */}
         <div className="relative z-20 flex min-h-[750px] items-center justify-center px-6 pt-24">
           <div className="w-full max-w-5xl text-white">
@@ -30,9 +35,9 @@ const Hero = () => {
             <div className="text-left">
               {/* Welcome */}
               <div className="mb-5 flex items-center gap-3">
-                <span className="h-[2px] w-8 bg-[#E4B75E]" />
+                <span className="h-[2px] w-8 bg-[#9BE564]" />
 
-                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#E4B75E]">
+                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#9BE564]">
                   Welcome to Nepal
                 </span>
               </div>
@@ -40,7 +45,7 @@ const Hero = () => {
               {/* Heading */}
               <h2 className="font-serif text-5xl font-bold leading-[1.05] text-white sm:text-6xl lg:text-7xl">
                 Explore
-                <span className="block font-serif italic text-[#E4B75E]">
+                <span className="block font-serif italic text-[#9BE564]">
                   Nepal
                 </span>
               </h2>

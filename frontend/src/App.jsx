@@ -8,6 +8,7 @@ import AboutUs from "./pages/AboutUs.jsx";
 import BlogDetail from "./sections/blog/BlogDetail.jsx";
 import TripDetail from "./pages/TripDetail.jsx";
 import PageDetail from "./pages/PageDetail.jsx";
+import FAQ from "./sections/home/FAQ.jsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/Blogs" element={<Blogs />} />
             <Route path="/everest" element={<Everest />} />
             <Route path="/ContactUs" element={<ContactUs />} />
+            <Route path="/faq" element={<FAQ />} />
             <Route path="/AboutUs" element={<AboutUs />} />
             <Route path="/blogs/:id" element={<BlogDetail />} />
             <Route path="/package/:slug" element={<TripDetail />} />

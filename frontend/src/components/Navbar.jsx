@@ -158,6 +158,16 @@ const Navbar = () => {
           >
             About Us
           </a>
+           <a
+            href="/faq"
+            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              navbarSolid
+                ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"
+                : "text-white hover:bg-white/20"
+            }`}
+          >
+            FAQ's
+          </a>
 
           {/* BLOGS */}
 
