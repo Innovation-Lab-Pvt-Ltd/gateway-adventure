@@ -6,6 +6,7 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
+  MapPin,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +22,7 @@ const TourCategories = () => {
 
   const [allPackages, setAllPackages] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [regions, setRegions] = useState([]);
 
   const [category, setCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,6 +43,7 @@ const TourCategories = () => {
         let page = 1;
         let lastPage = 1;
         let fetchedActivities = [];
+        let fetchedRegions = [];
 
         do {
           const response = await fetch(
@@ -88,6 +91,17 @@ const TourCategories = () => {
             fetchedActivities = data.activities;
           }
 
+          // =================================================
+          // REGIONS
+          // =================================================
+
+          if (
+            page === 1 &&
+            Array.isArray(data?.regions)
+          ) {
+            fetchedRegions = data.regions;
+          }
+
           page++;
         } while (page <= lastPage);
 
@@ -108,6 +122,7 @@ const TourCategories = () => {
 
         setAllPackages(collectedPackages);
         setActivities(fetchedActivities);
+        setRegions(fetchedRegions);
       } catch (error) {
         console.error(
           "ERROR FETCHING PACKAGES:",
@@ -116,6 +131,7 @@ const TourCategories = () => {
 
         setAllPackages([]);
         setActivities([]);
+        setRegions([]);
       } finally {
         setLoading(false);
       }
@@ -316,6 +332,28 @@ const TourCategories = () => {
     );
 
     return activity?.name || "";
+  };
+
+  // =====================================================
+  // GET REGION NAME
+  // =====================================================
+
+  const getPackageRegionName = (pkg) => {
+    // region_id of 0 (or missing) means no region was assigned
+    if (
+      !pkg.region_id ||
+      Number(pkg.region_id) === 0
+    ) {
+      return "";
+    }
+
+    const region = regions.find(
+      (region) =>
+        String(region.id) ===
+        String(pkg.region_id)
+    );
+
+    return region?.name || "";
   };
 
   // =====================================================
@@ -605,16 +643,32 @@ const TourCategories = () => {
 
                     <div className="absolute bottom-0 left-0 right-0 p-5">
 
-                      {/* ACTIVITY */}
+                      {/* ACTIVITY & REGION */}
 
-                      {getPackageActivityName(
-                        pkg
-                      ) && (
-                        <span className="mb-2 inline-block rounded-full bg-[#9be564] px-3 py-1 text-xs font-semibold text-[#0b2418]">
+                      {(getPackageActivityName(pkg) ||
+                        getPackageRegionName(pkg)) && (
+                        <div className="mb-2 flex flex-wrap items-center gap-1.5">
                           {getPackageActivityName(
                             pkg
+                          ) && (
+                            <span className="inline-block rounded-full bg-[#9be564] px-3 py-1 text-xs font-semibold text-[#0b2418]">
+                              {getPackageActivityName(
+                                pkg
+                              )}
+                            </span>
                           )}
-                        </span>
+
+                          {getPackageRegionName(
+                            pkg
+                          ) && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                              <MapPin size={12} />
+                              {getPackageRegionName(
+                                pkg
+                              )}
+                            </span>
+                          )}
+                        </div>
                       )}
 
                       {/* TITLE */}
@@ -770,4 +824,3 @@ const TourCategories = () => {
 };
 
 export default TourCategories;
-

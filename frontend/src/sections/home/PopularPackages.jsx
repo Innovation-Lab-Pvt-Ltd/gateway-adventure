@@ -90,18 +90,22 @@ const PopularPackages = () => {
   // VIEW FULL TRIP
   // =====================================================
 
-  const handleViewTrip = (pkg) => {
-    if (!pkg?.id) {
-      console.error("Package ID is missing:", pkg);
-      return;
-    }
+ // =====================================================
+// VIEW FULL TRIP
+// =====================================================
 
-    navigate(`/packages/${pkg.id}`, {
-      state: {
-        trip: pkg,
-      },
-    });
-  };
+const handleViewTrip = (pkg) => {
+  if (!pkg?.slug) {
+    console.error("Package slug is missing:", pkg);
+    return;
+  }
+
+  navigate(`/package/${pkg.slug}`, {
+    state: {
+      trip: pkg,
+    },
+  });
+};
 
   // =====================================================
   // LOADING

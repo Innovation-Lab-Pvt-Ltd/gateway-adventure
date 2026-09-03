@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -5,8 +6,19 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
-  // Check if we are on PackageDetail page
-  const isPackageDetail = location.pathname.startsWith("/packages/");
+  // =========================================================
+  // TRIP DETAIL PAGE
+  // =========================================================
+  // Your TripDetail navigation uses:
+  // /package/${pkg.slug}
+  //
+  // Therefore, detect /package/ here.
+  const isPackageDetail =
+    location.pathname.startsWith("/package/");
+
+  // =========================================================
+  // SCROLL DETECTION
+  // =========================================================
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,8 +32,17 @@ const Navbar = () => {
     };
   }, []);
 
-  // Navbar should be solid on PackageDetail
-  // OR when user has scrolled
+  // =========================================================
+  // NAVBAR APPEARANCE
+  // =========================================================
+  //
+  // TripDetail:
+  //    Always white
+  //
+  // Other pages:
+  //    Top of page = transparent
+  //    After scrolling = white
+
   const navbarSolid = isPackageDetail || scrolled;
 
   return (
@@ -34,8 +55,14 @@ const Navbar = () => {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
 
-        {/* Logo */}
-        <a href="/" className="flex items-center gap-3">
+        {/* =====================================================
+            LOGO
+        ===================================================== */}
+
+        <a
+          href="/"
+          className="flex items-center gap-3"
+        >
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-xl text-lg font-bold ${
               navbarSolid
@@ -69,7 +96,10 @@ const Navbar = () => {
           </div>
         </a>
 
-        {/* Desktop Navigation */}
+        {/* =====================================================
+            DESKTOP NAVIGATION
+        ===================================================== */}
+
         <div
           className={`hidden items-center gap-1 rounded-full px-2 py-2 md:flex ${
             navbarSolid
@@ -77,7 +107,8 @@ const Navbar = () => {
               : "bg-black/10 backdrop-blur-sm"
           }`}
         >
-          {/* Home */}
+          {/* HOME */}
+
           <a
             href="/"
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
@@ -89,7 +120,8 @@ const Navbar = () => {
             Home
           </a>
 
-          {/* Trekking */}
+          {/* TREKKING & TOURS */}
+
           <a
             href="#trekking&tours"
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
@@ -101,10 +133,8 @@ const Navbar = () => {
             Trekking&Tours
           </a>
 
-          {/* Tours */}
-          
+          {/* DESTINATIONS */}
 
-          {/* Destinations */}
           <a
             href="#destinations"
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
@@ -116,7 +146,8 @@ const Navbar = () => {
             Destinations
           </a>
 
-          {/* About Us */}
+          {/* ABOUT US */}
+
           <a
             href="/AboutUs"
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
@@ -128,7 +159,8 @@ const Navbar = () => {
             About Us
           </a>
 
-          {/* Blogs */}
+          {/* BLOGS */}
+
           <a
             href="/Blogs"
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
@@ -141,8 +173,12 @@ const Navbar = () => {
           </a>
         </div>
 
-        {/* CTA */}
+        {/* =====================================================
+            CTA
+        ===================================================== */}
+
         <div className="flex items-center gap-3">
+
           <a
             href="/ContactUs"
             className={`hidden rounded-full px-5 py-2.5 text-sm font-semibold transition sm:block ${
@@ -154,7 +190,10 @@ const Navbar = () => {
             Contact Us
           </a>
 
-          {/* Mobile Button */}
+          {/* =================================================
+              MOBILE BUTTON
+          ================================================= */}
+
           <button
             className={`flex h-10 w-10 items-center justify-center rounded-full md:hidden ${
               navbarSolid
@@ -164,6 +203,7 @@ const Navbar = () => {
           >
             ☰
           </button>
+
         </div>
 
       </div>
@@ -172,3 +212,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
