@@ -10,8 +10,11 @@ import {
   ChevronDown,
   Clock,
   Clock3,
+  Download,
   Image as ImageIcon,
   MapPin,
+  Maximize2,
+  Minimize2,
   Mountain,
   Star,
   Sun,
@@ -53,14 +56,6 @@ const TripFacts = ({ trip }) => {
             ? trip.grade?.name || "Moderate"
             : trip.grade || "Moderate";
 
-  // -----------------------------------------------------
-  // REGION
-  // The tripdetail API may expose the region under several
-  // possible keys depending on how it was resolved server
-  // side (similar to how destname/actname are resolved for
-  // destination and activity). We check the most likely
-  // ones and only show the fact if a real region was found.
-  // -----------------------------------------------------
   const regionName =
     trip.regname ||
     trip.region_name ||
@@ -149,23 +144,21 @@ const TripFact = ({ icon, label, value, star = false }) => {
 
 /* =========================================================
    TRIP ROUTE
-   Displays the trip_routes string (e.g. "Kathmandu - Chitwan
-   - Lumbini - ... - Kathmandu") as a visual route flow.
-   This is intentionally kept separate from TripFacts.
 ========================================================= */
 
 const TripRoute = ({ route }) => {
-  if (!route || typeof route !== "string") return null;
+  if (!route || typeof route !== "string") {
+    return null;
+  }
 
-  // The API stores routes using different separators
-  // depending on the package ("-", ",", "→"), so we
-  // normalize all of them into a clean list of stops.
   const stops = route
     .split(/\s*(?:->|→|–|—|-|,)\s*/)
     .map((stop) => stop.trim())
     .filter(Boolean);
 
-  if (stops.length < 2) return null;
+  if (stops.length < 2) {
+    return null;
+  }
 
   return (
     <section className="mb-12 rounded-2xl bg-white p-6 shadow-sm md:p-10">
@@ -211,7 +204,9 @@ const TripRoute = ({ route }) => {
 ========================================================= */
 
 const HtmlContent = ({ content, className = "trip-description" }) => {
-  if (!content) return null;
+  if (!content) {
+    return null;
+  }
 
   return (
     <div
@@ -228,12 +223,30 @@ const HtmlContent = ({ content, className = "trip-description" }) => {
 ========================================================= */
 
 const RATING_ROW_LABELS = [
-  { key: "trip_info_rating", label: "Trip Information" },
-  { key: "accomodation_rating", label: "Accommodation" },
-  { key: "meals_rating", label: "Meals" },
-  { key: "transportation_rating", label: "Transportation" },
-  { key: "staff_rating", label: "Guide & Staff" },
-  { key: "value_rating", label: "Value for Money" },
+  {
+    key: "trip_info_rating",
+    label: "Trip Information",
+  },
+  {
+    key: "accomodation_rating",
+    label: "Accommodation",
+  },
+  {
+    key: "meals_rating",
+    label: "Meals",
+  },
+  {
+    key: "transportation_rating",
+    label: "Transportation",
+  },
+  {
+    key: "staff_rating",
+    label: "Guide & Staff",
+  },
+  {
+    key: "value_rating",
+    label: "Value for Money",
+  },
 ];
 
 const RatingBar = ({ label, average }) => {
@@ -242,7 +255,7 @@ const RatingBar = ({ label, average }) => {
   const percent = Math.max(0, Math.min(100, (value / 5) * 100));
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 s">
       <span className="w-40 shrink-0 text-sm text-gray-500">{label}</span>
 
       <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
@@ -418,21 +431,33 @@ const BookingCard = ({
 }) => {
   const [showWhatsapp, setShowWhatsapp] = useState(false);
 
+  const [persons, setPersons] = useState(1);
+
   const formatPrice = (value) => {
     if (value === null || value === undefined || value === "") {
       return null;
     }
 
-    return `$${value}`;
+    return `$${Number(value).toLocaleString()}`;
+  };
+
+  const pricePerPerson =
+    price !== null && price !== undefined && price !== ""
+      ? Number(price)
+      : null;
+
+  const totalPrice = pricePerPerson !== null ? pricePerPerson * persons : null;
+
+  const increasePersons = () => {
+    setPersons((previous) => previous + 1);
+  };
+
+  const decreasePersons = () => {
+    setPersons((previous) => Math.max(1, previous - 1));
   };
 
   return (
     <>
-      {/* =================================================
-          STICKY BOOKING CARD
-          Stays below navbar
-      ================================================= */}
-
       <aside className="lg:sticky lg:top-[104px] lg:self-start lg:h-fit">
         <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
           <div className="bg-[#0b2418] px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white">
@@ -443,15 +468,15 @@ const BookingCard = ({
             <p className="text-xs text-gray-500">Price per person</p>
 
             <div className="mt-1 flex flex-wrap items-center gap-2">
-              {hasDiscount && discountAmount && price !== null && (
+              {hasDiscount && discountAmount && pricePerPerson !== null && (
                 <span className="text-sm text-gray-400 line-through">
-                  {formatPrice(price)}
+                  {formatPrice(pricePerPerson)}
                 </span>
               )}
 
-              {price !== null ? (
+              {pricePerPerson !== null ? (
                 <span className="text-3xl font-bold text-[#0b2418]">
-                  {formatPrice(price)}
+                  {formatPrice(pricePerPerson)}
                 </span>
               ) : (
                 <span className="text-xl font-bold text-[#0b2418]">
@@ -464,6 +489,67 @@ const BookingCard = ({
               {duration ? `${duration} days` : "Flexible duration"} ·
               all-inclusive
             </p>
+
+            {pricePerPerson !== null && (
+              <div className="mt-5">
+                <p className="mb-2 text-sm font-semibold text-[#0b2418]">
+                  Number of Persons
+                </p>
+
+                <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-[#FBF9F4] p-2">
+                  <button
+                    type="button"
+                    onClick={decreasePersons}
+                    disabled={persons === 1}
+                    aria-label="Decrease number of persons"
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg text-xl font-bold transition ${
+                      persons === 1
+                        ? "cursor-not-allowed text-gray-300"
+                        : "bg-white text-[#0b2418] shadow-sm hover:bg-[#0b2418] hover:text-white"
+                    }`}
+                  >
+                    −
+                  </button>
+
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-[#0b2418]">
+                      {persons}
+                    </p>
+
+                    <p className="text-xs text-gray-500">
+                      {persons === 1 ? "Person" : "Persons"}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={increasePersons}
+                    aria-label="Increase number of persons"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-xl font-bold text-[#0b2418] shadow-sm transition hover:bg-[#0b2418] hover:text-white"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {totalPrice !== null && (
+              <div className="mt-4 rounded-xl bg-[#eaf6df] p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm text-gray-600">
+                    {formatPrice(pricePerPerson)} × {persons}
+                  </span>
+
+                  <span className="text-xl font-bold text-[#0b2418]">
+                    {formatPrice(totalPrice)}
+                  </span>
+                </div>
+
+                <p className="mt-1 text-xs text-gray-500">
+                  Total estimated trip cost
+                </p>
+              </div>
+            )}
 
             <div className="mt-4 rounded-lg bg-[#eaf6df] p-3">
               <p className="text-sm font-semibold text-[#0b2418]">
@@ -565,9 +651,21 @@ const TripDetail = () => {
 
   const [activeTab, setActiveTab] = useState("overview");
 
+  /*
+   * -1 means no itinerary is open.
+   * Otherwise it contains the currently opened
+   * itinerary index.
+   */
   const [openItinerary, setOpenItinerary] = useState(0);
 
+  /*
+   * -1 means no FAQ is open.
+   */
   const [openFaq, setOpenFaq] = useState(null);
+
+  const [allItinerariesExpanded, setAllItinerariesExpanded] = useState(false);
+
+  const [allFaqsExpanded, setAllFaqsExpanded] = useState(false);
 
   /* =====================================================
      FETCH TRIP
@@ -614,14 +712,6 @@ const TripDetail = () => {
 
         tripData.revCount = tripData.revCount ?? data?.revCount ?? 0;
 
-        // ---------------------------------------------
-        // REGION
-        // Some responses resolve the region name at the
-        // top level of the payload (similar to how
-        // destinations/activities can be resolved) rather
-        // than on the trip object itself. Fall back to that
-        // if the trip object doesn't already have it.
-        // ---------------------------------------------
         if (!tripData.regname && !tripData.region_name && !tripData.region) {
           const regionFromTopLevel = data?.region?.name || data?.regname || "";
 
@@ -705,11 +795,13 @@ const TripDetail = () => {
     );
   }
 
-  if (!trip) return null;
+  if (!trip) {
+    return null;
+  }
 
-  /* =========================================================
+  /* =====================================================
      HELPERS
-  ========================================================= */
+  ===================================================== */
 
   const getImageUrl = (imageName) => {
     if (!imageName) {
@@ -723,9 +815,9 @@ const TripDetail = () => {
     return `${IMAGE_BASE_URL}${imageName}`;
   };
 
-  /* =========================================================
+  /* =====================================================
      BASIC DATA
-  ========================================================= */
+  ===================================================== */
 
   const title =
     trip.title || trip.name || trip.package_title || "Untitled Trip";
@@ -756,17 +848,17 @@ const TripDetail = () => {
 
   const featuredVideo = trip.featured_video_url || "";
 
-  /* =========================================================
+  /* =====================================================
      HERO IMAGE
-  ========================================================= */
+  ===================================================== */
 
   const heroImage = getImageUrl(
     trip.image || trip.social_image || trip.featured_image || trip.thumbnail,
   );
 
-  /* =========================================================
+  /* =====================================================
      ARRAYS
-  ========================================================= */
+  ===================================================== */
 
   const itineraries = Array.isArray(trip.itineraries)
     ? [...trip.itineraries].sort(
@@ -792,18 +884,18 @@ const TripDetail = () => {
     ? trip.related_packages
     : [];
 
-  /* =========================================================
+  /* =====================================================
      BREADCRUMBS
-  ========================================================= */
+  ===================================================== */
 
   const breadcrumbs =
     trip.breadcrumbs && typeof trip.breadcrumbs === "object"
       ? Object.entries(trip.breadcrumbs)
       : [];
 
-  /* =========================================================
+  /* =====================================================
      CONTENT
-  ========================================================= */
+  ===================================================== */
 
   const costIncludes = trip.cost_includes || trip.includes || "";
 
@@ -813,9 +905,399 @@ const TripDetail = () => {
 
   const complimentary = trip.complimentary || "";
 
-  /* =========================================================
+  /* =====================================================
+     ITINERARY CONTROLS
+  ===================================================== */
+
+  const toggleAllItineraries = () => {
+    if (allItinerariesExpanded) {
+      setOpenItinerary(null);
+      setAllItinerariesExpanded(false);
+    } else {
+      setOpenItinerary("all");
+      setAllItinerariesExpanded(true);
+    }
+  };
+
+  /* =====================================================
+     FAQ CONTROLS
+  ===================================================== */
+
+  const toggleAllFaqs = () => {
+    if (allFaqsExpanded) {
+      setOpenFaq(null);
+      setAllFaqsExpanded(false);
+    } else {
+      setOpenFaq("all");
+      setAllFaqsExpanded(true);
+    }
+  };
+
+  /* =====================================================
+     DOWNLOAD ITINERARY PDF
+     
+     Uses browser print dialog.
+     User can select "Save as PDF".
+  ===================================================== */
+
+  const downloadItineraryPDF = () => {
+    if (!itineraries.length) {
+      return;
+    }
+
+    const printWindow = window.open("", "_blank");
+
+    if (!printWindow) {
+      alert(
+        "Please allow pop-ups in your browser to download the itinerary PDF.",
+      );
+
+      return;
+    }
+
+    const escapeHtml = (value) => {
+      if (value === null || value === undefined) {
+        return "";
+      }
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    };
+
+    const stripHtml = (html) => {
+      if (!html) {
+        return "";
+      }
+
+      const temp = document.createElement("div");
+
+      temp.innerHTML = html;
+
+      return temp.textContent || temp.innerText || "";
+    };
+
+    const itineraryHtml = itineraries
+      .map((day, index) => {
+        const dayNumber = day.day_no || index + 1;
+
+        const dayTitle =
+          day.title || day.name || day.short_description || `Day ${dayNumber}`;
+
+        const description = stripHtml(day.description || "");
+
+        const details = [
+          {
+            label: "Altitude",
+            value: day.altitude,
+          },
+          {
+            label: "Meal",
+            value: day.meal,
+          },
+          {
+            label: "Accommodation",
+            value: day.accomodation || day.accommodation,
+          },
+          {
+            label: "Transportation",
+            value: day.transportation,
+          },
+          {
+            label: "Distance",
+            value: day.distance,
+          },
+          {
+            label: "Time",
+            value: day.time,
+          },
+          {
+            label: "Ascent",
+            value: day.ascent,
+          },
+          {
+            label: "Descent",
+            value: day.descent,
+          },
+        ].filter(
+          (item) =>
+            item.value !== null &&
+            item.value !== undefined &&
+            item.value !== "",
+        );
+
+        return `
+            <div class="day">
+              <div class="day-header">
+                <div class="day-number">
+                  ${escapeHtml(dayNumber)}
+                </div>
+
+                <div>
+                  <div class="day-label">
+                    DAY ${escapeHtml(dayNumber)}
+                  </div>
+
+                  <h2>
+                    ${escapeHtml(dayTitle)}
+                  </h2>
+                </div>
+              </div>
+
+              ${
+                description
+                  ? `
+                    <div class="description">
+                      ${escapeHtml(description)}
+                    </div>
+                  `
+                  : ""
+              }
+
+              ${
+                details.length > 0
+                  ? `
+                    <div class="details">
+                      ${details
+                        .map(
+                          (item) => `
+                            <div class="detail">
+                              <div class="detail-label">
+                                ${escapeHtml(item.label)}
+                              </div>
+
+                              <div class="detail-value">
+                                ${escapeHtml(item.value)}
+                              </div>
+                            </div>
+                          `,
+                        )
+                        .join("")}
+                    </div>
+                  `
+                  : ""
+              }
+            </div>
+          `;
+      })
+      .join("");
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+
+      <html>
+        <head>
+          <title>
+            ${escapeHtml(title)} - Itinerary
+          </title>
+
+          <style>
+            * {
+              box-sizing: border-box;
+            }
+
+            body {
+              margin: 0;
+              padding: 40px;
+              font-family: Arial, sans-serif;
+              color: #0b2418;
+              background: white;
+            }
+
+            .header {
+              margin-bottom: 35px;
+              padding-bottom: 20px;
+              border-bottom: 2px solid #eaf6df;
+            }
+
+            .brand {
+              margin-bottom: 8px;
+              color: #4f8f3a;
+              font-size: 11px;
+              font-weight: bold;
+              letter-spacing: 3px;
+              text-transform: uppercase;
+            }
+
+            .title {
+              margin: 0 0 8px;
+              font-size: 30px;
+              font-weight: bold;
+              line-height: 1.2;
+            }
+
+            .subtitle {
+              color: #666;
+              font-size: 14px;
+            }
+
+            .trip-info {
+              display: flex;
+              gap: 20px;
+              margin-top: 12px;
+              color: #666;
+              font-size: 12px;
+            }
+
+            .day {
+              margin-bottom: 28px;
+              padding: 24px;
+              border: 1px solid #e5e7eb;
+              border-radius: 14px;
+              page-break-inside: avoid;
+            }
+
+            .day-header {
+              display: flex;
+              align-items: center;
+              gap: 15px;
+              margin-bottom: 20px;
+            }
+
+            .day-number {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 42px;
+              height: 42px;
+              min-width: 42px;
+              border-radius: 50%;
+              background: #0b2418;
+              color: white;
+              font-size: 15px;
+              font-weight: bold;
+            }
+
+            .day-label {
+              margin-bottom: 5px;
+              color: #4f8f3a;
+              font-size: 10px;
+              font-weight: bold;
+              letter-spacing: 1.5px;
+            }
+
+            h2 {
+              margin: 0;
+              font-size: 20px;
+              line-height: 1.3;
+            }
+
+            .description {
+              margin-bottom: 20px;
+              color: #555;
+              font-size: 13px;
+              line-height: 1.7;
+              white-space: pre-line;
+            }
+
+            .details {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 10px;
+            }
+
+            .detail {
+              padding: 12px;
+              border-radius: 8px;
+              background: #fbf9f4;
+            }
+
+            .detail-label {
+              margin-bottom: 5px;
+              color: #999;
+              font-size: 9px;
+              font-weight: bold;
+              letter-spacing: 1px;
+              text-transform: uppercase;
+            }
+
+            .detail-value {
+              color: #0b2418;
+              font-size: 12px;
+              font-weight: 600;
+            }
+
+            .footer {
+              margin-top: 30px;
+              padding-top: 15px;
+              border-top: 1px solid #e5e7eb;
+              color: #999;
+              font-size: 10px;
+              text-align: center;
+            }
+
+            @media print {
+              body {
+                padding: 20px;
+              }
+
+              .day {
+                break-inside: avoid;
+              }
+            }
+          </style>
+        </head>
+
+        <body>
+          <div class="header">
+            <div class="brand">
+              Gateway Treks
+            </div>
+
+            <h1 class="title">
+              ${escapeHtml(title)}
+            </h1>
+
+            <div class="subtitle">
+              Trip Itinerary
+            </div>
+
+            <div class="trip-info">
+              ${
+                tripCode
+                  ? `<span>Trip Code: ${escapeHtml(tripCode)}</span>`
+                  : ""
+              }
+
+              ${
+                duration
+                  ? `<span>Duration: ${escapeHtml(duration)} days</span>`
+                  : ""
+              }
+            </div>
+          </div>
+
+          ${itineraryHtml}
+
+          <div class="footer">
+            ${escapeHtml(title)}
+            · Trip Itinerary
+          </div>
+
+          <script>
+            window.onload = function () {
+              setTimeout(function () {
+                window.print();
+              }, 500);
+            };
+
+            window.onafterprint = function () {
+              window.close();
+            };
+          <\/script>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+  };
+
+  /* =====================================================
      TABS
-  ========================================================= */
+  ===================================================== */
 
   const tabs = [
     {
@@ -842,9 +1324,9 @@ const TripDetail = () => {
     },
   ];
 
-  /* =========================================================
+  /* =====================================================
      RENDER
-  ========================================================= */
+  ===================================================== */
 
   return (
     <div className="min-h-screen bg-[#FBF9F4] pt-[88px]">
@@ -978,10 +1460,7 @@ const TripDetail = () => {
           ================================================= */}
 
           <div className="min-w-0 lg:col-span-2">
-            {/* =================================================
-                STICKY TABS
-                88px = navbar height
-            ================================================= */}
+            {/* STICKY TABS */}
 
             <div
               className="
@@ -1078,20 +1557,73 @@ const TripDetail = () => {
 
             {activeTab === "itinerary" && (
               <section className="rounded-2xl bg-white p-6 shadow-sm md:p-10">
-                <div className="mb-8">
-                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
-                    Day by day
-                  </p>
+                {/* HEADER */}
 
-                  <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
-                    Itinerary
-                  </h2>
+                <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+                  <div>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+                      Day by day
+                    </p>
+
+                    <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+                      Itinerary
+                    </h2>
+
+                    {itineraries.length > 0 && (
+                      <p className="mt-2 text-sm text-gray-500">
+                        {itineraries.length} day
+                        {itineraries.length !== 1 ? "s" : ""} of your journey
+                      </p>
+                    )}
+                  </div>
+
+                  {/* ACTION BUTTONS */}
+
+                  {itineraries.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* EXPAND / COLLAPSE ALL */}
+
+                      <button
+                        type="button"
+                        onClick={toggleAllItineraries}
+                        className="inline-flex items-center gap-2 rounded-xl border border-[#0b2418] px-4 py-2.5 text-sm font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white"
+                      >
+                        {allItinerariesExpanded ? (
+                          <>
+                            <Minimize2 size={16} />
+                            Collapse All
+                          </>
+                        ) : (
+                          <>
+                            <Maximize2 size={16} />
+                            Expand All
+                          </>
+                        )}
+                      </button>
+
+                      {/* DOWNLOAD PDF */}
+
+                      <button
+                        type="button"
+                        onClick={downloadItineraryPDF}
+                        className="inline-flex items-center gap-2 rounded-xl bg-[#4f8f3a] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#3d762e]"
+                      >
+                        <Download size={16} />
+                        Download PDF
+                      </button>
+                    </div>
+                  )}
                 </div>
+
+                {/* ITINERARY LIST */}
 
                 {itineraries.length > 0 ? (
                   <div className="space-y-4">
                     {itineraries.map((day, index) => {
-                      const isOpen = openItinerary === index;
+                      const isOpen =
+                        allItinerariesExpanded ||
+                        openItinerary === index ||
+                        openItinerary === "all";
 
                       const dayNumber = day.day_no || index + 1;
 
@@ -1106,11 +1638,19 @@ const TripDetail = () => {
                           key={day.id || `${dayNumber}-${index}`}
                           className="overflow-hidden rounded-2xl border border-gray-100"
                         >
+                          {/* DAY HEADER */}
+
                           <button
                             type="button"
-                            onClick={() =>
-                              setOpenItinerary(isOpen ? null : index)
-                            }
+                            onClick={() => {
+                              if (allItinerariesExpanded) {
+                                setAllItinerariesExpanded(false);
+
+                                setOpenItinerary(index);
+                              } else {
+                                setOpenItinerary(isOpen ? null : index);
+                              }
+                            }}
                             className="flex w-full items-center gap-4 p-5 text-left transition hover:bg-gray-50"
                           >
                             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0b2418] text-sm font-bold text-white">
@@ -1134,6 +1674,8 @@ const TripDetail = () => {
                               }`}
                             />
                           </button>
+
+                          {/* DAY CONTENT */}
 
                           {isOpen && (
                             <div className="border-t border-gray-100 px-5 pb-6 pt-5">
@@ -1177,7 +1719,12 @@ const TripDetail = () => {
                                     value: day.descent,
                                   },
                                 ]
-                                  .filter((item) => item.value)
+                                  .filter(
+                                    (item) =>
+                                      item.value !== null &&
+                                      item.value !== undefined &&
+                                      item.value !== "",
+                                  )
                                   .map((item) => (
                                     <div
                                       key={item.label}
@@ -1306,20 +1853,49 @@ const TripDetail = () => {
 
             {activeTab === "faq" && (
               <section className="rounded-2xl bg-white p-6 shadow-sm md:p-10">
-                <div className="mb-8">
-                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
-                    Frequently asked
-                  </p>
+                {/* FAQ HEADER */}
 
-                  <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
-                    Frequently Asked Questions
-                  </h2>
+                <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+                  <div>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+                      Frequently asked
+                    </p>
+
+                    <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+                      Frequently Asked Questions
+                    </h2>
+                  </div>
+
+                  {/* EXPAND / COLLAPSE ALL */}
+
+                  {faqs.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={toggleAllFaqs}
+                      className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#0b2418] px-4 py-2.5 text-sm font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white"
+                    >
+                      {allFaqsExpanded ? (
+                        <>
+                          <Minimize2 size={16} />
+                          Collapse All
+                        </>
+                      ) : (
+                        <>
+                          <Maximize2 size={16} />
+                          Expand All
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
 
                 {faqs.length > 0 ? (
                   <div className="space-y-3">
                     {faqs.map((faq, index) => {
-                      const isOpen = openFaq === index;
+                      const isOpen =
+                        allFaqsExpanded ||
+                        openFaq === index ||
+                        openFaq === "all";
 
                       return (
                         <div
@@ -1328,7 +1904,15 @@ const TripDetail = () => {
                         >
                           <button
                             type="button"
-                            onClick={() => setOpenFaq(isOpen ? null : index)}
+                            onClick={() => {
+                              if (allFaqsExpanded) {
+                                setAllFaqsExpanded(false);
+
+                                setOpenFaq(index);
+                              } else {
+                                setOpenFaq(isOpen ? null : index);
+                              }
+                            }}
                             className="flex w-full items-center justify-between gap-5 p-5 text-left font-semibold text-[#0b2418] transition hover:bg-gray-50"
                           >
                             <span>{faq.question}</span>
@@ -1418,7 +2002,7 @@ const TripDetail = () => {
           </div>
 
           {/* =================================================
-              STICKY BOOKING CARD
+              BOOKING CARD
           ================================================= */}
 
           <BookingCard

@@ -1,26 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ArrowRight, ArrowLeft, Search, X } from "lucide-react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  ArrowRight,
+  ArrowLeft,
+  Search,
+  X,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-// =====================================================
-// GATEWAY TREKS API
-// =====================================================
 
 const API_URL = "/api/v1/blogs";
 
-// Compact mode shows only 4 blogs
+const IMAGE_BASE_URL =
+  "https://gatewaytreks.com/public/uploads/frontend/full/";
+
 const VISIBLE_COUNT = 4;
-
-// Large mode shows 8 blogs per page
 const CARDS_PER_PAGE = 8;
-
-// How many matches to show in the search dropdown before
-// the list becomes scrollable instead of endless.
 const MAX_SEARCH_RESULTS = 8;
-
-// =====================================================
-// BLOG CATEGORIES
-// =====================================================
 
 const CATEGORIES = [
   "All",
@@ -34,7 +32,7 @@ const CATEGORIES = [
 ];
 
 // =====================================================
-// HELPER
+// NORMALIZE TEXT
 // =====================================================
 
 const normalizeText = (value) => {
@@ -48,44 +46,24 @@ const normalizeText = (value) => {
 };
 
 // =====================================================
-// GET CATEGORY FROM BLOG
+// GET CATEGORY
+// EXACT SAME CATEGORY LOGIC AS BLOGDETAIL.JSX
 // =====================================================
-//
-// Priority:
-// 1. Title
-// 2. Tags
-// 3. Short description
-// 4. Description/content
-//
-// This prevents words such as "cost", "weather", etc.
-// inside a trekking article from incorrectly changing
-// its category.
-//
 
 export const getCategory = (blog) => {
   if (!blog) return "Stories & People";
 
   const title = normalizeText(blog.title);
 
-  const shortDescription = normalizeText(
-    blog.short_description
-  );
-
-  const description = normalizeText(
-    blog.description
-  );
-
-  const content = normalizeText(
-    blog.content
-  );
-
   const tags = Array.isArray(blog.tags)
-    ? blog.tags.map((tag) => normalizeText(tag)).join(" ")
+    ? blog.tags
+        .map((tag) => normalizeText(tag))
+        .join(" ")
     : normalizeText(blog.tags);
 
-  // =====================================================
-  // 1. TRAVEL NEWS
-  // =====================================================
+  // ===================================================
+  // TRAVEL NEWS
+  // ===================================================
 
   const newsKeywords = [
     "travel news",
@@ -99,7 +77,6 @@ export const getCategory = (blog) => {
     "new rules",
     "new regulation",
     "new regulations",
-    "regulation update",
     "official announcement",
     "announcement",
     "announced",
@@ -108,7 +85,6 @@ export const getCategory = (blog) => {
     "tourism board",
   ];
 
-  // Strong match in title
   if (
     newsKeywords.some((keyword) =>
       title.includes(keyword)
@@ -117,7 +93,6 @@ export const getCategory = (blog) => {
     return "Travel News";
   }
 
-  // Strong match in tags
   if (
     newsKeywords.some((keyword) =>
       tags.includes(keyword)
@@ -126,21 +101,9 @@ export const getCategory = (blog) => {
     return "Travel News";
   }
 
-  // =====================================================
-  // 2. TREKKING GUIDES
-  // =====================================================
-  //
-  // Check title/tags BEFORE planning keywords.
-  //
-  // Example:
-  // "Everest Base Camp Trek Cost"
-  //
-  // should be:
-  // Trekking Guides
-  //
-  // and NOT:
-  // Permits & Planning
-  //
+  // ===================================================
+  // TREKKING GUIDES
+  // ===================================================
 
   const trekkingKeywords = [
     "everest base camp trek",
@@ -179,7 +142,6 @@ export const getCategory = (blog) => {
     "pass trek",
   ];
 
-  // Strong match in title
   if (
     trekkingKeywords.some((keyword) =>
       title.includes(keyword)
@@ -188,7 +150,6 @@ export const getCategory = (blog) => {
     return "Trekking Guides";
   }
 
-  // Strong match in tags
   if (
     trekkingKeywords.some((keyword) =>
       tags.includes(keyword)
@@ -197,9 +158,9 @@ export const getCategory = (blog) => {
     return "Trekking Guides";
   }
 
-  // =====================================================
-  // 3. PERMITS & PLANNING
-  // =====================================================
+  // ===================================================
+  // PERMITS & PLANNING
+  // ===================================================
 
   const planningKeywords = [
     "permit",
@@ -243,7 +204,6 @@ export const getCategory = (blog) => {
     "things to know",
   ];
 
-  // Strong match in title
   if (
     planningKeywords.some((keyword) =>
       title.includes(keyword)
@@ -252,7 +212,6 @@ export const getCategory = (blog) => {
     return "Permits & Planning";
   }
 
-  // Strong match in tags
   if (
     planningKeywords.some((keyword) =>
       tags.includes(keyword)
@@ -261,9 +220,9 @@ export const getCategory = (blog) => {
     return "Permits & Planning";
   }
 
-  // =====================================================
-  // 4. CULTURE & HERITAGE
-  // =====================================================
+  // ===================================================
+  // CULTURE
+  // ===================================================
 
   const cultureKeywords = [
     "culture",
@@ -312,9 +271,9 @@ export const getCategory = (blog) => {
     return "Culture & Heritage";
   }
 
-  // =====================================================
-  // 5. NATURE & WILDLIFE
-  // =====================================================
+  // ===================================================
+  // NATURE
+  // ===================================================
 
   const natureKeywords = [
     "wildlife",
@@ -358,9 +317,9 @@ export const getCategory = (blog) => {
     return "Nature & Wildlife";
   }
 
-  // =====================================================
-  // 6. ADVENTURE & ACTIVITIES
-  // =====================================================
+  // ===================================================
+  // ADVENTURE
+  // ===================================================
 
   const adventureKeywords = [
     "rafting",
@@ -399,9 +358,9 @@ export const getCategory = (blog) => {
     return "Adventure & Activities";
   }
 
-  // =====================================================
-  // 7. STORIES & PEOPLE
-  // =====================================================
+  // ===================================================
+  // STORIES
+  // ===================================================
 
   const storiesKeywords = [
     "story",
@@ -440,74 +399,6 @@ export const getCategory = (blog) => {
     return "Stories & People";
   }
 
-  // =====================================================
-  // 8. FALLBACK
-  // =====================================================
-  //
-  // Only use short description/content if the title
-  // and tags did not give us a strong category.
-  //
-
-  const secondaryText = `
-    ${shortDescription}
-    ${description}
-    ${content}
-  `;
-
-  // News
-  if (
-    newsKeywords.some((keyword) =>
-      secondaryText.includes(keyword)
-    )
-  ) {
-    return "Travel News";
-  }
-
-  // Culture
-  if (
-    cultureKeywords.some((keyword) =>
-      secondaryText.includes(keyword)
-    )
-  ) {
-    return "Culture & Heritage";
-  }
-
-  // Nature
-  if (
-    natureKeywords.some((keyword) =>
-      secondaryText.includes(keyword)
-    )
-  ) {
-    return "Nature & Wildlife";
-  }
-
-  // Adventure
-  if (
-    adventureKeywords.some((keyword) =>
-      secondaryText.includes(keyword)
-    )
-  ) {
-    return "Adventure & Activities";
-  }
-
-  // Trekking
-  if (
-    trekkingKeywords.some((keyword) =>
-      secondaryText.includes(keyword)
-    )
-  ) {
-    return "Trekking Guides";
-  }
-
-  // Planning
-  if (
-    planningKeywords.some((keyword) =>
-      secondaryText.includes(keyword)
-    )
-  ) {
-    return "Permits & Planning";
-  }
-
   return "Stories & People";
 };
 
@@ -542,17 +433,18 @@ const BlogList = ({ variant = "compact" }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] =
+    useState("All");
 
-  // Current page
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] =
+    useState(0);
 
-  // =====================================================
-  // SEARCH (searches blog.title only)
-  // =====================================================
+  const [searchQuery, setSearchQuery] =
+    useState("");
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] =
+    useState(false);
+
   const searchContainerRef = useRef(null);
 
   // =====================================================
@@ -576,7 +468,7 @@ const BlogList = ({ variant = "compact" }) => {
         const data = await response.json();
 
         console.log(
-          "Gateway Treks Blogs API Response:",
+          "Gateway Treks Blogs:",
           data
         );
 
@@ -586,20 +478,22 @@ const BlogList = ({ variant = "compact" }) => {
           data.blog ||
           data.data;
 
-        if (Array.isArray(list)) {
-          setBlogs(list);
-        } else {
+        if (!Array.isArray(list)) {
           throw new Error(
             "Blogs response is not an array"
           );
         }
+
+        setBlogs(list);
       } catch (err) {
         console.error(
-          "GATEWAY TREKS BLOGS ERROR:",
+          "BLOG LIST ERROR:",
           err
         );
 
-        setError("Unable to load blog posts.");
+        setError(
+          "Unable to load blog posts."
+        );
       } finally {
         setLoading(false);
       }
@@ -617,14 +511,16 @@ const BlogList = ({ variant = "compact" }) => {
   }, [activeCategory]);
 
   // =====================================================
-  // CLOSE SEARCH DROPDOWN ON OUTSIDE CLICK / ESC
+  // CLOSE SEARCH
   // =====================================================
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         searchContainerRef.current &&
-        !searchContainerRef.current.contains(event.target)
+        !searchContainerRef.current.contains(
+          event.target
+        )
       ) {
         setIsSearchOpen(false);
       }
@@ -636,12 +532,26 @@ const BlogList = ({ variant = "compact" }) => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleEscape);
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+    document.addEventListener(
+      "keydown",
+      handleEscape
+    );
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+
+      document.removeEventListener(
+        "keydown",
+        handleEscape
+      );
     };
   }, []);
 
@@ -651,22 +561,23 @@ const BlogList = ({ variant = "compact" }) => {
 
   const handleBlogClick = (blog) => {
     if (!blog || !blog.id) {
-      console.error("Invalid blog:", blog);
+      console.error(
+        "Invalid blog:",
+        blog
+      );
       return;
     }
 
     const blogId = blog.id;
-
-    // ---------------------------------------------------
-    // GET EXISTING VIEW COUNTS
-    // ---------------------------------------------------
 
     let storedViews = {};
 
     try {
       storedViews =
         JSON.parse(
-          localStorage.getItem("blogViews")
+          localStorage.getItem(
+            "blogViews"
+          )
         ) || {};
     } catch (error) {
       console.error(
@@ -674,10 +585,6 @@ const BlogList = ({ variant = "compact" }) => {
         error
       );
     }
-
-    // ---------------------------------------------------
-    // INCREASE VIEW COUNT
-    // ---------------------------------------------------
 
     const newCount =
       (storedViews[blogId] || 0) + 1;
@@ -687,26 +594,16 @@ const BlogList = ({ variant = "compact" }) => {
       [blogId]: newCount,
     };
 
-    // ---------------------------------------------------
-    // SAVE
-    // ---------------------------------------------------
-
     localStorage.setItem(
       "blogViews",
       JSON.stringify(updatedViews)
     );
 
-    // ---------------------------------------------------
-    // NOTIFY OTHER COMPONENTS
-    // ---------------------------------------------------
-
     window.dispatchEvent(
-      new CustomEvent("blogViewUpdated")
+      new CustomEvent(
+        "blogViewUpdated"
+      )
     );
-
-    // ---------------------------------------------------
-    // NAVIGATE
-    // ---------------------------------------------------
 
     navigate(`/blogs/${blogId}`, {
       state: {
@@ -716,16 +613,21 @@ const BlogList = ({ variant = "compact" }) => {
   };
 
   // =====================================================
-  // HANDLE SEARCH RESULT CLICK
-  // Same navigation as a normal card, then reset the search
-  // so the dropdown doesn't stay open on the next page.
+  // SEARCH RESULT CLICK
   // =====================================================
 
-  const handleSearchResultClick = (blog) => {
+  const handleSearchResultClick = (
+    blog
+  ) => {
     handleBlogClick(blog);
+
     setSearchQuery("");
     setIsSearchOpen(false);
   };
+
+  // =====================================================
+  // CLEAR SEARCH
+  // =====================================================
 
   const clearSearch = () => {
     setSearchQuery("");
@@ -741,7 +643,6 @@ const BlogList = ({ variant = "compact" }) => {
       <section className="bg-[#F4F0E7] px-6 py-16 md:px-10 lg:px-16">
 
         <div className="mb-8 max-w-2xl">
-
           <div className="mb-4 flex items-center gap-3">
             <span className="h-[2px] w-8 bg-[#2F6B4F]" />
 
@@ -759,21 +660,18 @@ const BlogList = ({ variant = "compact" }) => {
           </h1>
 
           <p className="text-base leading-7 text-gray-500">
-            Stories, guides and inspiration for
-            your next adventure.
+            Stories, guides and inspiration
+            for your next adventure.
           </p>
-
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-
           {[1, 2, 3, 4].map((item) => (
             <div
               key={item}
               className="h-[360px] animate-pulse rounded-2xl bg-gray-200/60"
             />
           ))}
-
         </div>
 
       </section>
@@ -801,21 +699,30 @@ const BlogList = ({ variant = "compact" }) => {
   }
 
   // =====================================================
-  // SEARCH RESULTS (by blog.title only)
+  // SEARCH RESULTS
+  // SEARCH BY TITLE ONLY
   // =====================================================
 
-  const normalizedQuery = normalizeText(searchQuery);
+  const normalizedQuery =
+    normalizeText(searchQuery);
 
   const searchResults = normalizedQuery
     ? blogs
         .filter((blog) =>
-          normalizeText(blog.title).includes(normalizedQuery)
+          normalizeText(
+            blog.title
+          ).includes(
+            normalizedQuery
+          )
         )
-        .slice(0, MAX_SEARCH_RESULTS)
+        .slice(
+          0,
+          MAX_SEARCH_RESULTS
+        )
     : [];
 
   // =====================================================
-  // FILTER BLOGS
+  // FILTER BLOGS BY CATEGORY
   // =====================================================
 
   const filteredBlogs =
@@ -831,11 +738,10 @@ const BlogList = ({ variant = "compact" }) => {
   // TOTAL PAGES
   // =====================================================
 
-  const totalPages =
-    Math.ceil(
-      filteredBlogs.length /
-        CARDS_PER_PAGE
-    );
+  const totalPages = Math.ceil(
+    filteredBlogs.length /
+      CARDS_PER_PAGE
+  );
 
   // =====================================================
   // VISIBLE BLOGS
@@ -873,7 +779,10 @@ const BlogList = ({ variant = "compact" }) => {
     setCurrentPage((prev) =>
       Math.min(
         prev + 1,
-        Math.max(totalPages - 1, 0)
+        Math.max(
+          totalPages - 1,
+          0
+        )
       )
     );
   };
@@ -910,25 +819,23 @@ const BlogList = ({ variant = "compact" }) => {
         </h1>
 
         <p className="text-base leading-7 text-gray-500">
-          Stories, guides and inspiration for
-          your next adventure.
+          Stories, guides and inspiration
+          for your next adventure.
         </p>
 
       </div>
 
       {/* =================================================
-          SEARCH BAR
-          Searches blog.title only. Results appear in a
-          scrollable dropdown right below the input, and
-          clicking a result navigates to /blogs/:id, same
-          as clicking a card.
+          SEARCH
       ================================================= */}
 
       <div
         ref={searchContainerRef}
         className="relative mb-8 max-w-xl"
       >
+
         <div className="relative">
+
           <Search
             size={18}
             className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
@@ -938,11 +845,16 @@ const BlogList = ({ variant = "compact" }) => {
             type="text"
             value={searchQuery}
             onChange={(event) => {
-              setSearchQuery(event.target.value);
+              setSearchQuery(
+                event.target.value
+              );
+
               setIsSearchOpen(true);
             }}
             onFocus={() => {
-              if (searchQuery) setIsSearchOpen(true);
+              if (searchQuery) {
+                setIsSearchOpen(true);
+              }
             }}
             placeholder="Search blog posts by title..."
             className="w-full rounded-full border border-gray-200 bg-white py-3 pl-11 pr-10 text-sm text-[#171310] shadow-sm outline-none transition focus:border-[#2F6B4F] focus:ring-2 focus:ring-[#2F6B4F]/20"
@@ -958,55 +870,83 @@ const BlogList = ({ variant = "compact" }) => {
               <X size={15} />
             </button>
           )}
+
         </div>
 
-        {/* DROPDOWN */}
-        {isSearchOpen && normalizedQuery && (
-          <div className="absolute left-0 right-0 top-full z-30 mt-2 max-h-96 overflow-y-auto rounded-xl border border-gray-100 bg-white shadow-xl">
-            {searchResults.length > 0 ? (
-              searchResults.map((blog) => (
-                <button
-                  key={blog.id}
-                  type="button"
-                  onClick={() => handleSearchResultClick(blog)}
-                  className="flex w-full items-center gap-3 border-b border-gray-50 p-3 text-left transition last:border-b-0 hover:bg-[#F4F0E7]/60"
-                >
-                  <img
-                    src={`https://gatewaytreks.com/public/uploads/frontend/full/${blog.image}`}
-                    alt={blog.title || "Gateway Treks blog"}
-                    className="h-12 w-14 shrink-0 rounded-lg object-cover"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = "/images/MOUNT.jpg";
-                    }}
-                  />
+        {/* =================================================
+            SEARCH DROPDOWN
+        ================================================= */}
 
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-[#0b2418]">
-                      {blog.title}
-                    </p>
+        {isSearchOpen &&
+          normalizedQuery && (
+            <div className="absolute left-0 right-0 top-full z-30 mt-2 max-h-96 overflow-y-auto rounded-xl border border-gray-100 bg-white shadow-xl">
 
-                    <p className="mt-0.5 text-xs text-gray-400">
-                      {getCategory(blog)}
-                      {blog.published_at
-                        ? ` · ${formatDate(blog.published_at)}`
-                        : ""}
-                    </p>
-                  </div>
+              {searchResults.length > 0 ? (
+                searchResults.map(
+                  (blog) => (
+                    <button
+                      key={blog.id}
+                      type="button"
+                      onClick={() =>
+                        handleSearchResultClick(
+                          blog
+                        )
+                      }
+                      className="flex w-full items-center gap-3 border-b border-gray-50 p-3 text-left transition last:border-b-0 hover:bg-[#F4F0E7]/60"
+                    >
 
-                  <ArrowRight
-                    size={15}
-                    className="shrink-0 text-gray-300"
-                  />
-                </button>
-              ))
-            ) : (
-              <p className="p-4 text-center text-sm text-gray-500">
-                No blog posts found for "{searchQuery}".
-              </p>
-            )}
-          </div>
-        )}
+                      <img
+                        src={`${IMAGE_BASE_URL}${blog.image}`}
+                        alt={
+                          blog.title ||
+                          "Gateway Treks blog"
+                        }
+                        className="h-12 w-14 shrink-0 rounded-lg object-cover"
+                        onError={(event) => {
+                          event.currentTarget.onerror =
+                            null;
+
+                          event.currentTarget.src =
+                            "/images/MOUNT.jpg";
+                        }}
+                      />
+
+                      <div className="min-w-0 flex-1">
+
+                        <p className="truncate text-sm font-semibold text-[#0b2418]">
+                          {blog.title}
+                        </p>
+
+                        <p className="mt-0.5 text-xs text-gray-400">
+                          {getCategory(blog)}
+
+                          {blog.published_at
+                            ? ` · ${formatDate(
+                                blog.published_at
+                              )}`
+                            : ""}
+                        </p>
+
+                      </div>
+
+                      <ArrowRight
+                        size={15}
+                        className="shrink-0 text-gray-300"
+                      />
+
+                    </button>
+                  )
+                )
+              ) : (
+                <p className="p-4 text-center text-sm text-gray-500">
+                  No blog posts found for "
+                  {searchQuery}".
+                </p>
+              )}
+
+            </div>
+          )}
+
       </div>
 
       {/* =================================================
@@ -1017,34 +957,39 @@ const BlogList = ({ variant = "compact" }) => {
       {variant === "large" && (
         <div className="mb-8 flex flex-wrap gap-2">
 
-          {CATEGORIES.map((category) => {
+          {CATEGORIES.map(
+            (category) => {
 
-            const isActive =
-              activeCategory === category;
+              const isActive =
+                activeCategory ===
+                category;
 
-            return (
-              <button
-                key={category}
-                type="button"
-                onClick={() =>
-                  setActiveCategory(category)
-                }
-                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                  isActive
-                    ? "border-[#2F6B4F] bg-[#2F6B4F] text-white"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-[#2F6B4F]/40 hover:text-[#0b2418]"
-                }`}
-              >
-                {category}
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() =>
+                    setActiveCategory(
+                      category
+                    )
+                  }
+                  className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                    isActive
+                      ? "border-[#2F6B4F] bg-[#2F6B4F] text-white"
+                      : "border-gray-200 bg-white text-gray-600 hover:border-[#2F6B4F]/40 hover:text-[#0b2418]"
+                  }`}
+                >
+                  {category}
+                </button>
+              );
+            }
+          )}
 
         </div>
       )}
 
       {/* =================================================
-          SLIDER BUTTONS
+          PAGINATION BUTTONS
           ONLY LARGE VERSION
       ================================================= */}
 
@@ -1052,11 +997,11 @@ const BlogList = ({ variant = "compact" }) => {
         totalPages > 1 && (
           <div className="mb-6 flex justify-end gap-2">
 
-            {/* PREVIOUS */}
-
             <button
               type="button"
-              onClick={goToPreviousPage}
+              onClick={
+                goToPreviousPage
+              }
               disabled={
                 currentPage === 0
               }
@@ -1066,11 +1011,11 @@ const BlogList = ({ variant = "compact" }) => {
               <ArrowLeft size={18} />
             </button>
 
-            {/* NEXT */}
-
             <button
               type="button"
-              onClick={goToNextPage}
+              onClick={
+                goToNextPage
+              }
               disabled={
                 currentPage ===
                 totalPages - 1
@@ -1085,11 +1030,10 @@ const BlogList = ({ variant = "compact" }) => {
         )}
 
       {/* =================================================
-          EMPTY STATE
+          BLOG GRID
       ================================================= */}
 
       {visibleBlogs.length === 0 ? (
-
         <div className="py-10 text-center">
 
           <p className="text-gray-500">
@@ -1098,137 +1042,127 @@ const BlogList = ({ variant = "compact" }) => {
           </p>
 
         </div>
-
       ) : (
-
-        /* =================================================
-           BLOG GRID
-        ================================================= */
-
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
-          {visibleBlogs.map((blog) => (
-
-            <div
-              key={blog.id}
-              className={
-                variant === "large"
-                  ? "flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-                  : "flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
-              }
-            >
-
-              {/* =================================================
-                  IMAGE
-              ================================================= */}
-
+          {visibleBlogs.map(
+            (blog) => (
               <div
+                key={blog.id}
                 className={
                   variant === "large"
-                    ? "h-48 w-full overflow-hidden"
-                    : "h-40 w-full overflow-hidden"
+                    ? "flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                    : "flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
                 }
               >
 
-                <img
-                  src={`https://gatewaytreks.com/public/uploads/frontend/full/${blog.image}`}
-                  alt={
-                    blog.title ||
-                    "Gateway Treks blog"
-                  }
-                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
-                  onError={(e) => {
-
-                    console.error(
-                      "Gateway Treks blog image failed:",
-                      blog.image
-                    );
-
-                    e.currentTarget.onerror =
-                      null;
-
-                    e.currentTarget.src =
-                      "/images/MOUNT.jpg";
-                  }}
-                />
-
-              </div>
-
-              {/* =================================================
-                  CONTENT
-              ================================================= */}
-
-              <div className="flex flex-1 flex-col p-4">
-
                 {/* =================================================
-                    CATEGORY + DATE
+                    IMAGE
                 ================================================= */}
 
-                <div className="mb-2 flex items-center justify-between gap-2">
+                <div
+                  className={
+                    variant === "large"
+                      ? "h-48 w-full overflow-hidden"
+                      : "h-40 w-full overflow-hidden"
+                  }
+                >
 
-                  <span className="rounded-full bg-[#e8f0eb] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#2F6B4F]">
-                    {getCategory(blog)}
-                  </span>
+                  <img
+                    src={`${IMAGE_BASE_URL}${blog.image}`}
+                    alt={
+                      blog.title ||
+                      "Gateway Treks blog"
+                    }
+                    className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
+                    onError={(event) => {
+                      event.currentTarget.onerror =
+                        null;
 
-                  <span className="text-xs font-medium text-gray-400">
-                    {formatDate(
-                      blog.published_at
-                    )}
-                  </span>
+                      event.currentTarget.src =
+                        "/images/MOUNT.jpg";
+                    }}
+                  />
 
                 </div>
 
                 {/* =================================================
-                    TITLE
+                    CONTENT
                 ================================================= */}
 
-                <h3
-                  className={
-                    variant === "large"
-                      ? "mb-2 line-clamp-2 text-lg font-bold leading-6 text-[#0b2418]"
-                      : "mb-2 line-clamp-2 text-base font-bold leading-5 text-[#0b2418]"
-                  }
-                >
-                  {blog.title}
-                </h3>
+                <div className="flex flex-1 flex-col p-4">
 
-                {/* =================================================
-                    SHORT DESCRIPTION
-                ================================================= */}
+                  {/* =================================================
+                      CATEGORY + DATE
+                  ================================================= */}
 
-                <p
-                  className={
-                    variant === "large"
-                      ? "mb-4 line-clamp-3 flex-1 text-sm leading-6 text-gray-500"
-                      : "mb-4 line-clamp-2 flex-1 text-xs leading-5 text-gray-500"
-                  }
-                >
-                  {blog.short_description}
-                </p>
+                  <div className="mb-2 flex items-center justify-between gap-2">
 
-                {/* =================================================
-                    READ MORE
-                ================================================= */}
+                    <span className="rounded-full bg-[#e8f0eb] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#2F6B4F]">
+                      {getCategory(blog)}
+                    </span>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleBlogClick(blog)
-                  }
-                  className="flex items-center gap-1 self-start text-sm font-semibold text-[#0b2418] transition hover:text-[#2F6B4F]"
-                >
-                  Read More
+                    <span className="text-xs font-medium text-gray-400">
+                      {formatDate(
+                        blog.published_at
+                      )}
+                    </span>
 
-                  <ArrowRight
-                    size={16}
-                  />
-                </button>
+                  </div>
+
+                  {/* =================================================
+                      TITLE
+                  ================================================= */}
+
+                  <h3
+                    className={
+                      variant === "large"
+                        ? "mb-2 line-clamp-2 text-lg font-bold leading-6 text-[#0b2418]"
+                        : "mb-2 line-clamp-2 text-base font-bold leading-5 text-[#0b2418]"
+                    }
+                  >
+                    {blog.title}
+                  </h3>
+
+                  {/* =================================================
+                      DESCRIPTION
+                  ================================================= */}
+
+                  <p
+                    className={
+                      variant === "large"
+                        ? "mb-4 line-clamp-3 flex-1 text-sm leading-6 text-gray-500"
+                        : "mb-4 line-clamp-2 flex-1 text-xs leading-5 text-gray-500"
+                    }
+                  >
+                    {blog.short_description}
+                  </p>
+
+                  {/* =================================================
+                      READ MORE
+                  ================================================= */}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleBlogClick(
+                        blog
+                      )
+                    }
+                    className="flex items-center gap-1 self-start text-sm font-semibold text-[#0b2418] transition hover:text-[#2F6B4F]"
+                  >
+                    Read More
+
+                    <ArrowRight
+                      size={16}
+                    />
+                  </button>
+
+                </div>
 
               </div>
-
-            </div>
-
-          ))}
+            )
+          )}
 
         </div>
       )}
@@ -1240,14 +1174,10 @@ const BlogList = ({ variant = "compact" }) => {
 
       {variant === "large" &&
         totalPages > 1 && (
-
           <div className="mt-6 text-center text-sm text-gray-500">
-
             Page {currentPage + 1} of{" "}
             {totalPages}
-
           </div>
-
         )}
 
     </section>

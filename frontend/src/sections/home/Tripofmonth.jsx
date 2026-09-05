@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CalendarDays,
   Clock3,
@@ -8,69 +8,120 @@ import {
   Check,
 } from "lucide-react";
 
+const API_URL = "/api/v1/allpackages";
+
+// Package images are referenced by filename only in the API (e.g. "1758340471_pisang-peak-climbing.webp").
+// Based on image paths seen elsewhere on the site, they live under this uploads folder.
+const IMAGE_BASE = "https://gatewaytreks.com/public/uploads/frontend/full/";
+
+// grade_id -> human-readable difficulty, matching the "grades" list the API
+// returns alongside the packages (Easy / Moderate / Strenuous / Very Strenuous).
+const GRADE_LABELS = {
+  1: "Easy",
+  2: "Moderate",
+  3: "Strenuous",
+  4: "Very Strenuous",
+};
+
+const stripHtml = (html) => {
+  if (!html) return "";
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&rsquo;/g, "’")
+    .replace(/&ldquo;|&rdquo;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+// Builds the "X% OFF" / "$X OFF" label shown on the badge. Falls back to
+// "0%" when the package has no discount, so the field always exists just
+// like it did in the original hardcoded trips object.
+const getDiscountLabel = (pkg) => {
+  if (!pkg.has_discount) return "0%";
+  if (pkg.discount_msg) return pkg.discount_msg;
+  if (!pkg.discount_amt) return "0%";
+  return pkg.discount_type === 1 ? `${pkg.discount_amt}%` : `$${pkg.discount_amt}`;
+};
+
+// Converts one raw API package into the exact same shape the component used
+// to hardcode per trip: title, image, discount, price, details, description, why.
+const toTripEntry = (pkg) => ({
+  title: pkg.title || pkg.name || "Untitled Trip",
+  image: pkg.image ? `${IMAGE_BASE}${pkg.image}` : "/images/placeholder.jpg",
+  discount: getDiscountLabel(pkg),
+  price: pkg.price != null ? `$${pkg.price}` : "N/A",
+
+  details: [
+    { icon: Clock3, text: pkg.duration ? `${pkg.duration} Days` : "N/A" },
+    { icon: Gauge, text: GRADE_LABELS[pkg.grade_id] || "N/A" },
+    { icon: Mountain, text: pkg.max_altitude || "N/A" },
+    { icon: Star, text: pkg.rating ? `Rating ${pkg.rating}` : "Rating N/A" },
+  ],
+
+  description:
+    stripHtml(pkg.short_description) || stripHtml(pkg.description).slice(0, 220),
+
+  why: pkg.best_season
+    ? `Best season to go: ${pkg.best_season}.`
+    : "A great time to book this trip.",
+});
+
 const Tripofmonth = () => {
-  const [selectedTrip, setSelectedTrip] = useState("everest");
+  const [trips, setTrips] = useState({});
+  const [selectedTrip, setSelectedTrip] = useState(null);
 
-  const trips = {
-    everest: {
-      title: "Everest Climbing",
-      image: "/images/MOUNT.jpg",
-      discount: "8.33%",
-      price: "$1,190",
+  useEffect(() => {
+    let cancelled = false;
 
-      details: [
-        { icon: Clock3, text: "12 Days" },
-        { icon: Gauge, text: "Moderate" },
-        { icon: Mountain, text: "Max 8840m" },
-        { icon: Star, text: "Rating 4.2" },
-      ],
+    const fetchPackages = async () => {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
 
-      description:
-        "Experience the breathtaking Himalayas and the world's highest mountain. Explore the legendary Everest region and enjoy spectacular mountain views.",
+        const data = await res.json();
 
-      why: "This is a perfect time to explore the Everest region, with beautiful mountain views and favorable trekking conditions.",
-    },
+        // Real shape: { packages: { data: [ ...package objects... ], total, per_page, ... } }
+        const rawList = data?.packages?.data ?? [];
 
-    api: {
-      title: "Api Base Camp Trek",
-      image: "/images/API.jpg",
-      discount: "10%",
-      price: "$1,350",
+        // Only packages with is_dest_featured = 1 are shown. If none match,
+        // trips stays empty and the component renders nothing.
+        const featuredEntries = rawList
+          .filter((pkg) => Number(pkg.is_dest_featured) === 0)
+          .reduce((acc, pkg) => {
+            const key = pkg.slug || String(pkg.id);
+            acc[key] = toTripEntry(pkg);
+            return acc;
+          }, {});
 
-      details: [
-        { icon: Clock3, text: "14 Days" },
-        { icon: Gauge, text: "Hard" },
-        { icon: Mountain, text: "Max 7132m" },
-        { icon: Star, text: "Rating 4.5" },
-      ],
+        if (!cancelled) {
+          setTrips(featuredEntries);
+          const firstKey = Object.keys(featuredEntries)[0] || null;
+          setSelectedTrip(firstKey);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setTrips({});
+          setSelectedTrip(null);
+        }
+      }
+    };
 
-      description:
-        "Discover the remote and beautiful Api region of western Nepal. Experience untouched landscapes, dramatic mountains, and traditional Himalayan culture.",
+    fetchPackages();
 
-      why: "Api is ideal for travelers looking for a remote Himalayan adventure away from the more crowded trekking routes.",
-    },
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-    chitwan: {
-      title: "Chitwan Jungle Safari",
-      image: "/images/CHITWAN.jpg",
-      discount: "15%",
-      price: "$590",
+  const tripKeys = Object.keys(trips);
+  const trip = selectedTrip ? trips[selectedTrip] : null;
 
-      details: [
-        { icon: Clock3, text: "3 Days" },
-        { icon: Gauge, text: "Easy" },
-        { icon: Mountain, text: "Terai Region" },
-        { icon: Star, text: "Rating 4.6" },
-      ],
-
-      description:
-        "Explore the beautiful Chitwan National Park and experience wildlife, jungle safaris, canoe rides, and the natural beauty of Nepal's Terai region.",
-
-      why: "Chitwan is perfect this month for wildlife experiences, jungle activities, and exploring Nepal's diverse natural environment.",
-    },
-  };
-
-  const trip = trips[selectedTrip];
+  // Nothing featured (or nothing loaded yet) -> render nothing.
+  if (!trip) {
+    return null;
+  }
 
   return (
     <div className="relative grid grid-cols-1 gap-10 bg-[#141714] p-6 text-white sm:p-10 lg:grid-cols-2 lg:gap-16 lg:p-16">
@@ -84,40 +135,23 @@ const Tripofmonth = () => {
         </h6>
 
         {/* Trip Selector */}
-        <div className="mb-8 flex w-fit gap-2 rounded-xl border border-white/10 bg-white/5 p-1">
-          <button
-            onClick={() => setSelectedTrip("everest")}
-            className={`rounded-lg px-5 py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 ${
-              selectedTrip === "everest"
-                ? "bg-green-500 text-green-950 shadow-lg"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
-            }`}
-          >
-            EVEREST
-          </button>
-
-          <button
-            onClick={() => setSelectedTrip("api")}
-            className={`rounded-lg px-5 py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 ${
-              selectedTrip === "api"
-                ? "bg-green-300 text-green-950 shadow-lg"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
-            }`}
-          >
-            API
-          </button>
-
-          <button
-            onClick={() => setSelectedTrip("chitwan")}
-            className={`rounded-lg px-5 py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 ${
-              selectedTrip === "chitwan"
-                ? "bg-green-300 text-green-950 shadow-lg"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
-            }`}
-          >
-            CHITWAN
-          </button>
-        </div>
+        {tripKeys.length > 1 && (
+          <div className="mb-8 flex w-fit flex-wrap gap-2 rounded-xl border border-white/10 bg-white/5 p-1">
+            {tripKeys.map((key) => (
+              <button
+                key={key}
+                onClick={() => setSelectedTrip(key)}
+                className={`rounded-lg px-5 py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 ${
+                  selectedTrip === key
+                    ? "bg-green-500 text-green-950 shadow-lg"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                {trips[key].title.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Title */}
         <h1 className="mb-5 text-3xl font-bold sm:text-4xl lg:text-5xl">
