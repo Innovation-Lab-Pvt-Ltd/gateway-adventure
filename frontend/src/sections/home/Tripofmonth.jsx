@@ -85,10 +85,10 @@ const Tripofmonth = () => {
         // Real shape: { packages: { data: [ ...package objects... ], total, per_page, ... } }
         const rawList = data?.packages?.data ?? [];
 
-        // Only packages with is_dest_featured = 1 are shown. If none match,
+        // Only packages with is_month_featured = 1 are shown. If none match,
         // trips stays empty and the component renders nothing.
         const featuredEntries = rawList
-          .filter((pkg) => Number(pkg.is_dest_featured) === 0)
+          .filter((pkg) => Number(pkg.is_month_featured) === 1)
           .reduce((acc, pkg) => {
             const key = pkg.slug || String(pkg.id);
             acc[key] = toTripEntry(pkg);
