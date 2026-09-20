@@ -1,76 +1,20 @@
 import React, { useEffect, useState } from "react";
-import {
-  ArrowRight,
-  CalendarDays,
-  Mountain,
-  Star,
-  Heart,
-  Gauge,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import PopularPackage from "./PopularPackage";
-
-// Gateway Treks API
-const API_URL = "/api/v1/popular-packages";
-
-// =====================================================
-// REGIONS
-// =====================================================
-
-const regions = [
-  { id: 1, name: "Everest Region" },
-  { id: 2, name: "Annapurna Region" },
-  { id: 3, name: "Langtang Region" },
-  { id: 4, name: "Mustang Region" },
-  { id: 7, name: "Manang Region" },
-  { id: 8, name: "Manaslu Region" },
-];
-
-// =====================================================
-// GRADES
-// =====================================================
-
-const grades = [
-  { id: 1, name: "Easy" },
-  { id: 2, name: "Moderate" },
-  { id: 3, name: "Strenuous" },
-  { id: 4, name: "Very Strenuous" },
-];
-
-// =====================================================
-// HELPER FUNCTIONS
-// =====================================================
-
-const getRegionName = (regionId) => {
-  const region = regions.find(
-    (item) => Number(item.id) === Number(regionId)
-  );
-
-  return region?.name || "N/A";
-};
-
-const getGradeName = (gradeId) => {
-  const grade = grades.find(
-    (item) => Number(item.id) === Number(gradeId)
-  );
-
-  return grade?.name || "N/A";
-};
-
-// =====================================================
-// COMPONENT
-// =====================================================
+import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 
 const PopularPackages = () => {
   const [packages, setPackages] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const [wishlist, setWishlist] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedPackage, setSelectedPackage] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
+  const IMAGE_BASE_URL =
+    "https://gatewaytreks.com/public/uploads/frontend/full/";
 
   // =====================================================
   // FETCH POPULAR PACKAGES
@@ -82,7 +26,7 @@ const PopularPackages = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(API_URL);
+        const response = await fetch("/api/v1/popular-packages");
 
         if (!response.ok) {
           throw new Error(
@@ -92,19 +36,15 @@ const PopularPackages = () => {
 
         const data = await response.json();
 
-        console.log("Gateway Treks API Response:", data);
+        console.log("Gateway Treks Popular Packages:", data);
 
         if (Array.isArray(data.popular_packages)) {
           setPackages(data.popular_packages);
         } else {
-          throw new Error("popular_packages is not an array");
+          setPackages([]);
         }
       } catch (err) {
-        console.error(
-          "GATEWAY TREKS POPULAR PACKAGES ERROR:",
-          err
-        );
-
+        console.error("POPULAR PACKAGES ERROR:", err);
         setError("Unable to load popular packages.");
       } finally {
         setLoading(false);
@@ -135,21 +75,47 @@ const PopularPackages = () => {
   };
 
   // =====================================================
-  // VIEW FULL TRIP
+  // NEXT
   // =====================================================
 
-  const handleViewTrip = (pkg) => {
-    if (!pkg?.slug) {
-      console.error("Package slug is missing:", pkg);
+  const handleNext = () => {
+    if (isAnimating || currentIndex + 3 >= packages.length) {
       return;
     }
 
-    navigate(`/package/${pkg.slug}`, {
-      state: {
-        trip: pkg,
-      },
-    });
+    setIsAnimating(true);
+
+    setTimeout(() => {
+      setCurrentIndex((prev) => prev + 3);
+      setIsAnimating(false);
+    }, 650);
   };
+
+  // =====================================================
+  // PREVIOUS
+  // =====================================================
+
+  const handlePrevious = () => {
+    if (isAnimating || currentIndex === 0) {
+      return;
+    }
+
+    setIsAnimating(true);
+
+    setTimeout(() => {
+      setCurrentIndex((prev) => Math.max(0, prev - 3));
+      setIsAnimating(false);
+    }, 650);
+  };
+
+  // =====================================================
+  // VISIBLE PACKAGES
+  // =====================================================
+
+  const visiblePackages = packages.slice(
+    currentIndex,
+    currentIndex + 3
+  );
 
   // =====================================================
   // LOADING
@@ -157,29 +123,34 @@ const PopularPackages = () => {
 
   if (loading) {
     return (
-      <section className="px-6 py-16 md:px-10 lg:px-16">
-        <div className="mb-10 max-w-2xl">
-          <h5 className="mb-3 text-sm font-semibold uppercase tracking-widest text-[#4f8f3a]">
-            - Popular trekking packages
-          </h5>
+      <section className="bg-white px-6 py-24 lg:px-8">
+        <div className="mx-auto max-w-7xl">
 
-          <h1 className="mb-4 text-3xl font-bold text-[#0b2418] sm:text-4xl lg:text-5xl">
-            Find Your Next Adventure
-          </h1>
+          <div className="mb-14 text-center">
+            <h2 className="font-playfair text-4xl font-semibold leading-tight text-[#0b2418] md:text-5xl">
+              Start Your Journey
+            </h2>
 
-          <p className="text-base leading-7 text-gray-500">
-            Handpick journeys through Nepal's most
-            spectacular landscapes.
-          </p>
-        </div>
+            <p className="mt-4 font-montserrat text-sm tracking-wide text-gray-500 md:text-base">
+              Discover unforgettable adventures across Nepal
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((item) => (
-            <div
-              key={item}
-              className="h-[430px] animate-pulse rounded-2xl bg-gray-100"
-            />
-          ))}
+          <div className="mb-8 flex items-center justify-between">
+            <h3 className="font-montserrat text-2xl font-semibold text-[#0b2418]">
+              Most Popular
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className="h-[600px] animate-pulse bg-gray-200"
+              />
+            ))}
+          </div>
+
         </div>
       </section>
     );
@@ -191,427 +162,495 @@ const PopularPackages = () => {
 
   if (error) {
     return (
-      <section className="px-6 py-16 md:px-10 lg:px-16">
-        <div className="rounded-xl bg-red-50 p-6 text-center">
-          <p className="font-medium text-red-500">
-            {error}
-          </p>
+      <section className="bg-white px-6 py-24 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+
+          <div className="mb-14 text-center">
+            <h2 className="font-playfair text-4xl font-semibold text-[#0b2418] md:text-5xl">
+              Start Your Journey
+            </h2>
+
+            <p className="mt-4 font-montserrat text-sm text-gray-500">
+              Discover unforgettable adventures across Nepal
+            </p>
+          </div>
+
+          <div className="py-10 text-center">
+            <p className="font-montserrat text-gray-500">
+              {error}
+            </p>
+          </div>
+
         </div>
       </section>
     );
   }
 
-  // =====================================================
-  // MAIN UI
-  // =====================================================
-
   return (
-    <section className="px-6 py-16 md:px-10 lg:px-16">
+    <section className="bg-white px-6 py-24 lg:px-8">
 
-      {/* =================================================
-          WISHLIST POPUP
-      ================================================= */}
+      <div className="mx-auto max-w-7xl">
 
-      {showPopup && (
-        <div className="fixed right-6 top-24 z-[100] flex items-center gap-2 rounded-xl bg-[#0b2418] px-5 py-3 text-sm font-medium text-white shadow-xl">
-          <Heart
-            size={17}
-            fill="currentColor"
-          />
+        {/* =====================================================
+            WISHLIST POPUP
+        ====================================================== */}
 
-          Added to wishlist
-        </div>
-      )}
+        {showPopup && (
+          <div
+            className="
+              fixed
+              right-6
+              top-24
+              z-[100]
+              flex
+              items-center
+              gap-2
+              bg-[#0b2418]
+              px-5
+              py-3
+              font-montserrat
+              text-sm
+              font-medium
+              text-white
+              shadow-xl
+            "
+          >
+            <Heart
+              size={17}
+              fill="currentColor"
+            />
 
-      {/* =================================================
-          HEADING
-      ================================================= */}
+            Added to wishlist
+          </div>
+        )}
 
-      <div className="mb-10 max-w-2xl">
-        <h5 className="mb-3 text-sm font-semibold uppercase tracking-widest text-[#4f8f3a]">
-          - Popular trekking packages
-        </h5>
+        {/* =====================================================
+            MAIN HEADING
+        ====================================================== */}
 
-        <h1 className="mb-4 text-3xl font-bold text-[#0b2418] sm:text-4xl lg:text-5xl">
-          Find Your Next Adventure
-        </h1>
+        <div className="mb-14 text-center">
 
-        <p className="text-base leading-7 text-gray-500">
-          Handpick journeys through Nepal's most
-          spectacular landscapes.
-        </p>
-      </div>
+          <h2
+            className="
+              font-playfair
+              text-4xl
+              font-semibold
+              leading-tight
+              text-[#0b2418]
+              md:text-5xl
+            "
+          >
+            Start Your Journey
+          </h2>
 
-      {/* =================================================
-          EMPTY
-      ================================================= */}
-
-      {packages.length === 0 ? (
-        <div className="py-10 text-center">
-          <p className="text-gray-500">
-            No popular packages found.
+          <p
+            className="
+              mt-4
+              font-montserrat
+              text-sm
+              tracking-wide
+              text-gray-500
+              md:text-base
+            "
+          >
+            Discover unforgettable adventures across Nepal
           </p>
+
         </div>
-      ) : (
 
-        /* =================================================
-           PACKAGE GRID
-        ================================================= */
+        {/* =====================================================
+            SECTION HEADER
+        ====================================================== */}
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-8 flex items-center justify-between">
 
-          {packages.map((pkg, index) => {
+          <h3
+            className="
+              font-montserrat
+              text-2xl
+              font-semibold
+              text-[#0b2418]
+            "
+          >
+            Most Popular
+          </h3>
 
-            // =================================================
-            // BASIC DATA
-            // =================================================
+          {/* ARROWS */}
 
-            const id = pkg.id;
+          <div className="flex items-center gap-5">
 
-            const title =
-              pkg.title ||
-              pkg.name ||
-              "Untitled Package";
+            {/* PREVIOUS */}
 
-            // =================================================
-            // REGION
-            // =================================================
+            <button
+              type="button"
+              onClick={handlePrevious}
+              disabled={
+                currentIndex === 0 ||
+                isAnimating
+              }
+              className="
+                text-[#0b2418]
+                transition-colors
+                duration-300
+                hover:text-pink-500
+                disabled:cursor-not-allowed
+                disabled:opacity-30
+              "
+            >
+              <ChevronLeft
+                size={30}
+                strokeWidth={1.5}
+              />
+            </button>
 
-            const region = getRegionName(pkg.region_id);
+            {/* NEXT */}
 
-            // =================================================
-            // GRADE / DIFFICULTY
-            // =================================================
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={
+                currentIndex + 3 >= packages.length ||
+                isAnimating
+              }
+              className="
+                text-[#0b2418]
+                transition-colors
+                duration-300
+                hover:text-pink-500
+                disabled:cursor-not-allowed
+                disabled:opacity-30
+              "
+            >
+              <ChevronRight
+                size={30}
+                strokeWidth={1.5}
+              />
+            </button>
 
-            const difficulty = getGradeName(pkg.grade_id);
+          </div>
 
-            // =================================================
-            // DIFFICULTY COLORS
-            // =================================================
+        </div>
 
-            const difficultyColor =
-              difficulty === "Easy"
-                ? {
-                    text: "text-green-600",
-                    border: "border-green-600/30",
-                    bg: "bg-green-50",
-                  }
-                : difficulty === "Moderate"
-                ? {
-                    text: "text-yellow-600",
-                    border: "border-yellow-600/30",
-                    bg: "bg-yellow-50",
-                  }
-                : difficulty === "Strenuous"
-                ? {
-                    text: "text-orange-600",
-                    border: "border-orange-600/30",
-                    bg: "bg-orange-50",
-                  }
-                : {
-                    text: "text-red-600",
-                    border: "border-red-600/30",
-                    bg: "bg-red-50",
-                  };
+        {/* =====================================================
+            EMPTY STATE
+        ====================================================== */}
 
-            // =================================================
-            // DURATION
-            // =================================================
+        {packages.length === 0 ? (
 
-            const days = pkg.duration
-              ? `${pkg.duration} days`
-              : "N/A";
+          <div className="py-16 text-center">
 
-            // =================================================
-            // ALTITUDE
-            // =================================================
+            <p
+              className="
+                font-montserrat
+                text-sm
+                tracking-wide
+                text-gray-500
+              "
+            >
+              No popular packages found.
+            </p>
 
-            const height =
-              pkg.max_altitude || "N/A";
+          </div>
 
-            // =================================================
-            // RATING
-            // =================================================
+        ) : (
 
-            const rating =
-              pkg.rating ?? "N/A";
+          /* =====================================================
+             PACKAGE CARDS
+          ====================================================== */
 
-            // =================================================
-            // PRICE
-            // =================================================
+          <div className="overflow-hidden">
 
-            const price =
-              pkg.price ?? null;
+            <div
+              className={`
+                grid
+                grid-cols-1
+                gap-6
+                md:grid-cols-2
+                lg:grid-cols-3
+                transition-transform
+                duration-[650ms]
+                ease-[cubic-bezier(0.65,0,0.35,1)]
+                ${
+                  isAnimating
+                    ? "translate-x-[-100%]"
+                    : "translate-x-0"
+                }
+              `}
+            >
 
-            // =================================================
-            // DISCOUNT
-            // =================================================
+              {visiblePackages.map((pkg) => (
 
-            const hasDiscount =
-              pkg.has_discount === 1 ||
-              pkg.has_discount === true;
+                <div
+                  key={pkg.id}
+                  className="
+                    group
+                    relative
+                    block
+                    h-[600px]
+                    overflow-hidden
+                    bg-gray-200
+                  "
+                >
 
-            const discountText =
-              pkg.discount_msg ||
-              (
-                hasDiscount &&
-                pkg.discount_amt
-                  ? `Save ${pkg.discount_amt}`
-                  : ""
-              );
-
-            // =================================================
-            // IMAGE
-            // =================================================
-
-            const image = pkg.image;
-
-            // =================================================
-            // CARD
-            // =================================================
-
-            return (
-              <div
-                key={id}
-                className="overflow-hidden rounded-2xl bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-              >
-
-                {/* =================================================
-                    IMAGE
-                ================================================= */}
-
-                <div className="group relative h-60 overflow-hidden">
+                  {/* =================================================
+                      IMAGE
+                  ================================================== */}
 
                   <img
-                    src={`https://gatewaytreks.com/public/uploads/frontend/full/${pkg.image}`}
-                    alt={title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    src={`${IMAGE_BASE_URL}${pkg.image}`}
+                    alt={
+                      pkg.title ||
+                      pkg.name ||
+                      "Nepal adventure"
+                    }
+                    className="
+                      absolute
+                      inset-0
+                      h-full
+                      w-full
+                      object-cover
+                    "
                     onError={(e) => {
-                      console.error(
-                        "Gateway Treks image failed:",
-                        image
-                      );
-
                       e.currentTarget.onerror = null;
                       e.currentTarget.src =
                         "/images/MOUNT.jpg";
                     }}
                   />
 
-                  {/* DARK OVERLAY */}
+                  {/* =================================================
+                      HOVER OVERLAY
+                  ================================================== */}
 
-                  <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/30" />
+                  <div
+                    className="
+                      absolute
+                      inset-0
+                      bg-black/0
+                      transition-colors
+                      duration-500
+                      group-hover:bg-black/20
+                    "
+                  />
 
                   {/* =================================================
-                      VIEW DETAIL BUTTON
-                  ================================================= */}
+                      BOTTOM GRADIENT
+                  ================================================== */}
 
-                  <div className="absolute bottom-4 left-0 right-0 flex translate-y-3 justify-center opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setSelectedPackage(pkg)
-                      }
-                      className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#0b2418] shadow-lg transition duration-300 hover:scale-105 hover:bg-[#2F6B4F] hover:text-white"
-                    >
-                      View Detail
-                    </button>
-
-                  </div>
-
-                  {/* =================================================
-                      DISCOUNT
-                      HIDDEN FOR SECOND CARD
-                  ================================================= */}
-
-                  {discountText && index !== 1 && (
-                    <div className="absolute left-4 top-4 rounded-full bg-[#2F6B4F] px-3 py-1.5 text-xs font-bold text-white shadow-md">
-                      {discountText}
-                    </div>
-                  )}
+                  <div
+                    className="
+                      absolute
+                      inset-x-0
+                      bottom-0
+                      h-1/2
+                      bg-gradient-to-t
+                      from-black/85
+                      via-black/30
+                      to-transparent
+                    "
+                  />
 
                   {/* =================================================
                       WISHLIST
-                  ================================================= */}
+                  ================================================== */}
 
                   <button
                     type="button"
                     onClick={() =>
-                      handleWishlist(id)
+                      handleWishlist(pkg.id)
                     }
-                    className={`absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition duration-300 hover:scale-110 ${
-                      wishlist.includes(id)
-                        ? "text-red-500"
-                        : "text-gray-700"
-                    }`}
+                    className={`
+                      absolute
+                      right-5
+                      top-5
+                      z-20
+                      flex
+                      h-10
+                      w-10
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-white/90
+                      shadow-md
+                      transition
+                      duration-300
+                      hover:scale-110
+                      ${
+                        wishlist.includes(pkg.id)
+                          ? "text-red-500"
+                          : "text-gray-700"
+                      }
+                    `}
                   >
                     <Heart
-                      size={20}
+                      size={19}
                       fill={
-                        wishlist.includes(id)
+                        wishlist.includes(pkg.id)
                           ? "currentColor"
                           : "none"
                       }
                     />
                   </button>
 
-                </div>
-
-                {/* =================================================
-                    INFORMATION
-                ================================================= */}
-
-                <div className="p-4">
-
                   {/* =================================================
-                      REGION
-                  ================================================= */}
+                      ACTIVITY
+                  ================================================== */}
 
-                  <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-gray-500">
-                    <Mountain
-                      size={13}
-                      className="text-[#2F6B4F]"
-                    />
+                  <div className="absolute inset-0 flex items-center justify-center">
 
-                    <span>
-                      {region}
+                    <span
+                      className="
+                        font-montserrat
+                        text-sm
+                        font-medium
+                        uppercase
+                        tracking-[0.2em]
+                        text-white
+                      "
+                    >
+                      {pkg.actname || "Adventure"}
                     </span>
+
                   </div>
 
                   {/* =================================================
-                      DIFFICULTY
-                  ================================================= */}
+                      PACKAGE INFORMATION
+                  ================================================== */}
 
-                  <div className="mb-2 flex justify-end">
+                  <div
+                    className="
+                      absolute
+                      bottom-0
+                      left-0
+                      right-0
+                      p-7
+                    "
+                  >
+
+                    {/* TITLE */}
+
+                    <h4
+                      className="
+                        font-playfair
+                        text-2xl
+                        font-semibold
+                        leading-tight
+                        text-white
+                      "
+                    >
+                      {pkg.title || pkg.name}
+                    </h4>
+
+                    {/* DETAILS */}
 
                     <div
-                      className={`flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-medium ${difficultyColor.border} ${difficultyColor.bg} ${difficultyColor.text}`}
+                      className="
+                        mt-4
+                        flex
+                        items-center
+                        justify-between
+                      "
                     >
-                      <Gauge size={11} />
 
-                      {difficulty}
-                    </div>
+                      {/* DURATION */}
 
-                  </div>
+                      {pkg.duration && (
+                        <span
+                          className="
+                            font-montserrat
+                            text-xs
+                            tracking-wide
+                            text-white/80
+                          "
+                        >
+                          {pkg.duration} days
+                        </span>
+                      )}
 
-                  {/* =================================================
-                      TITLE
-                  ================================================= */}
+                      {/* PRICE */}
 
-                  <h3 className="mb-3 line-clamp-2 text-lg font-bold leading-6 text-[#0b2418]">
-                    {title}
-                  </h3>
-
-                  {/* =================================================
-                      DAYS + ALTITUDE
-                  ================================================= */}
-
-                  <div className="mb-3 flex items-center gap-4 text-sm text-gray-500">
-
-                    <div className="flex items-center gap-1.5">
-
-                      <CalendarDays
-                        size={15}
-                        className="text-[#2F6B4F]"
-                      />
-
-                      <span>
-                        {days}
-                      </span>
-
-                    </div>
-
-                    <div className="flex min-w-0 items-center gap-1.5">
-
-                      <Mountain
-                        size={16}
-                        className="shrink-0 text-[#2F6B4F]"
-                      />
-
-                      <span className="truncate">
-                        {height}
-                      </span>
-
-                    </div>
-
-                  </div>
-
-                  {/* =================================================
-                      RATING
-                  ================================================= */}
-
-                  <div className="mb-3 flex items-center gap-2 text-sm">
-
-                    <Star
-                      size={15}
-                      className="text-[#f5b942]"
-                      fill="currentColor"
-                    />
-
-                    <span className="font-semibold text-[#0b2418]">
-                      {rating}
-                    </span>
-
-                  </div>
-
-                  {/* =================================================
-                      PRICE + VIEW TRIP
-                  ================================================= */}
-
-                  <div className="flex items-end justify-between border-t border-gray-100 pt-3">
-
-                    <div className="text-lg font-bold text-[#0b2418]">
-
-                      {price !== null
-                        ? `$${price}`
-                        : "Contact us"}
-
-                      {price !== null && (
-                        <span className="ml-1 text-xs font-normal text-gray-400">
-                          /person
+                      {pkg.price && (
+                        <span
+                          className="
+                            font-montserrat
+                            text-sm
+                            font-semibold
+                            text-white
+                          "
+                        >
+                          ${pkg.price}
                         </span>
                       )}
 
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleViewTrip(pkg)
-                      }
-                      className="flex items-center gap-1 text-sm font-semibold text-[#0b2418] transition hover:text-[#2F6B4F]"
-                    >
-                      View trip
+                    {/* VIEW TRIP */}
 
-                      <ArrowRight size={16} />
-                    </button>
+                    <Link
+                      to={`/package/${pkg.slug}`}
+                      className="
+                        mt-5
+                        inline-block
+                        border-b
+                        border-white/70
+                        pb-1
+                        font-montserrat
+                        text-xs
+                        font-medium
+                        uppercase
+                        tracking-[0.15em]
+                        text-white
+                        opacity-0
+                        transition-all
+                        duration-300
+                        group-hover:opacity-100
+                      "
+                    >
+                      View Trip
+                    </Link>
 
                   </div>
 
                 </div>
 
-              </div>
-            );
-          })}
+              ))}
+
+            </div>
+
+          </div>
+
+        )}
+
+        {/* =====================================================
+            VIEW MORE
+        ====================================================== */}
+
+        <div className="mt-12 flex justify-center">
+
+          <Link
+            to="/trekking-tours"
+            className="
+              bg-pink-500
+              px-6
+              py-3
+              font-montserrat
+              text-sm
+              font-semibold
+              text-white
+              transition
+              duration-300
+              hover:bg-white
+              hover:text-pink-500
+            "
+          >
+            View More
+          </Link>
 
         </div>
-      )}
 
-      {/* =================================================
-          POPULAR PACKAGE MODAL
-      ================================================= */}
-
-      {selectedPackage && (
-        <PopularPackage
-          packageData={selectedPackage}
-          onClose={() => setSelectedPackage(null)}
-        />
-      )}
+      </div>
 
     </section>
   );
 };
 
 export default PopularPackages;
-

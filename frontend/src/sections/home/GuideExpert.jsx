@@ -1,10 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Mail,
-  Phone,
-} from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Mail, Phone, ArrowUpRight } from "lucide-react";
 
 const API_URL = "/api/v1/teams";
 
@@ -13,9 +8,10 @@ const IMAGE_BASE_URL =
 
 const GuideExpert = () => {
   const [experts, setExperts] = useState([]);
-  const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const scrollRef = useRef(null);
 
   /* =========================================================
      FETCH TEAM DATA
@@ -35,7 +31,7 @@ const GuideExpert = () => {
 
         if (!response.ok) {
           throw new Error(
-            `Failed to fetch team: ${response.status}`,
+            `Failed to fetch team: ${response.status}`
           );
         }
 
@@ -50,12 +46,12 @@ const GuideExpert = () => {
             (employee) =>
               employee.is_active === 1 ||
               employee.is_active === true ||
-              employee.is_active === undefined,
+              employee.is_active === undefined
           )
           .sort(
             (a, b) =>
               Number(a.display_order || 0) -
-              Number(b.display_order || 0),
+              Number(b.display_order || 0)
           );
 
         setExperts(activeEmployees);
@@ -92,21 +88,16 @@ const GuideExpert = () => {
   };
 
   /* =========================================================
-     SLIDER
+     HORIZONTAL SCROLL
   ========================================================= */
 
-  const nextImage = () => {
-    if (!experts.length) return;
+  const scrollExperts = (direction) => {
+    if (!scrollRef.current) return;
 
-    setCurrent((prev) => (prev + 1) % experts.length);
-  };
-
-  const previousImage = () => {
-    if (!experts.length) return;
-
-    setCurrent((prev) =>
-      prev === 0 ? experts.length - 1 : prev - 1,
-    );
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -330 : 330,
+      behavior: "smooth",
+    });
   };
 
   /* =========================================================
@@ -115,12 +106,12 @@ const GuideExpert = () => {
 
   if (loading) {
     return (
-      <section className="bg-gray-100 px-4 py-5 sm:px-6 lg:px-8">
-        <div className="mx-auto flex min-h-[400px] max-w-6xl items-center justify-center">
+      <section className="bg-white px-5 py-12 sm:px-8">
+        <div className="mx-auto flex min-h-[220px] max-w-7xl items-center justify-center">
           <div className="text-center">
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-[#4f8f3a]" />
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-black" />
 
-            <p className="text-sm text-gray-500">
+            <p className="font-montserrat text-[10px] uppercase tracking-[0.2em] text-gray-500">
               Loading our team...
             </p>
           </div>
@@ -135,9 +126,9 @@ const GuideExpert = () => {
 
   if (error) {
     return (
-      <section className="bg-gray-100 px-4 py-5 sm:px-6 lg:px-8">
-        <div className="mx-auto flex min-h-[300px] max-w-6xl items-center justify-center">
-          <p className="text-sm text-red-500">
+      <section className="bg-white px-5 py-12 sm:px-8">
+        <div className="mx-auto flex min-h-[180px] max-w-7xl items-center justify-center">
+          <p className="font-montserrat text-sm text-red-500">
             Unable to load team members.
           </p>
         </div>
@@ -151,9 +142,9 @@ const GuideExpert = () => {
 
   if (!experts.length) {
     return (
-      <section className="bg-gray-100 px-4 py-5 sm:px-6 lg:px-8">
-        <div className="mx-auto flex min-h-[300px] max-w-6xl items-center justify-center">
-          <p className="text-sm text-gray-500">
+      <section className="bg-white px-5 py-12 sm:px-8">
+        <div className="mx-auto flex min-h-[180px] max-w-7xl items-center justify-center">
+          <p className="font-montserrat text-sm text-gray-500">
             No team members available.
           </p>
         </div>
@@ -161,308 +152,537 @@ const GuideExpert = () => {
     );
   }
 
-  const expert = experts[current];
-
   /* =========================================================
      MAIN UI
   ========================================================= */
 
   return (
-    <section className="bg-gray-100 px-4 py-5 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden bg-white px-5 py-12 sm:px-8 sm:py-14 lg:px-12 lg:py-16">
 
-      {/* ========================================= */}
-      {/* EXPERT INFORMATION + IMAGE */}
-      {/* ========================================= */}
+      {/* =====================================================
+          SUBTLE BLACK & WHITE BACKGROUND
+      ===================================================== */}
 
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-5 lg:flex-row lg:gap-8">
+      <div className="absolute inset-0 opacity-[0.035]">
+        <div className="black-pattern absolute inset-0" />
+      </div>
 
-        {/* ================================= */}
-        {/* LEFT SIDE */}
-        {/* ================================= */}
+      {/* Small decorative circle */}
 
-        <div className="order-2 w-full lg:order-1 lg:w-1/2">
+      <div
+        className="
+          absolute
+          -right-20
+          top-10
+          h-48
+          w-48
+          rounded-full
+          border
+          border-black/5
+        "
+      />
 
-          {/* Section Heading */}
+      <div
+        className="
+          absolute
+          -left-20
+          bottom-0
+          h-40
+          w-40
+          rounded-full
+          border
+          border-black/5
+        "
+      />
 
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#4f8f3a] sm:text-sm">
-            Our Team
-          </p>
+      <div className="relative z-10 mx-auto max-w-7xl">
 
-          <h1 className="mb-3 max-w-xl text-2xl font-bold leading-tight text-[#0b2418] sm:text-3xl lg:text-4xl">
-            Meet Our Travel Experts
-          </h1>
+        {/* ===================================================
+            HEADER
+        =================================================== */}
 
-          {/* Short Description */}
+        <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
 
-          {expert.short_description && (
-            <p className="mb-4 max-w-xl text-sm leading-6 text-gray-600 sm:text-base sm:leading-7">
-              {expert.short_description}
-            </p>
-          )}
+          <div>
 
-          {/* Name */}
+            <div className="mb-2 flex items-center gap-2">
 
-          {expert.name && (
-            <h3 className="mb-1 text-xl font-bold text-[#0b2418] sm:text-2xl">
-              {expert.name}
-            </h3>
-          )}
+              <span className="h-[1px] w-7 bg-black" />
 
-          {/* Position */}
-
-          {expert.position && (
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-[#4f8f3a] sm:text-sm">
-              {expert.position}
-            </p>
-          )}
-
-          {/* Description */}
-
-          {expert.description && (
-            <div
-              className="mb-5 text-sm leading-6 text-gray-600 sm:text-base sm:leading-7"
-              dangerouslySetInnerHTML={{
-                __html: expert.description,
-              }}
-            />
-          )}
-
-          {/* Contact Information */}
-
-          {(expert.email || expert.phone) && (
-            <div className="space-y-2">
-
-              {expert.email && (
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eaf6df] text-[#4f8f3a]">
-                    <Mail size={17} />
-                  </div>
-
-                  <span>{expert.email}</span>
-                </div>
-              )}
-
-              {expert.phone && (
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eaf6df] text-[#4f8f3a]">
-                    <Phone size={17} />
-                  </div>
-
-                  <span>{expert.phone}</span>
-                </div>
-              )}
+              <p
+                className="
+                  font-montserrat
+                  text-[9px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.3em]
+                  text-black
+                "
+              >
+                Our Team
+              </p>
 
             </div>
-          )}
+
+            <h2
+              className="
+                font-playfair
+                text-3xl
+                font-medium
+                leading-tight
+                text-black
+                sm:text-4xl
+                lg:text-5xl
+              "
+            >
+              Meet Our{" "}
+              <span className="italic">
+                Travel Experts
+              </span>
+            </h2>
+
+            <p
+              className="
+                mt-2
+                max-w-xl
+                font-montserrat
+                text-xs
+                leading-5
+                text-gray-500
+                sm:text-sm
+              "
+            >
+              Meet the people who turn Himalayan journeys
+              into unforgettable experiences.
+            </p>
+
+          </div>
+
+          {/* Decorative text */}
+
+          <p
+            className="
+              hidden
+              font-greatvibes
+              text-2xl
+              text-[#b83b6b]
+              sm:block
+            "
+          >
+            Your journey begins here.
+          </p>
 
         </div>
 
-        {/* ================================= */}
-        {/* RIGHT SIDE - IMAGE SLIDER */}
-        {/* ================================= */}
+        {/* ===================================================
+            SCROLL HEADER
+        =================================================== */}
 
-        <div className="order-1 flex w-full justify-center lg:order-2 lg:w-1/2">
+        <div className="mb-4 flex items-center justify-between">
 
-          <div className="w-full max-w-[420px]">
+          <p
+            className="
+              font-montserrat
+              text-[9px]
+              font-semibold
+              uppercase
+              tracking-[0.2em]
+              text-gray-400
+            "
+          >
+            Our People
+          </p>
 
-            <div className="relative">
+          {/* Scroll buttons */}
 
-              {/* Image viewport */}
+          <div className="flex gap-1.5">
 
-              <div className="relative h-[240px] w-full overflow-hidden rounded-[28px] bg-gradient-to-b from-[#eaf6df] to-[#d9ecc9] shadow-[0_20px_45px_-15px_rgba(11,36,24,0.35)] sm:h-[280px] lg:h-[300px]">
+            <button
+              type="button"
+              onClick={() => scrollExperts("left")}
+              aria-label="Scroll team left"
+              className="
+                flex
+                h-8
+                w-8
+                items-center
+                justify-center
+                border
+                border-black/20
+                bg-white
+                text-black
+                transition-all
+                duration-300
+                hover:bg-black
+                hover:text-white
+              "
+            >
+              ←
+            </button>
 
-                {experts.map((item, index) => {
-                  let distance = index - current;
-
-                  if (distance > experts.length / 2) {
-                    distance -= experts.length;
-                  }
-
-                  if (distance < -experts.length / 2) {
-                    distance += experts.length;
-                  }
-
-                  return (
-                    <img
-                      key={item.id || item.image || index}
-                      src={getImageUrl(item.image)}
-                      alt={item.name || "Team member"}
-                      className="
-                        absolute
-                        left-1/2
-                        top-1/2
-                        h-[200px]
-                        w-[290px]
-                        rounded-2xl
-                        object-cover
-                        shadow-xl
-                        ring-1
-                        ring-white/60
-                        transition-all
-                        duration-500
-                        ease-out
-                        sm:h-[235px]
-                        sm:w-[345px]
-                        lg:h-[250px]
-                        lg:w-[365px]
-                      "
-                      style={{
-                        transform: `
-                          translate(-50%, -50%)
-                          translateX(${distance * 90}px)
-                          scale(${distance === 0 ? 1 : 0.8})
-                        `,
-
-                        opacity:
-                          Math.abs(distance) > 1
-                            ? 0
-                            : distance === 0
-                              ? 1
-                              : 0.4,
-
-                        zIndex: 10 - Math.abs(distance),
-
-                        pointerEvents:
-                          distance === 0 ? "auto" : "none",
-                      }}
-                      onError={(e) => {
-                        e.currentTarget.src = "/images/MOUNT.jpg";
-                      }}
-                    />
-                  );
-                })}
-
-              </div>
-
-              {/* Previous */}
-
-              {experts.length > 1 && (
-                <button
-                  type="button"
-                  onClick={previousImage}
-                  aria-label="Previous team member"
-                  className="
-                    absolute
-                    left-3
-                    top-1/2
-                    z-30
-                    flex
-                    h-10
-                    w-10
-                    -translate-y-1/2
-                    items-center
-                    justify-center
-                    rounded-full
-                    bg-white/90
-                    text-[#0b2418]
-                    shadow-lg
-                    backdrop-blur
-                    transition
-                    duration-200
-                    hover:scale-110
-                    hover:bg-white
-                  "
-                >
-                  <ChevronLeft size={20} />
-                </button>
-              )}
-
-              {/* Next */}
-
-              {experts.length > 1 && (
-                <button
-                  type="button"
-                  onClick={nextImage}
-                  aria-label="Next team member"
-                  className="
-                    absolute
-                    right-3
-                    top-1/2
-                    z-30
-                    flex
-                    h-10
-                    w-10
-                    -translate-y-1/2
-                    items-center
-                    justify-center
-                    rounded-full
-                    bg-white/90
-                    text-[#0b2418]
-                    shadow-lg
-                    backdrop-blur
-                    transition
-                    duration-200
-                    hover:scale-110
-                    hover:bg-white
-                  "
-                >
-                  <ChevronRight size={20} />
-                </button>
-              )}
-
-              {/* Name Card */}
-
-              <div
-                className="
-                  relative
-                  z-20
-                  mx-8
-                  -mt-9
-                  rounded-2xl
-                  border
-                  border-white/70
-                  bg-white/95
-                  px-5
-                  py-4
-                  text-center
-                  shadow-[0_12px_30px_-10px_rgba(11,36,24,0.3)]
-                  backdrop-blur
-                  sm:mx-10
-                  sm:-mt-10
-                "
-              >
-
-                {expert.name && (
-                  <p className="text-base font-bold text-[#0b2418] sm:text-lg">
-                    {expert.name}
-                  </p>
-                )}
-
-                {expert.position && (
-                  <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-[#4f8f3a] sm:text-sm">
-                    {expert.position}
-                  </p>
-                )}
-
-              </div>
-
-            </div>
-
-            {/* Dots */}
-
-            {experts.length > 1 && (
-              <div className="mt-4 flex items-center justify-center gap-2">
-                {experts.map((item, index) => (
-                  <button
-                    key={item.id || item.image || index}
-                    type="button"
-                    onClick={() => setCurrent(index)}
-                    aria-label={`Show ${item.name}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      index === current
-                        ? "w-6 bg-[#4f8f3a]"
-                        : "w-1.5 bg-gray-300 hover:bg-gray-400"
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
+            <button
+              type="button"
+              onClick={() => scrollExperts("right")}
+              aria-label="Scroll team right"
+              className="
+                flex
+                h-8
+                w-8
+                items-center
+                justify-center
+                border
+                border-black/20
+                bg-white
+                text-black
+                transition-all
+                duration-300
+                hover:bg-black
+                hover:text-white
+              "
+            >
+              →
+            </button>
 
           </div>
 
         </div>
 
+        {/* ===================================================
+            HORIZONTAL CARDS
+        =================================================== */}
+
+        <div
+          ref={scrollRef}
+          className="
+            team-scroll
+            flex
+            snap-x
+            snap-mandatory
+            gap-4
+            overflow-x-auto
+            pb-5
+          "
+        >
+
+          {experts.map((expert, index) => (
+            <article
+              key={
+                expert.id ||
+                expert.image ||
+                index
+              }
+              className="
+                group
+                min-w-[240px]
+                max-w-[240px]
+                snap-start
+                sm:min-w-[260px]
+                sm:max-w-[260px]
+                lg:min-w-[280px]
+                lg:max-w-[280px]
+              "
+            >
+
+              {/* =============================================
+                  IMAGE
+              ============================================== */}
+
+              <div className="relative overflow-hidden bg-gray-100">
+
+                <div className="aspect-[4/4.2] overflow-hidden">
+
+                  <img
+                    src={getImageUrl(expert.image)}
+                    alt={
+                      expert.name ||
+                      "Team member"
+                    }
+                    className="
+                      h-full
+                      w-full
+                      object-cover
+                      transition-transform
+                      duration-700
+                      ease-out
+                      group-hover:scale-105
+                    "
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "/images/MOUNT.jpg";
+                    }}
+                  />
+
+                </div>
+
+                {/* Number */}
+
+                <div
+                  className="
+                    absolute
+                    left-3
+                    top-3
+                    flex
+                    h-7
+                    w-7
+                    items-center
+                    justify-center
+                    bg-black/70
+                  "
+                >
+                  <span className="font-playfair text-[10px] text-white">
+                    {String(index + 1).padStart(
+                      2,
+                      "0"
+                    )}
+                  </span>
+                </div>
+
+                {/* Hover arrow */}
+
+                <div
+                  className="
+                    absolute
+                    bottom-3
+                    right-3
+                    flex
+                    h-8
+                    w-8
+                    translate-y-2
+                    items-center
+                    justify-center
+                    bg-white
+                    text-black
+                    opacity-0
+                    transition-all
+                    duration-300
+                    group-hover:translate-y-0
+                    group-hover:opacity-100
+                  "
+                >
+                  <ArrowUpRight
+                    size={14}
+                    strokeWidth={1.5}
+                  />
+                </div>
+
+              </div>
+
+              {/* =============================================
+                  CONTENT
+              ============================================== */}
+
+              <div
+                className="
+                  border
+                  border-t-0
+                  border-gray-200
+                  bg-white
+                  p-4
+                  transition-all
+                  duration-300
+                  group-hover:border-black/30
+                "
+              >
+
+                {/* Position */}
+
+                {expert.position && (
+                  <p
+                    className="
+                      mb-1.5
+                      font-montserrat
+                      text-[8px]
+                      font-semibold
+                      uppercase
+                      tracking-[0.18em]
+                      text-[#b83b6b]
+                    "
+                  >
+                    {expert.position}
+                  </p>
+                )}
+
+                {/* Name */}
+
+                {expert.name && (
+                  <h3
+                    className="
+                      font-playfair
+                      text-xl
+                      font-medium
+                      leading-tight
+                      text-black
+                    "
+                  >
+                    {expert.name}
+                  </h3>
+                )}
+
+                {/* Description */}
+
+                {expert.short_description && (
+                  <p
+                    className="
+                      mt-2
+                      line-clamp-2
+                      font-montserrat
+                      text-[10px]
+                      leading-5
+                      text-gray-500
+                    "
+                  >
+                    {expert.short_description}
+                  </p>
+                )}
+
+                {/* Divider */}
+
+                <div className="my-3 h-[1px] bg-gray-100" />
+
+                {/* Contact */}
+
+                <div className="space-y-1.5">
+
+                  {expert.email && (
+                    <div className="flex items-center gap-2">
+
+                      <Mail
+                        size={11}
+                        strokeWidth={1.5}
+                        className="shrink-0 text-black"
+                      />
+
+                      <span
+                        className="
+                          truncate
+                          font-montserrat
+                          text-[9px]
+                          text-gray-500
+                        "
+                      >
+                        {expert.email}
+                      </span>
+
+                    </div>
+                  )}
+
+                  {expert.phone && (
+                    <div className="flex items-center gap-2">
+
+                      <Phone
+                        size={11}
+                        strokeWidth={1.5}
+                        className="shrink-0 text-black"
+                      />
+
+                      <span
+                        className="
+                          font-montserrat
+                          text-[9px]
+                          text-gray-500
+                        "
+                      >
+                        {expert.phone}
+                      </span>
+
+                    </div>
+                  )}
+
+                </div>
+
+              </div>
+
+            </article>
+          ))}
+
+        </div>
+
+        {/* ===================================================
+            BOTTOM
+        =================================================== */}
+
+        <div className="mt-3 flex items-center justify-center gap-3">
+
+          <span className="h-[1px] w-8 bg-gray-200" />
+
+          <p
+            className="
+              font-montserrat
+              text-[8px]
+              font-semibold
+              uppercase
+              tracking-[0.25em]
+              text-gray-400
+            "
+          >
+            Scroll to explore
+          </p>
+
+          <span className="h-[1px] w-8 bg-gray-200" />
+
+        </div>
+
       </div>
+
+      {/* =====================================================
+          PATTERN
+      ===================================================== */}
+
+      <style>{`
+
+        .black-pattern {
+          width: 100%;
+          height: 100%;
+
+          background:
+            repeating-conic-gradient(
+              from 30deg,
+              #0000 0 120deg,
+              #000 0 180deg
+            )
+            calc(0.5 * 120px)
+            calc(0.5 * 120px * 0.577),
+
+            repeating-conic-gradient(
+              from 30deg,
+              #000 0 45deg,
+              #222 0 90deg,
+              #444 0 135deg,
+              #000 0 180deg,
+              #222 0 225deg,
+              #555 0 270deg,
+              #111 0 315deg,
+              #333 0 360deg,
+              #000 0 405deg
+            );
+
+          background-size:
+            120px
+            calc(120px * 0.577);
+        }
+
+        .team-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: #111 transparent;
+        }
+
+        .team-scroll::-webkit-scrollbar {
+          height: 3px;
+        }
+
+        .team-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        .team-scroll::-webkit-scrollbar-thumb {
+          background: #111;
+        }
+
+        .team-scroll::-webkit-scrollbar-thumb:hover {
+          background: #b83b6b;
+        }
+
+      `}</style>
 
     </section>
   );

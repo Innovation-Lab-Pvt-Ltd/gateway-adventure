@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Great+Vibes&display=swap");
+
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -151,4 +153,109 @@ body,
 .trip-list b {
   color: #0b2418;
   font-weight: 700;
+}
+@theme {
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-playfair: "Playfair Display", serif;
+  --font-greatvibes: "Great Vibes", cursive;
+}
+
+/* =========================================================
+   PREMIUM EXPLORE BUTTON
+   Based on the Uiverse button you provided
+========================================================= */
+
+.explore-btn {
+  width: 11em;
+  position: relative;
+  height: 3.3em;
+  border: 2px ridge #b83b6b;
+  outline: none;
+  background-color: #172019;
+  color: white;
+  transition: 0.7s;
+  border-radius: 0.35em;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  overflow: visible;
+}
+
+
+/* Top cut */
+
+.explore-btn::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 3%;
+  width: 94%;
+  height: 35%;
+  background-color: #f8f3ed;
+  transition: 0.5s;
+  transform-origin: center;
+}
+
+
+/* Bottom cut */
+
+.explore-btn::before {
+  content: "";
+  position: absolute;
+  transform-origin: center;
+  top: 80%;
+  left: 3%;
+  width: 94%;
+  height: 35%;
+  background-color: #f8f3ed;
+  transition: 0.5s;
+}
+
+
+/* Text and icon stay above pseudo-elements */
+
+.explore-btn span,
+.explore-btn svg {
+  position: relative;
+  z-index: 5;
+}
+
+
+/* Hover removes the cuts */
+
+.explore-btn:hover::before,
+.explore-btn:hover::after {
+  transform: scale(0);
+}
+
+
+/* Pink glow */
+
+.explore-btn:hover {
+  background-color: #172019;
+  color: #ffffff;
+  border-color: #d65383;
+
+  box-shadow:
+    inset 0px 0px 20px rgba(184, 59, 107, 0.75),
+    0px 8px 25px rgba(184, 59, 107, 0.18);
+}
+
+
+/* Icon movement */
+
+.explore-btn:hover svg {
+  transform: translate(2px, -2px);
+}
+
+.explore-btn svg {
+  transition: transform 0.3s ease;
 }

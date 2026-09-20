@@ -12,7 +12,7 @@ export default defineConfig({
     proxy: {
       // Gateway Treks API
       "/api": {
-        target: "https://gatewaytreks.com",
+        target: "https://gatewaytreks.com/",
         changeOrigin: true,
         secure: true,
        

@@ -1,14 +1,5 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import {
-  ArrowRight,
-  ArrowLeft,
-  Search,
-  X,
-} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, ArrowRight, CalendarDays } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "/api/v1/blogs";
@@ -16,484 +7,200 @@ const API_URL = "/api/v1/blogs";
 const IMAGE_BASE_URL =
   "https://gatewaytreks.com/public/uploads/frontend/full/";
 
-const VISIBLE_COUNT = 4;
-const CARDS_PER_PAGE = 8;
-const MAX_SEARCH_RESULTS = 8;
-
-const CATEGORIES = [
-  "All",
-  "Trekking Guides",
-  "Permits & Planning",
-  "Culture & Heritage",
-  "Nature & Wildlife",
-  "Adventure & Activities",
-  "Travel News",
-  "Stories & People",
-];
-
-// =====================================================
-// NORMALIZE TEXT
-// =====================================================
-
-const normalizeText = (value) => {
-  if (!value) return "";
-
-  return String(value)
-    .toLowerCase()
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-};
-
-// =====================================================
-// GET CATEGORY
-// EXACT SAME CATEGORY LOGIC AS BLOGDETAIL.JSX
-// =====================================================
-
-export const getCategory = (blog) => {
-  if (!blog) return "Stories & People";
-
-  const title = normalizeText(blog.title);
-
-  const tags = Array.isArray(blog.tags)
-    ? blog.tags
-        .map((tag) => normalizeText(tag))
-        .join(" ")
-    : normalizeText(blog.tags);
-
-  // ===================================================
-  // TRAVEL NEWS
-  // ===================================================
-
-  const newsKeywords = [
-    "travel news",
-    "latest news",
-    "breaking news",
-    "news update",
-    "travel update",
-    "government announcement",
-    "government update",
-    "new rule",
-    "new rules",
-    "new regulation",
-    "new regulations",
-    "official announcement",
-    "announcement",
-    "announced",
-    "immigration update",
-    "border update",
-    "tourism board",
-  ];
-
-  if (
-    newsKeywords.some((keyword) =>
-      title.includes(keyword)
-    )
-  ) {
-    return "Travel News";
-  }
-
-  if (
-    newsKeywords.some((keyword) =>
-      tags.includes(keyword)
-    )
-  ) {
-    return "Travel News";
-  }
-
-  // ===================================================
-  // TREKKING GUIDES
-  // ===================================================
-
-  const trekkingKeywords = [
-    "everest base camp trek",
-    "everest base camp",
-    "ebc trek",
-    "ebc",
-    "everest trek",
-    "annapurna circuit",
-    "annapurna base camp",
-    "annapurna trek",
-    "manaslu circuit",
-    "manaslu trek",
-    "langtang trek",
-    "mardi himal trek",
-    "ghorepani poon hill",
-    "poon hill trek",
-    "upper mustang trek",
-    "upper mustang",
-    "nar phu trek",
-    "nar phu",
-    "dolpo trek",
-    "kanchenjunga trek",
-    "makalu trek",
-    "trekking",
-    "trek",
-    "trekker",
-    "trekkers",
-    "hiking",
-    "hike",
-    "mountaineering",
-    "expedition",
-    "base camp",
-    "circuit trek",
-    "high pass trek",
-    "high passes",
-    "pass trek",
-  ];
-
-  if (
-    trekkingKeywords.some((keyword) =>
-      title.includes(keyword)
-    )
-  ) {
-    return "Trekking Guides";
-  }
-
-  if (
-    trekkingKeywords.some((keyword) =>
-      tags.includes(keyword)
-    )
-  ) {
-    return "Trekking Guides";
-  }
-
-  // ===================================================
-  // PERMITS & PLANNING
-  // ===================================================
-
-  const planningKeywords = [
-    "permit",
-    "permits",
-    "tims",
-    "visa",
-    "visa guide",
-    "visa requirement",
-    "visa requirements",
-    "immigration",
-    "cost",
-    "price",
-    "fee",
-    "fees",
-    "budget",
-    "packing list",
-    "packing",
-    "what to pack",
-    "best time to visit",
-    "best time to travel",
-    "best time",
-    "when to trek",
-    "weather",
-    "difficulty",
-    "difficulty guide",
-    "travel tips",
-    "trekking tips",
-    "planning",
-    "travel planning",
-    "itinerary",
-    "regulation",
-    "regulations",
-    "drone",
-    "travel insurance",
-    "insurance",
-    "acclimatization",
-    "altitude sickness",
-    "accommodation",
-    "transportation",
-    "how to get",
-    "things to know",
-  ];
-
-  if (
-    planningKeywords.some((keyword) =>
-      title.includes(keyword)
-    )
-  ) {
-    return "Permits & Planning";
-  }
-
-  if (
-    planningKeywords.some((keyword) =>
-      tags.includes(keyword)
-    )
-  ) {
-    return "Permits & Planning";
-  }
-
-  // ===================================================
-  // CULTURE
-  // ===================================================
-
-  const cultureKeywords = [
-    "culture",
-    "cultural",
-    "heritage",
-    "durbar",
-    "durbar square",
-    "kumari",
-    "thangka",
-    "newari",
-    "newar",
-    "festival",
-    "festivals",
-    "temple",
-    "temples",
-    "monastery",
-    "monasteries",
-    "museum",
-    "museums",
-    "heritage site",
-    "heritage sites",
-    "sherpa culture",
-    "tradition",
-    "traditions",
-    "religion",
-    "krishna mandir",
-    "basantapur",
-    "architecture",
-    "historical",
-    "history",
-  ];
-
-  if (
-    cultureKeywords.some((keyword) =>
-      title.includes(keyword)
-    )
-  ) {
-    return "Culture & Heritage";
-  }
-
-  if (
-    cultureKeywords.some((keyword) =>
-      tags.includes(keyword)
-    )
-  ) {
-    return "Culture & Heritage";
-  }
-
-  // ===================================================
-  // NATURE
-  // ===================================================
-
-  const natureKeywords = [
-    "wildlife",
-    "birdwatching",
-    "bird watching",
-    "birds",
-    "snow leopard",
-    "leopard",
-    "biodiversity",
-    "nature",
-    "flora",
-    "fauna",
-    "forest",
-    "forests",
-    "national park",
-    "national parks",
-    "conservation",
-    "animals",
-    "wild animals",
-    "rhino",
-    "tiger",
-    "elephant",
-    "red panda",
-    "ecosystem",
-    "wetland",
-  ];
-
-  if (
-    natureKeywords.some((keyword) =>
-      title.includes(keyword)
-    )
-  ) {
-    return "Nature & Wildlife";
-  }
-
-  if (
-    natureKeywords.some((keyword) =>
-      tags.includes(keyword)
-    )
-  ) {
-    return "Nature & Wildlife";
-  }
-
-  // ===================================================
-  // ADVENTURE
-  // ===================================================
-
-  const adventureKeywords = [
-    "rafting",
-    "raft",
-    "paragliding",
-    "paraglide",
-    "jungle safari",
-    "safari",
-    "bungee",
-    "zipline",
-    "canyoning",
-    "mountain biking",
-    "cycling",
-    "kayaking",
-    "climbing",
-    "rock climbing",
-    "adventure",
-    "adventures",
-    "caving",
-    "canoeing",
-  ];
-
-  if (
-    adventureKeywords.some((keyword) =>
-      title.includes(keyword)
-    )
-  ) {
-    return "Adventure & Activities";
-  }
-
-  if (
-    adventureKeywords.some((keyword) =>
-      tags.includes(keyword)
-    )
-  ) {
-    return "Adventure & Activities";
-  }
-
-  // ===================================================
-  // STORIES
-  // ===================================================
-
-  const storiesKeywords = [
-    "story",
-    "stories",
-    "people",
-    "profile",
-    "journey",
-    "travel story",
-    "personal experience",
-    "experience",
-    "kami rita",
-    "sherpa",
-    "guide",
-    "guides",
-    "traveler",
-    "traveller",
-    "local guide",
-    "porter",
-    "mountaineer",
-    "climber",
-  ];
-
-  if (
-    storiesKeywords.some((keyword) =>
-      title.includes(keyword)
-    )
-  ) {
-    return "Stories & People";
-  }
-
-  if (
-    storiesKeywords.some((keyword) =>
-      tags.includes(keyword)
-    )
-  ) {
-    return "Stories & People";
-  }
-
-  return "Stories & People";
-};
-
-// =====================================================
-// FORMAT DATE
-// =====================================================
-
-const formatDate = (dateString) => {
-  if (!dateString) return "";
-
-  const date = new Date(dateString);
-
-  if (Number.isNaN(date.getTime())) {
-    return dateString;
-  }
-
-  return date.toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-};
-
-// =====================================================
-// BLOG LIST
-// =====================================================
+const FALLBACK_IMAGE = "/images/MOUNT.jpg";
 
 const BlogList = ({ variant = "compact" }) => {
   const navigate = useNavigate();
 
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  const [activeCategory, setActiveCategory] =
-    useState("All");
+  // Compact slider
+  const [compactIndex, setCompactIndex] = useState(0);
+  const [isChanging, setIsChanging] = useState(false);
 
-  const [currentPage, setCurrentPage] =
-    useState(0);
+  // Large version states
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [searchQuery, setSearchQuery] =
-    useState("");
+  const categories = [
+    "All",
+    "Trekking Guides",
+    "Permits & Planning",
+    "Culture & Heritage",
+    "Nature & Wildlife",
+    "Adventure & Activities",
+    "Travel News",
+    "Stories & People",
+  ];
 
-  const [isSearchOpen, setIsSearchOpen] =
-    useState(false);
+  /* =========================================================
+     NORMALIZE TEXT
+  ========================================================= */
 
-  const searchContainerRef = useRef(null);
+  const normalizeText = (value) => {
+    if (!value) return "";
 
-  // =====================================================
-  // FETCH BLOGS
-  // =====================================================
+    return String(value)
+      .toLowerCase()
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
+  /* =========================================================
+     CATEGORY DETECTION
+  ========================================================= */
+
+  const getCategory = (blog) => {
+    const title = normalizeText(blog?.title);
+    const tags = normalizeText(blog?.tags);
+
+    const text = `${title} ${tags}`;
+
+    // Travel News
+    if (
+      text.includes("news") ||
+      text.includes("flood") ||
+      text.includes("earthquake") ||
+      text.includes("weather") ||
+      text.includes("rescue") ||
+      text.includes("accident") ||
+      text.includes("government") ||
+      text.includes("announcement") ||
+      text.includes("update")
+    ) {
+      return "Travel News";
+    }
+
+    // Trekking Guides
+    if (
+      text.includes("trek") ||
+      text.includes("trekking") ||
+      text.includes("itinerary") ||
+      text.includes("route") ||
+      text.includes("trail") ||
+      text.includes("guide") ||
+      text.includes("camp") ||
+      text.includes("base camp") ||
+      text.includes("everest") ||
+      text.includes("annapurna") ||
+      text.includes("manaslu") ||
+      text.includes("langtang")
+    ) {
+      return "Trekking Guides";
+    }
+
+    // Permits & Planning
+    if (
+      text.includes("permit") ||
+      text.includes("visa") ||
+      text.includes("planning") ||
+      text.includes("budget") ||
+      text.includes("cost") ||
+      text.includes("insurance") ||
+      text.includes("packing") ||
+      text.includes("gear") ||
+      text.includes("equipment")
+    ) {
+      return "Permits & Planning";
+    }
+
+    // Culture & Heritage
+    if (
+      text.includes("culture") ||
+      text.includes("heritage") ||
+      text.includes("festival") ||
+      text.includes("temple") ||
+      text.includes("monastery") ||
+      text.includes("tradition") ||
+      text.includes("religion") ||
+      text.includes("community") ||
+      text.includes("history")
+    ) {
+      return "Culture & Heritage";
+    }
+
+    // Nature & Wildlife
+    if (
+      text.includes("wildlife") ||
+      text.includes("nature") ||
+      text.includes("bird") ||
+      text.includes("animal") ||
+      text.includes("forest") ||
+      text.includes("national park") ||
+      text.includes("conservation") ||
+      text.includes("mountain")
+    ) {
+      return "Nature & Wildlife";
+    }
+
+    // Adventure & Activities
+    if (
+      text.includes("adventure") ||
+      text.includes("motorbike") ||
+      text.includes("motorbiking") ||
+      text.includes("rafting") ||
+      text.includes("climbing") ||
+      text.includes("paragliding") ||
+      text.includes("bungee") ||
+      text.includes("cycling") ||
+      text.includes("activities")
+    ) {
+      return "Adventure & Activities";
+    }
+
+    return "Stories & People";
+  };
+
+  /* =========================================================
+     DATE FORMAT
+  ========================================================= */
+
+  const formatDate = (dateValue) => {
+    if (!dateValue) return "";
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    return date.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  /* =========================================================
+     FETCH BLOGS
+  ========================================================= */
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         setLoading(true);
-        setError(null);
 
         const response = await fetch(API_URL);
 
         if (!response.ok) {
-          throw new Error(
-            `API request failed with status ${response.status}`
-          );
+          throw new Error("Failed to fetch blogs");
         }
 
         const data = await response.json();
 
-        console.log(
-          "Gateway Treks Blogs:",
-          data
-        );
+        const blogArray = Array.isArray(data?.Blog)
+          ? data.Blog
+          : Array.isArray(data?.blogs)
+          ? data.blogs
+          : [];
 
-        const list =
-          data.Blog ||
-          data.blogs ||
-          data.blog ||
-          data.data;
-
-        if (!Array.isArray(list)) {
-          throw new Error(
-            "Blogs response is not an array"
-          );
-        }
-
-        setBlogs(list);
-      } catch (err) {
-        console.error(
-          "BLOG LIST ERROR:",
-          err
-        );
-
-        setError(
-          "Unable to load blog posts."
-        );
+        setBlogs(blogArray);
+      } catch (error) {
+        console.error("Blog fetch error:", error);
+        setBlogs([]);
       } finally {
         setLoading(false);
       }
@@ -502,684 +209,752 @@ const BlogList = ({ variant = "compact" }) => {
     fetchBlogs();
   }, []);
 
-  // =====================================================
-  // RESET PAGE WHEN CATEGORY CHANGES
-  // =====================================================
+  /* =========================================================
+     IMAGE URL
+  ========================================================= */
 
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [activeCategory]);
+  const getImageUrl = (blog) => {
+    if (!blog?.image) {
+      return FALLBACK_IMAGE;
+    }
 
-  // =====================================================
-  // CLOSE SEARCH
-  // =====================================================
+    if (
+      blog.image.startsWith("http://") ||
+      blog.image.startsWith("https://")
+    ) {
+      return blog.image;
+    }
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        searchContainerRef.current &&
-        !searchContainerRef.current.contains(
-          event.target
-        )
-      ) {
-        setIsSearchOpen(false);
-      }
-    };
+    return `${IMAGE_BASE_URL}${blog.image}`;
+  };
 
-    const handleEscape = (event) => {
-      if (event.key === "Escape") {
-        setIsSearchOpen(false);
-      }
-    };
-
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-
-    document.addEventListener(
-      "keydown",
-      handleEscape
-    );
-
-    return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
-
-      document.removeEventListener(
-        "keydown",
-        handleEscape
-      );
-    };
-  }, []);
-
-  // =====================================================
-  // HANDLE BLOG CLICK
-  // =====================================================
+  /* =========================================================
+     BLOG CLICK
+  ========================================================= */
 
   const handleBlogClick = (blog) => {
-    if (!blog || !blog.id) {
-      console.error(
-        "Invalid blog:",
-        blog
-      );
-      return;
-    }
-
-    const blogId = blog.id;
-
-    let storedViews = {};
+    if (!blog?.id) return;
 
     try {
-      storedViews =
-        JSON.parse(
-          localStorage.getItem(
-            "blogViews"
-          )
-        ) || {};
-    } catch (error) {
-      console.error(
-        "Unable to read blog views:",
-        error
+      const storedViews = JSON.parse(
+        localStorage.getItem("blogViews") || "{}"
       );
+
+      storedViews[blog.id] = (storedViews[blog.id] || 0) + 1;
+
+      localStorage.setItem("blogViews", JSON.stringify(storedViews));
+
+      localStorage.setItem(
+        "blogViewUpdated",
+        Date.now().toString()
+      );
+
+      window.dispatchEvent(new Event("blogViewUpdated"));
+    } catch (error) {
+      console.error("Blog view error:", error);
     }
 
-    const newCount =
-      (storedViews[blogId] || 0) + 1;
-
-    const updatedViews = {
-      ...storedViews,
-      [blogId]: newCount,
-    };
-
-    localStorage.setItem(
-      "blogViews",
-      JSON.stringify(updatedViews)
-    );
-
-    window.dispatchEvent(
-      new CustomEvent(
-        "blogViewUpdated"
-      )
-    );
-
-    navigate(`/blogs/${blogId}`, {
+    navigate(`/blogs/${blog.id}`, {
       state: {
         blog,
       },
     });
   };
 
-  // =====================================================
-  // SEARCH RESULT CLICK
-  // =====================================================
+  /* =========================================================
+     COMPACT BLOGS
+     
+     We keep only 3 blogs.
+  ========================================================= */
 
-  const handleSearchResultClick = (
-    blog
-  ) => {
-    handleBlogClick(blog);
+  const compactBlogs = useMemo(() => {
+    if (!blogs.length) return [];
 
-    setSearchQuery("");
-    setIsSearchOpen(false);
+    return blogs.slice(0, 3);
+  }, [blogs]);
+
+  /* =========================================================
+     COMPACT CHANGE BUTTONS
+  ========================================================= */
+
+  const changeCompactBlog = (direction) => {
+    if (compactBlogs.length <= 1 || isChanging) return;
+
+    setIsChanging(true);
+
+    setTimeout(() => {
+      setCompactIndex((current) => {
+        if (direction === "next") {
+          return (current + 1) % compactBlogs.length;
+        }
+
+        return (
+          (current - 1 + compactBlogs.length) %
+          compactBlogs.length
+        );
+      });
+
+      setTimeout(() => {
+        setIsChanging(false);
+      }, 50);
+    }, 220);
   };
 
-  // =====================================================
-  // CLEAR SEARCH
-  // =====================================================
+  /* =========================================================
+     LARGE VERSION FILTERING
+  ========================================================= */
 
-  const clearSearch = () => {
-    setSearchQuery("");
-    setIsSearchOpen(false);
-  };
+  const filteredBlogs = useMemo(() => {
+    let result = [...blogs];
 
-  // =====================================================
-  // LOADING
-  // =====================================================
+    if (selectedCategory !== "All") {
+      result = result.filter(
+        (blog) => getCategory(blog) === selectedCategory
+      );
+    }
+
+    if (searchTerm.trim()) {
+      const search = normalizeText(searchTerm);
+
+      result = result.filter((blog) =>
+        normalizeText(blog?.title).includes(search)
+      );
+
+      result = result.slice(0, 8);
+    }
+
+    return result;
+  }, [blogs, selectedCategory, searchTerm]);
+
+  /* =========================================================
+     LARGE PAGINATION
+  ========================================================= */
+
+  const CARDS_PER_PAGE = 8;
+
+  const totalPages = Math.ceil(
+    filteredBlogs.length / CARDS_PER_PAGE
+  );
+
+  const paginatedBlogs = filteredBlogs.slice(
+    (currentPage - 1) * CARDS_PER_PAGE,
+    currentPage * CARDS_PER_PAGE
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchTerm]);
+
+  /* =========================================================
+     LOADING
+  ========================================================= */
 
   if (loading) {
     return (
-      <section className="bg-[#F4F0E7] px-6 py-16 md:px-10 lg:px-16">
+      <section className="bg-white px-6 py-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex min-h-[300px] items-center justify-center">
+            <div className="text-center">
+              <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[#b83b6b] border-t-transparent" />
 
-        <div className="mb-8 max-w-2xl">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="h-[2px] w-8 bg-[#2F6B4F]" />
-
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#2F6B4F]">
-              From the Himalayas
-            </span>
-          </div>
-
-          <h1 className="mb-4 font-serif text-4xl font-bold leading-tight text-[#171310] sm:text-5xl lg:text-6xl">
-            Stories, Guides{" "}
-            <span className="italic">
-              &amp;
-            </span>{" "}
-            Inspiration
-          </h1>
-
-          <p className="text-base leading-7 text-gray-500">
-            Stories, guides and inspiration
-            for your next adventure.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((item) => (
-            <div
-              key={item}
-              className="h-[360px] animate-pulse rounded-2xl bg-gray-200/60"
-            />
-          ))}
-        </div>
-
-      </section>
-    );
-  }
-
-  // =====================================================
-  // ERROR
-  // =====================================================
-
-  if (error) {
-    return (
-      <section className="bg-[#F4F0E7] px-6 py-16 md:px-10 lg:px-16">
-
-        <div className="rounded-xl bg-red-50 p-6 text-center">
-
-          <p className="font-medium text-red-500">
-            {error}
-          </p>
-
-        </div>
-
-      </section>
-    );
-  }
-
-  // =====================================================
-  // SEARCH RESULTS
-  // SEARCH BY TITLE ONLY
-  // =====================================================
-
-  const normalizedQuery =
-    normalizeText(searchQuery);
-
-  const searchResults = normalizedQuery
-    ? blogs
-        .filter((blog) =>
-          normalizeText(
-            blog.title
-          ).includes(
-            normalizedQuery
-          )
-        )
-        .slice(
-          0,
-          MAX_SEARCH_RESULTS
-        )
-    : [];
-
-  // =====================================================
-  // FILTER BLOGS BY CATEGORY
-  // =====================================================
-
-  const filteredBlogs =
-    activeCategory === "All"
-      ? blogs
-      : blogs.filter(
-          (blog) =>
-            getCategory(blog) ===
-            activeCategory
-        );
-
-  // =====================================================
-  // TOTAL PAGES
-  // =====================================================
-
-  const totalPages = Math.ceil(
-    filteredBlogs.length /
-      CARDS_PER_PAGE
-  );
-
-  // =====================================================
-  // VISIBLE BLOGS
-  // =====================================================
-
-  const visibleBlogs =
-    variant === "compact"
-      ? filteredBlogs.slice(
-          0,
-          VISIBLE_COUNT
-        )
-      : filteredBlogs.slice(
-          currentPage *
-            CARDS_PER_PAGE,
-          currentPage *
-              CARDS_PER_PAGE +
-            CARDS_PER_PAGE
-        );
-
-  // =====================================================
-  // PREVIOUS PAGE
-  // =====================================================
-
-  const goToPreviousPage = () => {
-    setCurrentPage((prev) =>
-      Math.max(prev - 1, 0)
-    );
-  };
-
-  // =====================================================
-  // NEXT PAGE
-  // =====================================================
-
-  const goToNextPage = () => {
-    setCurrentPage((prev) =>
-      Math.min(
-        prev + 1,
-        Math.max(
-          totalPages - 1,
-          0
-        )
-      )
-    );
-  };
-
-  // =====================================================
-  // MAIN UI
-  // =====================================================
-
-  return (
-    <section className="bg-[#F4F0E7] px-6 py-16 md:px-10 lg:px-16">
-
-      {/* =================================================
-          HEADING
-      ================================================= */}
-
-      <div className="mb-8 max-w-2xl">
-
-        <div className="mb-4 flex items-center gap-3">
-
-          <span className="h-[2px] w-8 bg-[#2F6B4F]" />
-
-          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#2F6B4F]">
-            From the Himalayas
-          </span>
-
-        </div>
-
-        <h1 className="mb-4 font-serif text-4xl font-bold leading-tight text-[#171310] sm:text-5xl lg:text-6xl">
-          Stories, Guides{" "}
-          <span className="italic">
-            &amp;
-          </span>{" "}
-          Inspiration
-        </h1>
-
-        <p className="text-base leading-7 text-gray-500">
-          Stories, guides and inspiration
-          for your next adventure.
-        </p>
-
-      </div>
-
-      {/* =================================================
-          SEARCH
-      ================================================= */}
-
-      <div
-        ref={searchContainerRef}
-        className="relative mb-8 max-w-xl"
-      >
-
-        <div className="relative">
-
-          <Search
-            size={18}
-            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-          />
-
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(event) => {
-              setSearchQuery(
-                event.target.value
-              );
-
-              setIsSearchOpen(true);
-            }}
-            onFocus={() => {
-              if (searchQuery) {
-                setIsSearchOpen(true);
-              }
-            }}
-            placeholder="Search blog posts by title..."
-            className="w-full rounded-full border border-gray-200 bg-white py-3 pl-11 pr-10 text-sm text-[#171310] shadow-sm outline-none transition focus:border-[#2F6B4F] focus:ring-2 focus:ring-[#2F6B4F]/20"
-          />
-
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={clearSearch}
-              aria-label="Clear search"
-              className="absolute right-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100 hover:text-[#171310]"
-            >
-              <X size={15} />
-            </button>
-          )}
-
-        </div>
-
-        {/* =================================================
-            SEARCH DROPDOWN
-        ================================================= */}
-
-        {isSearchOpen &&
-          normalizedQuery && (
-            <div className="absolute left-0 right-0 top-full z-30 mt-2 max-h-96 overflow-y-auto rounded-xl border border-gray-100 bg-white shadow-xl">
-
-              {searchResults.length > 0 ? (
-                searchResults.map(
-                  (blog) => (
-                    <button
-                      key={blog.id}
-                      type="button"
-                      onClick={() =>
-                        handleSearchResultClick(
-                          blog
-                        )
-                      }
-                      className="flex w-full items-center gap-3 border-b border-gray-50 p-3 text-left transition last:border-b-0 hover:bg-[#F4F0E7]/60"
-                    >
-
-                      <img
-                        src={`${IMAGE_BASE_URL}${blog.image}`}
-                        alt={
-                          blog.title ||
-                          "Gateway Treks blog"
-                        }
-                        className="h-12 w-14 shrink-0 rounded-lg object-cover"
-                        onError={(event) => {
-                          event.currentTarget.onerror =
-                            null;
-
-                          event.currentTarget.src =
-                            "/images/MOUNT.jpg";
-                        }}
-                      />
-
-                      <div className="min-w-0 flex-1">
-
-                        <p className="truncate text-sm font-semibold text-[#0b2418]">
-                          {blog.title}
-                        </p>
-
-                        <p className="mt-0.5 text-xs text-gray-400">
-                          {getCategory(blog)}
-
-                          {blog.published_at
-                            ? ` · ${formatDate(
-                                blog.published_at
-                              )}`
-                            : ""}
-                        </p>
-
-                      </div>
-
-                      <ArrowRight
-                        size={15}
-                        className="shrink-0 text-gray-300"
-                      />
-
-                    </button>
-                  )
-                )
-              ) : (
-                <p className="p-4 text-center text-sm text-gray-500">
-                  No blog posts found for "
-                  {searchQuery}".
-                </p>
-              )}
-
+              <p className="font-montserrat text-sm text-gray-500">
+                Loading stories...
+              </p>
             </div>
-          )}
-
-      </div>
-
-      {/* =================================================
-          CATEGORY FILTERS
-          ONLY LARGE VERSION
-      ================================================= */}
-
-      {variant === "large" && (
-        <div className="mb-8 flex flex-wrap gap-2">
-
-          {CATEGORIES.map(
-            (category) => {
-
-              const isActive =
-                activeCategory ===
-                category;
-
-              return (
-                <button
-                  key={category}
-                  type="button"
-                  onClick={() =>
-                    setActiveCategory(
-                      category
-                    )
-                  }
-                  className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                    isActive
-                      ? "border-[#2F6B4F] bg-[#2F6B4F] text-white"
-                      : "border-gray-200 bg-white text-gray-600 hover:border-[#2F6B4F]/40 hover:text-[#0b2418]"
-                  }`}
-                >
-                  {category}
-                </button>
-              );
-            }
-          )}
-
-        </div>
-      )}
-
-      {/* =================================================
-          PAGINATION BUTTONS
-          ONLY LARGE VERSION
-      ================================================= */}
-
-      {variant === "large" &&
-        totalPages > 1 && (
-          <div className="mb-6 flex justify-end gap-2">
-
-            <button
-              type="button"
-              onClick={
-                goToPreviousPage
-              }
-              disabled={
-                currentPage === 0
-              }
-              aria-label="Previous page"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white transition hover:bg-[#2F6B4F] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <ArrowLeft size={18} />
-            </button>
-
-            <button
-              type="button"
-              onClick={
-                goToNextPage
-              }
-              disabled={
-                currentPage ===
-                totalPages - 1
-              }
-              aria-label="Next page"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white transition hover:bg-[#2F6B4F] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <ArrowRight size={18} />
-            </button>
-
           </div>
-        )}
-
-      {/* =================================================
-          BLOG GRID
-      ================================================= */}
-
-      {visibleBlogs.length === 0 ? (
-        <div className="py-10 text-center">
-
-          <p className="text-gray-500">
-            No blog posts found in this
-            category.
-          </p>
-
         </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      </section>
+    );
+  }
 
-          {visibleBlogs.map(
-            (blog) => (
-              <div
-                key={blog.id}
-                className={
-                  variant === "large"
-                    ? "flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-                    : "flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
+  /* =========================================================
+     COMPACT VERSION
+  ========================================================= */
+
+  if (variant === "compact") {
+    if (!compactBlogs.length) {
+      return (
+        <section className="bg-white px-6 py-20">
+          <div className="mx-auto max-w-7xl text-center">
+            <p className="font-montserrat text-sm text-gray-500">
+              No stories published yet.
+            </p>
+          </div>
+        </section>
+      );
+    }
+
+    const activeBlog =
+      compactBlogs[compactIndex % compactBlogs.length];
+
+    const isImageLeft = compactIndex % 2 === 0;
+
+    return (
+      <section className="relative overflow-hidden bg-white px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+        {/* =================================================
+            TOP CONTENT
+        ================================================== */}
+
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-14 text-center">
+            <p className="mb-3 font-montserrat text-[10px] font-semibold uppercase tracking-[0.35em] text-[#b83b6b]">
+              From the Himalayas
+            </p>
+
+            <h2 className="font-playfair text-4xl font-medium leading-tight text-[#171310] sm:text-5xl lg:text-6xl">
+              Stories, Guides{" "}
+              <span className="font-greatvibes text-[#b83b6b]">
+                & Inspiration
+              </span>
+            </h2>
+
+            <div className="mx-auto mt-5 h-[1px] w-16 bg-[#b83b6b]" />
+          </div>
+
+          {/* =================================================
+              BLOG SLIDER
+          ================================================== */}
+
+          <div className="relative">
+            {/* LEFT BUTTON */}
+
+            <button
+              type="button"
+              onClick={() => changeCompactBlog("previous")}
+              aria-label="Previous blog"
+              className="
+                absolute
+                left-0
+                top-1/2
+                z-30
+                flex
+                h-11
+                w-11
+                -translate-x-1/2
+                -translate-y-1/2
+                items-center
+                justify-center
+                rounded-full
+                border
+                border-[#171310]
+                bg-white
+                text-[#171310]
+                shadow-md
+                transition-all
+                duration-300
+                hover:bg-[#171310]
+                hover:text-white
+                sm:h-12
+                sm:w-12
+              "
+            >
+              <ArrowLeft size={18} strokeWidth={1.5} />
+            </button>
+
+            {/* RIGHT BUTTON */}
+
+            <button
+              type="button"
+              onClick={() => changeCompactBlog("next")}
+              aria-label="Next blog"
+              className="
+                absolute
+                right-0
+                top-1/2
+                z-30
+                flex
+                h-11
+                w-11
+                translate-x-1/2
+                -translate-y-1/2
+                items-center
+                justify-center
+                rounded-full
+                border
+                border-[#171310]
+                bg-white
+                text-[#171310]
+                shadow-md
+                transition-all
+                duration-300
+                hover:bg-[#171310]
+                hover:text-white
+                sm:h-12
+                sm:w-12
+              "
+            >
+              <ArrowRight size={18} strokeWidth={1.5} />
+            </button>
+
+            {/* =================================================
+                MAIN BLOG
+            ================================================== */}
+
+            <article
+              className={`
+                grid
+                overflow-hidden
+                border
+                border-[#e7e2dc]
+                bg-[#FBF9F4]
+                transition-all
+                duration-500
+                ease-in-out
+                ${
+                  isChanging
+                    ? "translate-y-3 opacity-0"
+                    : "translate-y-0 opacity-100"
                 }
-              >
+                lg:grid-cols-2
+              `}
+            >
+              {/* IMAGE */}
 
-                {/* =================================================
-                    IMAGE
-                ================================================= */}
-
-                <div
-                  className={
-                    variant === "large"
-                      ? "h-48 w-full overflow-hidden"
-                      : "h-40 w-full overflow-hidden"
+              <div
+                className={`
+                  relative
+                  min-h-[320px]
+                  overflow-hidden
+                  sm:min-h-[400px]
+                  lg:min-h-[520px]
+                  ${
+                    isImageLeft
+                      ? "lg:order-1"
+                      : "lg:order-2"
                   }
-                >
+                `}
+              >
+                <img
+                  src={getImageUrl(activeBlog)}
+                  alt={activeBlog?.title || "Blog"}
+                  className="
+                    absolute
+                    inset-0
+                    h-full
+                    w-full
+                    object-cover
+                    transition-transform
+                    duration-700
+                    hover:scale-105
+                  "
+                />
 
-                  <img
-                    src={`${IMAGE_BASE_URL}${blog.image}`}
-                    alt={
-                      blog.title ||
-                      "Gateway Treks blog"
-                    }
-                    className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
-                    onError={(event) => {
-                      event.currentTarget.onerror =
-                        null;
+                {/* Image number */}
 
-                      event.currentTarget.src =
-                        "/images/MOUNT.jpg";
-                    }}
-                  />
+                <div className="absolute left-5 top-5 flex h-10 w-10 items-center justify-center border border-white/70 bg-black/30 backdrop-blur-sm">
+                  <span className="font-playfair text-sm text-white">
+                    {String(compactIndex + 1).padStart(2, "0")}
+                  </span>
+                </div>
+              </div>
 
+              {/* CONTENT */}
+
+              <div
+                className={`
+                  flex
+                  flex-col
+                  justify-center
+                  p-8
+                  sm:p-10
+                  lg:p-14
+                  xl:p-16
+                  ${
+                    isImageLeft
+                      ? "lg:order-2"
+                      : "lg:order-1"
+                  }
+                `}
+              >
+                {/* Category */}
+
+                <div className="mb-5 flex items-center gap-3">
+                  <span className="font-montserrat text-[10px] font-semibold uppercase tracking-[0.2em] text-[#b83b6b]">
+                    {getCategory(activeBlog)}
+                  </span>
+
+                  <span className="h-[1px] w-8 bg-[#b83b6b]" />
                 </div>
 
-                {/* =================================================
-                    CONTENT
-                ================================================= */}
+                {/* Date */}
 
-                <div className="flex flex-1 flex-col p-4">
+                <div className="mb-5 flex items-center gap-2 text-[#777]">
+                  <CalendarDays size={14} strokeWidth={1.5} />
 
-                  {/* =================================================
-                      CATEGORY + DATE
-                  ================================================= */}
+                  <span className="font-montserrat text-[11px] uppercase tracking-[0.12em]">
+                    {formatDate(activeBlog?.published_at)}
+                  </span>
+                </div>
 
-                  <div className="mb-2 flex items-center justify-between gap-2">
+                {/* Title */}
 
-                    <span className="rounded-full bg-[#e8f0eb] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#2F6B4F]">
-                      {getCategory(blog)}
-                    </span>
+                <h3 className="max-w-2xl font-playfair text-3xl font-medium leading-[1.15] text-[#171310] sm:text-4xl lg:text-5xl">
+                  {activeBlog?.title}
+                </h3>
 
-                    <span className="text-xs font-medium text-gray-400">
-                      {formatDate(
-                        blog.published_at
-                      )}
-                    </span>
+                {/* Description */}
 
-                  </div>
+                <p className="mt-6 max-w-xl font-montserrat text-sm leading-7 text-[#666] sm:text-[15px]">
+                  {activeBlog?.short_description
+                    ? normalizeText(
+                        activeBlog.short_description
+                      )
+                    : "Discover stories, travel guides and inspiration from the Himalayas."}
+                </p>
 
-                  {/* =================================================
-                      TITLE
-                  ================================================= */}
+                {/* Read More */}
 
-                  <h3
-                    className={
-                      variant === "large"
-                        ? "mb-2 line-clamp-2 text-lg font-bold leading-6 text-[#0b2418]"
-                        : "mb-2 line-clamp-2 text-base font-bold leading-5 text-[#0b2418]"
-                    }
-                  >
-                    {blog.title}
-                  </h3>
-
-                  {/* =================================================
-                      DESCRIPTION
-                  ================================================= */}
-
-                  <p
-                    className={
-                      variant === "large"
-                        ? "mb-4 line-clamp-3 flex-1 text-sm leading-6 text-gray-500"
-                        : "mb-4 line-clamp-2 flex-1 text-xs leading-5 text-gray-500"
-                    }
-                  >
-                    {blog.short_description}
-                  </p>
-
-                  {/* =================================================
-                      READ MORE
-                  ================================================= */}
-
+                <div className="mt-8">
                   <button
                     type="button"
                     onClick={() =>
-                      handleBlogClick(
-                        blog
-                      )
+                      handleBlogClick(activeBlog)
                     }
-                    className="flex items-center gap-1 self-start text-sm font-semibold text-[#0b2418] transition hover:text-[#2F6B4F]"
+                    className="
+                      group
+                      inline-flex
+                      items-center
+                      gap-3
+                      border
+                      border-[#171310]
+                      bg-[#171310]
+                      px-5
+                      py-3
+                      font-montserrat
+                      text-[10px]
+                      font-semibold
+                      uppercase
+                      tracking-[0.14em]
+                      text-white
+                      transition-all
+                      duration-300
+                      hover:bg-white
+                      hover:text-[#171310]
+                    "
                   >
                     Read More
 
                     <ArrowRight
-                      size={16}
+                      size={14}
+                      strokeWidth={1.5}
+                      className="
+                        transition-transform
+                        duration-300
+                        group-hover:translate-x-1
+                      "
                     />
                   </button>
-
                 </div>
 
+                {/* Slider indicators */}
+
+                <div className="mt-10 flex items-center gap-2">
+                  {compactBlogs.map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => {
+                        if (index === compactIndex) return;
+
+                        setIsChanging(true);
+
+                        setTimeout(() => {
+                          setCompactIndex(index);
+
+                          setTimeout(() => {
+                            setIsChanging(false);
+                          }, 50);
+                        }, 220);
+                      }}
+                      aria-label={`Show blog ${index + 1}`}
+                      className={`
+                        h-[2px]
+                        transition-all
+                        duration-300
+                        ${
+                          index === compactIndex
+                            ? "w-10 bg-[#b83b6b]"
+                            : "w-5 bg-[#cfc9c2]"
+                        }
+                      `}
+                    />
+                  ))}
+                </div>
               </div>
-            )
-          )}
+            </article>
+          </div>
 
+          {/* =================================================
+              BOTTOM DECORATIVE TEXT
+          ================================================== */}
+
+          <div className="mt-12 flex items-center justify-center gap-4">
+            <span className="h-[1px] w-10 bg-[#d8d1ca]" />
+
+            <p className="font-greatvibes text-2xl text-[#b83b6b]">
+              Travel. Discover. Remember.
+            </p>
+
+            <span className="h-[1px] w-10 bg-[#d8d1ca]" />
+          </div>
         </div>
-      )}
+      </section>
+    );
+  }
 
-      {/* =================================================
-          PAGE INDICATOR
-          ONLY LARGE VERSION
-      ================================================= */}
+  /* =========================================================
+     LARGE VERSION
+  ========================================================= */
 
-      {variant === "large" &&
-        totalPages > 1 && (
-          <div className="mt-6 text-center text-sm text-gray-500">
-            Page {currentPage + 1} of{" "}
-            {totalPages}
+  return (
+    <section className="bg-white px-5 py-20 sm:px-8 lg:px-12">
+      <div className="mx-auto max-w-7xl">
+        {/* HEADER */}
+
+        <div className="mb-12">
+          <p className="mb-3 font-montserrat text-[10px] font-semibold uppercase tracking-[0.3em] text-[#b83b6b]">
+            From the Himalayas
+          </p>
+
+          <h2 className="font-playfair text-4xl text-[#171310] sm:text-5xl">
+            Stories, Guides{" "}
+            <span className="font-greatvibes text-[#b83b6b]">
+              & Inspiration
+            </span>
+          </h2>
+        </div>
+
+        {/* SEARCH */}
+
+        <div className="mb-8">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) =>
+              setSearchTerm(e.target.value)
+            }
+            placeholder="Search stories..."
+            className="
+              w-full
+              border
+              border-[#ddd7d0]
+              bg-[#FBF9F4]
+              px-5
+              py-3
+              font-montserrat
+              text-sm
+              text-[#171310]
+              outline-none
+              transition
+              focus:border-[#b83b6b]
+            "
+          />
+        </div>
+
+        {/* CATEGORIES */}
+
+        <div className="mb-12 flex flex-wrap gap-2">
+          {categories.map((category) => (
+            <button
+              key={category}
+              type="button"
+              onClick={() =>
+                setSelectedCategory(category)
+              }
+              className={`
+                border
+                px-4
+                py-2
+                font-montserrat
+                text-[10px]
+                font-semibold
+                uppercase
+                tracking-[0.08em]
+                transition-all
+                duration-300
+                ${
+                  selectedCategory === category
+                    ? "border-[#171310] bg-[#171310] text-white"
+                    : "border-[#ddd7d0] bg-white text-[#555] hover:border-[#171310] hover:bg-[#171310] hover:text-white"
+                }
+              `}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* BLOG GRID */}
+
+        {paginatedBlogs.length === 0 ? (
+          <div className="py-20 text-center">
+            <p className="font-montserrat text-sm text-gray-500">
+              No stories found.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-8 md:grid-cols-2">
+            {paginatedBlogs.map((blog) => (
+              <article
+                key={blog.id}
+                className="
+                  overflow-hidden
+                  border
+                  border-[#e7e2dc]
+                  bg-[#FBF9F4]
+                  transition-all
+                  duration-500
+                  hover:-translate-y-1
+                  hover:shadow-xl
+                "
+              >
+                <div className="aspect-[16/10] overflow-hidden">
+                  <img
+                    src={getImageUrl(blog)}
+                    alt={blog?.title || "Blog"}
+                    className="
+                      h-full
+                      w-full
+                      object-cover
+                      transition-transform
+                      duration-700
+                      hover:scale-105
+                    "
+                  />
+                </div>
+
+                <div className="p-7">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <span className="font-montserrat text-[10px] font-semibold uppercase tracking-[0.15em] text-[#b83b6b]">
+                      {getCategory(blog)}
+                    </span>
+
+                    <span className="font-montserrat text-[10px] text-gray-500">
+                      {formatDate(blog?.published_at)}
+                    </span>
+                  </div>
+
+                  <h3 className="font-playfair text-2xl leading-tight text-[#171310]">
+                    {blog?.title}
+                  </h3>
+
+                  <p className="mt-4 line-clamp-3 font-montserrat text-sm leading-6 text-[#666]">
+                    {blog?.short_description
+                      ? normalizeText(
+                          blog.short_description
+                        )
+                      : "Discover stories, travel guides and inspiration from Nepal."}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleBlogClick(blog)
+                    }
+                    className="
+                      group
+                      mt-6
+                      inline-flex
+                      items-center
+                      gap-2
+                      border
+                      border-[#171310]
+                      bg-[#171310]
+                      px-4
+                      py-2.5
+                      font-montserrat
+                      text-[10px]
+                      font-semibold
+                      uppercase
+                      tracking-[0.1em]
+                      text-white
+                      transition-all
+                      duration-300
+                      hover:bg-white
+                      hover:text-[#171310]
+                    "
+                  >
+                    Read More
+
+                    <ArrowRight
+                      size={13}
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    />
+                  </button>
+                </div>
+              </article>
+            ))}
           </div>
         )}
 
+        {/* PAGINATION */}
+
+        {totalPages > 1 && (
+          <div className="mt-12 flex items-center justify-center gap-2">
+            <button
+              type="button"
+              disabled={currentPage === 1}
+              onClick={() =>
+                setCurrentPage((page) =>
+                  Math.max(1, page - 1)
+                )
+              }
+              className="
+                flex
+                h-10
+                w-10
+                items-center
+                justify-center
+                border
+                border-[#ddd7d0]
+                bg-white
+                text-[#171310]
+                transition-all
+                duration-300
+                hover:bg-[#171310]
+                hover:text-white
+                disabled:cursor-not-allowed
+                disabled:opacity-30
+              "
+            >
+              <ArrowLeft size={15} />
+            </button>
+
+            <span className="px-4 font-montserrat text-xs text-gray-500">
+              {currentPage} / {totalPages}
+            </span>
+
+            <button
+              type="button"
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setCurrentPage((page) =>
+                  Math.min(totalPages, page + 1)
+                )
+              }
+              className="
+                flex
+                h-10
+                w-10
+                items-center
+                justify-center
+                border
+                border-[#ddd7d0]
+                bg-white
+                text-[#171310]
+                transition-all
+                duration-300
+                hover:bg-[#171310]
+                hover:text-white
+                disabled:cursor-not-allowed
+                disabled:opacity-30
+              "
+            >
+              <ArrowRight size={15} />
+            </button>
+          </div>
+        )}
+      </div>
     </section>
   );
 };

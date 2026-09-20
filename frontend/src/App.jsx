@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home.jsx";
+import Home from "./pages/home.jsx";
 import Everest from "./pages/Everest.jsx";
 import Blogs from "./pages/Blogs.jsx";
 import MainLayout from "./layout/MainLayout.jsx";

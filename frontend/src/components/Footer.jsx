@@ -1,302 +1,418 @@
+import React, { useState } from "react";
 import {
   MapPin,
   Mail,
   Phone,
   MessageCircle,
 } from "lucide-react";
-import { useState } from "react";
 import Whatsapp from "../sections/home/Whatsapp";
 
 const Footer = () => {
   const [showWhatsapp, setShowWhatsapp] = useState(false);
+
   return (
-    <footer className="bg-[#08261b] text-white">
+    <footer className="relative overflow-hidden bg-[#2F2F2F] text-[#ADADAD]">
 
-      {/* ================= MAIN FOOTER ================= */}
-      <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+      {/* =====================================================
+          DARK OVERLAY
+      ====================================================== */}
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-[#2F2F2F]/75" />
 
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.1fr_1.5fr_0.8fr]">
+      {/* =====================================================
+          MAIN FOOTER
+      ====================================================== */}
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-10 lg:py-20">
 
-          {/* ================= COMPANY INFO ================= */}
-          <div>
+        <div className="grid grid-cols-1 gap-14 md:grid-cols-2 lg:grid-cols-12 lg:gap-10">
 
-            {/* Logo */}
+          {/* =================================================
+              BRAND
+          ================================================== */}
+          <div className="lg:col-span-4">
+
+            {/* Logo + Brand */}
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-lg font-bold text-[#08261b]">
-                G
+
+              <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#ADADAD]/30">
+
+                <img
+                  src="/TrekLogo.png"
+                  alt="Gateway Adventure"
+                  className="h-10 w-10 object-contain"
+                />
+
               </div>
 
-              <h1 className="text-xl font-bold text-white">
-                GatewayAdventure
-              </h1>
+              <div>
+
+                <h2 className="font-playfair text-2xl tracking-wide text-white">
+                  Gateway Adventure
+                </h2>
+
+                <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-[#ADADAD]">
+                  Explore Beyond
+                </p>
+
+              </div>
+
             </div>
 
+
             {/* Description */}
-            <p className="mt-5 max-w-sm text-sm leading-6 text-white/70">
-              A locally owned Nepal trekking company crafting safe,
-              personal and responsible Himalayan journeys since 2021.
+            <p className="mt-7 max-w-md text-sm leading-7 text-[#ADADAD]">
+              Discover Nepal through unforgettable journeys, breathtaking
+              landscapes, rich culture, and experiences designed to stay with
+              you forever.
             </p>
 
-            {/* Social Icons */}
-            <div className="mt-5 flex gap-3">
 
+            {/* Social Links */}
+            <div className="mt-8 flex items-center gap-3">
+
+              {/* Instagram */}
               <a
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-[#86efac] transition hover:bg-[#86efac] hover:text-[#08261b]"
+                aria-label="Instagram"
+                className="
+                  flex h-10 w-10 items-center justify-center
+                  rounded-full
+                  border border-[#ADADAD]/30
+                  text-xs font-semibold text-[#ADADAD]
+                  transition-all duration-300
+                  hover:border-white
+                  hover:bg-white
+                  hover:text-[#2F2F2F]
+                "
               >
                 IG
               </a>
 
+
+              {/* Facebook */}
               <a
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-sm font-bold text-[#86efac] transition hover:bg-[#86efac] hover:text-[#08261b]"
+                aria-label="Facebook"
+                className="
+                  flex h-10 w-10 items-center justify-center
+                  rounded-full
+                  border border-[#ADADAD]/30
+                  text-sm font-semibold text-[#ADADAD]
+                  transition-all duration-300
+                  hover:border-white
+                  hover:bg-white
+                  hover:text-[#2F2F2F]
+                "
               >
                 f
               </a>
 
+
+              {/* YouTube */}
               <a
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-sm text-[#86efac] transition hover:bg-[#86efac] hover:text-[#08261b]"
+                aria-label="YouTube"
+                className="
+                  flex h-10 w-10 items-center justify-center
+                  rounded-full
+                  border border-[#ADADAD]/30
+                  text-xs font-semibold text-[#ADADAD]
+                  transition-all duration-300
+                  hover:border-white
+                  hover:bg-white
+                  hover:text-[#2F2F2F]
+                "
               >
-                ▶
+                YT
               </a>
 
+
+              {/* X */}
               <a
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-sm font-bold text-[#86efac] transition hover:bg-[#86efac] hover:text-[#08261b]"
+                aria-label="X"
+                className="
+                  flex h-10 w-10 items-center justify-center
+                  rounded-full
+                  border border-[#ADADAD]/30
+                  text-sm font-semibold text-[#ADADAD]
+                  transition-all duration-300
+                  hover:border-white
+                  hover:bg-white
+                  hover:text-[#2F2F2F]
+                "
               >
                 X
               </a>
 
             </div>
 
-            {/* Certifications */}
-            <div className="mt-6 grid grid-cols-2 gap-2">
-
-              <div className="rounded-md border border-white/10 bg-white/5 p-2 text-center">
-                <p className="text-[11px] font-bold text-white">
-                  Govt. Licensed
-                </p>
-              </div>
-
-              <div className="rounded-md border border-white/10 bg-white/5 p-2 text-center">
-                <p className="text-[11px] font-bold text-white">
-                  NMA Member
-                </p>
-              </div>
-
-              <div className="rounded-md border border-white/10 bg-white/5 p-2 text-center">
-                <p className="text-[11px] font-bold text-white">
-                  TAN Member
-                </p>
-              </div>
-
-              <div className="rounded-md border border-white/10 bg-white/5 p-2 text-center">
-                <p className="text-[11px] font-bold text-white">
-                  Tripadvisor 4.9/5
-                </p>
-              </div>
-
-            </div>
-
           </div>
 
 
-          {/* ================= LINKS ================= */}
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+          {/* =================================================
+              COMPANY
+          ================================================== */}
+          <div className="lg:col-span-2">
 
-            {/* COMPANY */}
-            <div>
-              <h3 className="mb-5 text-sm font-bold tracking-widest text-white">
-                COMPANY
-              </h3>
-
-              <ul className="space-y-3 text-sm text-white/70">
-
-                <li>
-                  <a href="/" className="transition hover:text-[#86efac]">
-                    About Us
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Our Team
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Responsible Tourism
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Contact
-                  </a>
-                </li>
-
-              </ul>
-            </div>
-
-
-            {/* EXPLORE */}
-            <div>
-              <h3 className="mb-5 text-sm font-bold tracking-widest text-white">
-                EXPLORE
-              </h3>
-
-              <ul className="space-y-3 text-sm text-white/70">
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Everest
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Annapurna
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Langtang
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Mustang
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Manaslu
-                  </a>
-                </li>
-
-              </ul>
-            </div>
-
-
-            {/* RESOURCES */}
-            <div>
-              <h3 className="mb-5 text-sm font-bold tracking-widest text-white">
-                RESOURCES
-              </h3>
-
-              <ul className="space-y-3 text-sm text-white/70">
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Trekking Guide
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Travel Information
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    Blog
-                  </a>
-                </li>
-
-                <li>
-                  <a href="#" className="transition hover:text-[#86efac]">
-                    FAQs
-                  </a>
-                </li>
-
-              </ul>
-            </div>
-
-          </div>
-
-
-          {/* ================= CONTACT ================= */}
-          <div className="md:ml-auto md:w-full md:max-w-[240px]">
-
-            <h3 className="mb-5 text-sm font-bold tracking-widest text-white">
-              CONTACT
+            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+              Company
             </h3>
 
-            <div className="space-y-6">
+            <ul className="space-y-4 text-sm">
+
+              <li>
+                <a
+                  href="/"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Home
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="/about-us"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  About Us
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="/blog"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Our Blog
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="#"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Contact
+                </a>
+              </li>
+
+            </ul>
+
+          </div>
+
+
+          {/* =================================================
+              EXPLORE
+          ================================================== */}
+          <div className="lg:col-span-2">
+
+            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+              Explore
+            </h3>
+
+            <ul className="space-y-4 text-sm">
+
+              <li>
+                <a
+                  href="/packages"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Our Trips
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="/destinations"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Destinations
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="/activities"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Activities
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="#"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Trekking
+                </a>
+              </li>
+
+            </ul>
+
+          </div>
+
+
+          {/* =================================================
+              RESOURCES
+          ================================================== */}
+          <div className="lg:col-span-2">
+
+            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+              Resources
+            </h3>
+
+            <ul className="space-y-4 text-sm">
+
+              <li>
+                <a
+                  href="#"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Travel Guide
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="#"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  FAQ
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="#"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Terms & Conditions
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="#"
+                  className="transition-colors duration-300 hover:text-white"
+                >
+                  Privacy Policy
+                </a>
+              </li>
+
+            </ul>
+
+          </div>
+
+
+          {/* =================================================
+              CONTACT
+          ================================================== */}
+          <div className="lg:col-span-2">
+
+            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+              Contact
+            </h3>
+
+            <div className="space-y-5">
 
               {/* Location */}
               <div className="flex items-start gap-3">
 
                 <MapPin
-                  size={19}
-                  className="mt-1 shrink-0 text-[#86efac]"
+                  size={18}
+                  strokeWidth={1.5}
+                  className="mt-0.5 shrink-0 text-[#ADADAD]"
                 />
 
-                <div>
-                  <p className="text-xs font-bold text-white/50">
-                    Location
-                  </p>
-
-                  <p className="mt-1 text-sm text-white/80">
-                    Thamel, Kathmandu, Nepal
-                  </p>
-                </div>
+                <p className="text-sm leading-6">
+                  Kathmandu,
+                  <br />
+                  Nepal
+                </p>
 
               </div>
 
 
               {/* Email */}
-              <div className="flex items-start gap-3">
+              <a
+                href="mailto:gateway@gmail.com"
+                className="
+                  flex items-center gap-3
+                  text-sm
+                  transition-colors duration-300
+                  hover:text-white
+                "
+              >
 
                 <Mail
-                  size={19}
-                  className="mt-1 shrink-0 text-[#86efac]"
+                  size={18}
+                  strokeWidth={1.5}
+                  className="shrink-0"
                 />
 
-                <div>
-                  <p className="text-xs font-bold text-white/50">
-                    Email
-                  </p>
+                <span>
+                  gateway@gmail.com
+                </span>
 
-                  <p className="mt-1 text-sm text-white/80">
-                    gateway@gmail.com
-                  </p>
-                </div>
-
-              </div>
+              </a>
 
 
               {/* Phone */}
-              <div className="flex items-start gap-3">
+              <a
+                href="tel:+9779800000000"
+                className="
+                  flex items-center gap-3
+                  text-sm
+                  transition-colors duration-300
+                  hover:text-white
+                "
+              >
 
                 <Phone
-                  size={19}
-                  className="mt-1 shrink-0 text-[#86efac]"
+                  size={18}
+                  strokeWidth={1.5}
+                  className="shrink-0"
                 />
 
-                <div>
-                  <p className="text-xs font-bold text-white/50">
-                    Phone
-                  </p>
+                <span>
+                  +977 9800000000
+                </span>
 
-                  <p className="mt-1 text-sm text-white/80">
-                    +977 9800000000
-                  </p>
-                </div>
-
-              </div>
+              </a>
 
             </div>
 
 
-            {/* Chat Button */}
-            <button className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-[#86efac] px-5 py-3 text-sm font-bold text-[#08261b] transition hover:bg-white"  onClick={() => setShowWhatsapp(true)}>
+            {/* =================================================
+                CHAT WITH US
+            ================================================== */}
+            <button
+              type="button"
+              onClick={() => setShowWhatsapp(true)}
+              className="
+                mt-7
+                flex
+                w-full
+                items-center
+                justify-center
+                gap-2
+                rounded-full
+                border
+                border-[#ADADAD]/30
+                bg-transparent
+                px-5
+                py-3
+                text-sm
+                font-medium
+                text-[#ADADAD]
+                transition-all
+                duration-300
+                hover:border-white
+                hover:bg-white
+                hover:text-[#2F2F2F]
+              "
+            >
 
               <MessageCircle size={18} />
 
@@ -308,45 +424,82 @@ const Footer = () => {
 
         </div>
 
-      </div>
+
+        {/* =====================================================
+            DIVIDER
+        ====================================================== */}
+        <div className="my-14 h-px w-full bg-[#ADADAD]/15" />
 
 
-      {/* ================= BOTTOM FOOTER ================= */}
-      <div className="border-t border-white/10 bg-[#051a12]">
+        {/* =====================================================
+            FOOTER STATEMENT
+        ====================================================== */}
+        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
 
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-4 text-xs text-white/60 sm:flex-row lg:px-8">
+          <div>
 
-          <p>
-            © 2026 Sagarmatha Treks & Expeditions Pvt. Ltd.
-            All rights reserved.
-          </p>
+            <p className="font-playfair text-3xl leading-tight text-white sm:text-4xl">
+              Explore more.
+            </p>
 
-          <div className="flex gap-4">
-
-            <a
-              href="#"
-              className="transition hover:text-white"
-            >
-              Privacy Policy
-            </a>
-
-            <span>|</span>
-
-            <a
-              href="#"
-              className="transition hover:text-white"
-            >
-              Terms & Conditions
-            </a>
+            <p className="font-playfair text-3xl italic leading-tight text-[#ADADAD] sm:text-4xl">
+              Experience more.
+            </p>
 
           </div>
+
+
+          <p className="max-w-sm text-left text-xs leading-6 text-[#ADADAD] md:text-right">
+            Crafted for travelers who seek meaningful experiences,
+            unforgettable adventures, and the beauty of Nepal.
+          </p>
 
         </div>
 
       </div>
-       {showWhatsapp && (
+
+
+      {/* =====================================================
+          BOTTOM BAR
+      ====================================================== */}
+      <div className="relative z-10 border-t border-[#ADADAD]/10">
+
+        <div className="
+          mx-auto
+          flex
+          max-w-7xl
+          flex-col
+          items-center
+          justify-between
+          gap-3
+          px-6
+          py-5
+          text-xs
+          text-[#ADADAD]
+          sm:px-8
+          md:flex-row
+          lg:px-10
+        ">
+
+          <p>
+            © {new Date().getFullYear()} Gateway Adventure.
+            All rights reserved.
+          </p>
+
+          <p className="tracking-wide">
+            Made for the journey.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      {/* =====================================================
+          WHATSAPP MODAL
+      ====================================================== */}
+      {showWhatsapp && (
         <Whatsapp
-          
           onClose={() => setShowWhatsapp(false)}
         />
       )}

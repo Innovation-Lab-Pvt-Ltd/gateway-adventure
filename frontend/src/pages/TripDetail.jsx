@@ -219,6 +219,132 @@ const HtmlContent = ({ content, className = "trip-description" }) => {
 };
 
 /* =========================================================
+   ITINERARY SUMMARY TABLE (used in Overview)
+========================================================= */
+
+const ItinerarySummaryTable = ({
+  itineraries,
+  onViewFull,
+  showAltitude = false,
+}) => {
+  if (!Array.isArray(itineraries) || itineraries.length === 0) {
+    return null;
+  }
+
+  const hasValue = (v) => v !== null && v !== undefined && v !== "";
+
+  // Only show columns that have data in at least one day.
+  // The Altitude column is shown only when show_altitude = 1.
+  const columns = [
+    ...(showAltitude
+      ? [{ key: "altitude", label: "Altitude", get: (d) => d.altitude }]
+      : []),
+    {
+      key: "accommodation",
+      label: "Accommodation",
+      get: (d) => d.accomodation || d.accommodation,
+    },
+    { key: "meal", label: "Meal", get: (d) => d.meal },
+    {
+      key: "transportation",
+      label: "Transport",
+      get: (d) => d.transportation,
+    },
+  ].filter((col) => itineraries.some((d) => hasValue(col.get(d))));
+
+  return (
+    <section className="rounded-2xl bg-white p-6 shadow-sm md:p-10">
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+            At a glance
+          </p>
+
+          <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+            Itinerary Summary
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          onClick={onViewFull}
+          className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#0b2418] px-4 py-2.5 text-sm font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white"
+        >
+          Full Itinerary
+          <ArrowRight size={16} />
+        </button>
+      </div>
+
+      <div className="overflow-x-auto rounded-xl border border-gray-100">
+        <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+          <thead>
+            <tr className="bg-[#0b2418] text-white">
+              <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                Day
+              </th>
+
+              <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                Activity
+              </th>
+
+              {columns.map((col) => (
+                <th
+                  key={col.key}
+                  className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider"
+                >
+                  {col.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {itineraries.map((day, index) => {
+              const dayNumber = day.day_no || index + 1;
+
+              const dayTitle =
+                day.title ||
+                day.name ||
+                day.short_description ||
+                `Day ${dayNumber}`;
+
+              return (
+                <tr
+                  key={day.id || `${dayNumber}-${index}`}
+                  className={`border-t border-gray-100 align-top ${
+                    index % 2 === 0 ? "bg-white" : "bg-[#FBF9F4]"
+                  }`}
+                >
+                  <td className="whitespace-nowrap px-4 py-4">
+                    <span className="inline-flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-[#eaf6df] px-2 text-xs font-bold text-[#0b2418]">
+                      {dayNumber}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-4 font-semibold text-[#0b2418]">
+                    {dayTitle}
+                  </td>
+
+                  {columns.map((col) => {
+                    const value = col.get(day);
+
+                    return (
+                      <td key={col.key} className="px-4 py-4 text-gray-600">
+                        {hasValue(value) ? value : "—"}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+};
+
+/* =========================================================
    REVIEWS
 ========================================================= */
 
@@ -847,6 +973,12 @@ const TripDetail = () => {
   const discountMessage = trip.discount_msg || trip.discount_message || "";
 
   const featuredVideo = trip.featured_video_url || "";
+
+  // Altitude column in the itinerary table is shown only when show_altitude = 1
+  const showAltitude =
+    trip.show_altitude === true ||
+    trip.show_altitude === 1 ||
+    trip.show_altitude === "1";
 
   /* =====================================================
      HERO IMAGE
@@ -1533,6 +1665,14 @@ const TripDetail = () => {
                   )}
                 </section>
 
+                {/* ITINERARY SUMMARY TABLE */}
+
+                <ItinerarySummaryTable
+                  itineraries={itineraries}
+                  showAltitude={showAltitude}
+                  onViewFull={() => setActiveTab("itinerary")}
+                />
+
                 {complimentary && (
                   <section className="rounded-2xl border border-[#9be564]/40 bg-[#9be564]/10 p-6 md:p-8">
                     <div className="mb-4 flex items-center gap-3">
@@ -2044,7 +2184,7 @@ const TripDetail = () => {
                     key={pkg.id || index}
                     onClick={() => {
                       if (pkg.slug) {
-                        navigate(`/package/${pkg.slug}`);
+                        navigate(`/trips/${pkg.slug}`);
                       }
                     }}
                     className="group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"

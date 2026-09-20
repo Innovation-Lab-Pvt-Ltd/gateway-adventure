@@ -1,25 +1,19 @@
-
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
   // =========================================================
-  // TRIP DETAIL PAGE
+  // PACKAGE DETAIL PAGE
   // =========================================================
-  // Your TripDetail navigation uses:
-  // /package/${pkg.slug}
-  //
-  // Therefore, detect /package/ here.
   const isPackageDetail =
     location.pathname.startsWith("/package/");
 
   // =========================================================
   // SCROLL DETECTION
   // =========================================================
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 60);
@@ -33,183 +27,295 @@ const Navbar = () => {
   }, []);
 
   // =========================================================
-  // NAVBAR APPEARANCE
+  // NAVBAR STATE
   // =========================================================
   //
-  // TripDetail:
-  //    Always white
+  // Package Detail:
+  // Always white
   //
   // Other pages:
-  //    Top of page = transparent
-  //    After scrolling = white
-
+  // Top = transparent
+  // Scroll = white
+  //
   const navbarSolid = isPackageDetail || scrolled;
+
+  // =========================================================
+  // NAVIGATION LINK STYLE
+  // =========================================================
+  const navLinkStyle = `
+    relative
+    font-montserrat
+    text-sm
+    font-medium
+    tracking-wide
+    transition-colors
+    duration-300
+
+    after:absolute
+    after:-bottom-1
+    after:left-0
+    after:h-[1px]
+    after:w-full
+    after:origin-left
+    after:scale-x-0
+    after:bg-pink-500
+    after:transition-transform
+    after:duration-300
+    hover:after:scale-x-100
+  `;
 
   return (
     <nav
-      className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 ${
-        navbarSolid
-          ? "bg-white shadow-md"
-          : "bg-transparent"
-      }`}
+      className={`
+        fixed
+        left-0
+        top-0
+        z-50
+        w-full
+        transition-all
+        duration-300
+        ${
+          navbarSolid
+            ? "bg-white shadow-md"
+            : "bg-transparent"
+        }
+      `}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+      <div
+        className="
+          mx-auto
+          flex
+          max-w-7xl
+          items-center
+          justify-between
+          px-6
+          py-4
+          lg:px-8
+        "
+      >
 
         {/* =====================================================
             LOGO
         ===================================================== */}
 
-        <a
-          href="/"
+        <Link
+          to="/"
           className="flex items-center gap-3"
         >
-          <div
-            className={`flex h-10 w-10 items-center justify-center rounded-xl text-lg font-bold ${
-              navbarSolid
-                ? "bg-[#0b2418] text-[#9be564]"
-                : "bg-[#9be564] text-[#0b2418]"
-            }`}
-          >
-            G
-          </div>
+          {/* Logo Image */}
+
+          <img
+            src="/TrekLogo.png"
+            alt="Gateway Adventure"
+            className="h-10 w-10 object-contain"
+          />
+
+          {/* Logo Text */}
 
           <div>
             <h1
-              className={`text-xl font-bold leading-none ${
-                navbarSolid
-                  ? "text-[#0b2418]"
-                  : "text-white"
-              }`}
+              className={`
+                font-montserrat
+                text-xl
+                font-semibold
+                leading-none
+                transition-colors
+                duration-300
+                ${
+                  navbarSolid
+                    ? "text-[#0b2418]"
+                    : "text-white"
+                }
+              `}
             >
               GatewayAdventure
             </h1>
 
             <p
-              className={`mt-1 text-[9px] uppercase tracking-[0.2em] ${
-                navbarSolid
-                  ? "text-[#2F6B4F]"
-                  : "text-white/70"
-              }`}
+              className={`
+                mt-1
+                font-montserrat
+                text-[9px]
+                uppercase
+                tracking-[0.2em]
+                transition-colors
+                duration-300
+                ${
+                  navbarSolid
+                    ? "text-[#2F6B4F]"
+                    : "text-white/70"
+                }
+              `}
             >
               Explore Nepal
             </p>
           </div>
-        </a>
+        </Link>
 
         {/* =====================================================
             DESKTOP NAVIGATION
         ===================================================== */}
 
-        <div
-          className={`hidden items-center gap-1 rounded-full px-2 py-2 md:flex ${
-            navbarSolid
-              ? "bg-gray-100"
-              : "bg-black/10 backdrop-blur-sm"
-          }`}
-        >
+        <div className="hidden items-center gap-8 md:flex">
+
           {/* HOME */}
 
-          <a
-            href="/"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              navbarSolid
-                ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"
-                : "text-white hover:bg-white/20"
-            }`}
+          <Link
+            to="/"
+            className={`
+              ${navLinkStyle}
+              ${
+                navbarSolid
+                  ? "text-[#0b2418]"
+                  : "text-white"
+              }
+            `}
           >
             Home
-          </a>
+          </Link>
 
-          {/* TREKKING & TOURS */}
+          {/* ACTIVITY */}
 
-          <a
-            href="#trekking&tours"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              navbarSolid
-                ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"
-                : "text-white hover:bg-white/20"
-            }`}
+          <Link
+            to="/activity"
+            className={`
+              ${navLinkStyle}
+              ${
+                navbarSolid
+                  ? "text-[#0b2418]"
+                  : "text-white"
+              }
+            `}
           >
-            Trekking&Tours
-          </a>
+            Activity
+          </Link>
 
           {/* DESTINATIONS */}
 
-          <a
-            href="#destinations"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              navbarSolid
-                ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"
-                : "text-white hover:bg-white/20"
-            }`}
+          <Link
+            to="/destinations"
+            className={`
+              ${navLinkStyle}
+              ${
+                navbarSolid
+                  ? "text-[#0b2418]"
+                  : "text-white"
+              }
+            `}
           >
             Destinations
-          </a>
+          </Link>
 
           {/* ABOUT US */}
 
-          <a
-            href="/AboutUs"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              navbarSolid
-                ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"
-                : "text-white hover:bg-white/20"
-            }`}
+          <Link
+            to="/AboutUs"
+            className={`
+              ${navLinkStyle}
+              ${
+                navbarSolid
+                  ? "text-[#0b2418]"
+                  : "text-white"
+              }
+            `}
           >
             About Us
-          </a>
-           <a
-            href="/faq"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              navbarSolid
-                ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"
-                : "text-white hover:bg-white/20"
-            }`}
+          </Link>
+
+          {/* FAQ */}
+
+          <Link
+            to="/faq"
+            className={`
+              ${navLinkStyle}
+              ${
+                navbarSolid
+                  ? "text-[#0b2418]"
+                  : "text-white"
+              }
+            `}
           >
             FAQ's
-          </a>
+          </Link>
 
           {/* BLOGS */}
 
-          <a
-            href="/Blogs"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-              navbarSolid
-                ? "text-[#0b2418] hover:bg-white hover:text-[#4f8f3a]"
-                : "text-white hover:bg-white/20"
-            }`}
+          <Link
+            to="/Blogs"
+            className={`
+              ${navLinkStyle}
+              ${
+                navbarSolid
+                  ? "text-[#0b2418]"
+                  : "text-white"
+              }
+            `}
           >
             Blogs
-          </a>
+          </Link>
+
         </div>
 
         {/* =====================================================
-            CTA
+            RIGHT SIDE
         ===================================================== */}
 
         <div className="flex items-center gap-3">
 
-          <a
-            href="/ContactUs"
-            className={`hidden rounded-full px-5 py-2.5 text-sm font-semibold transition sm:block ${
-              navbarSolid
-                ? "bg-[#0b2418] text-[#9be564] hover:bg-[#4f8f3a] hover:text-white"
-                : "bg-[#9be564] text-[#0b2418] hover:bg-[#b5f27d]"
-            }`}
+          {/* CONTACT / ENQUIRE */}
+
+          <Link
+            to="/ContactUs"
+            className={`
+              hidden
+              px-5
+              py-2.5
+              font-montserrat
+              text-sm
+              font-semibold
+              transition
+              duration-300
+              sm:block
+
+              ${
+                navbarSolid
+                  ? `
+                    bg-[#0b2418]
+                    text-white
+                    hover:bg-pink-500
+                  `
+                  : `
+                    bg-pink-500
+                    text-white
+                    hover:bg-white
+                    hover:text-pink-500
+                  `
+              }
+            `}
           >
-            Contact Us
-          </a>
+            Enquire Now
+          </Link>
 
           {/* =================================================
               MOBILE BUTTON
           ================================================= */}
 
           <button
-            className={`flex h-10 w-10 items-center justify-center rounded-full md:hidden ${
-              navbarSolid
-                ? "bg-gray-100 text-[#0b2418]"
-                : "bg-black/20 text-white"
-            }`}
+            className={`
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              md:hidden
+              transition
+              duration-300
+              ${
+                navbarSolid
+                  ? "bg-gray-100 text-[#0b2418]"
+                  : "bg-black/20 text-white"
+              }
+            `}
           >
             ☰
           </button>
@@ -222,4 +328,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
