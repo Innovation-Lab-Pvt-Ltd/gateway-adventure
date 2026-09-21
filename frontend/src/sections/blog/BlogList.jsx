@@ -53,6 +53,8 @@ const BlogList = ({ variant = "compact" }) => {
      CATEGORY DETECTION
   ========================================================= */
 
+  // IMPORTANT:
+  // Export this function so MostReadBlog.jsx can import it.
   const getCategory = (blog) => {
     const title = normalizeText(blog?.title);
     const tags = normalizeText(blog?.tags);
@@ -263,8 +265,6 @@ const BlogList = ({ variant = "compact" }) => {
 
   /* =========================================================
      COMPACT BLOGS
-     
-     We keep only 3 blogs.
   ========================================================= */
 
   const compactBlogs = useMemo(() => {
@@ -391,10 +391,6 @@ const BlogList = ({ variant = "compact" }) => {
 
     return (
       <section className="relative overflow-hidden bg-white px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
-        {/* =================================================
-            TOP CONTENT
-        ================================================== */}
-
         <div className="mx-auto max-w-7xl">
           <div className="mb-14 text-center">
             <p className="mb-3 font-montserrat text-[10px] font-semibold uppercase tracking-[0.35em] text-[#b83b6b]">
@@ -411,13 +407,8 @@ const BlogList = ({ variant = "compact" }) => {
             <div className="mx-auto mt-5 h-[1px] w-16 bg-[#b83b6b]" />
           </div>
 
-          {/* =================================================
-              BLOG SLIDER
-          ================================================== */}
-
           <div className="relative">
             {/* LEFT BUTTON */}
-
             <button
               type="button"
               onClick={() => changeCompactBlog("previous")}
@@ -452,7 +443,6 @@ const BlogList = ({ variant = "compact" }) => {
             </button>
 
             {/* RIGHT BUTTON */}
-
             <button
               type="button"
               onClick={() => changeCompactBlog("next")}
@@ -486,10 +476,7 @@ const BlogList = ({ variant = "compact" }) => {
               <ArrowRight size={18} strokeWidth={1.5} />
             </button>
 
-            {/* =================================================
-                MAIN BLOG
-            ================================================== */}
-
+            {/* MAIN BLOG */}
             <article
               className={`
                 grid
@@ -509,7 +496,6 @@ const BlogList = ({ variant = "compact" }) => {
               `}
             >
               {/* IMAGE */}
-
               <div
                 className={`
                   relative
@@ -539,8 +525,6 @@ const BlogList = ({ variant = "compact" }) => {
                   "
                 />
 
-                {/* Image number */}
-
                 <div className="absolute left-5 top-5 flex h-10 w-10 items-center justify-center border border-white/70 bg-black/30 backdrop-blur-sm">
                   <span className="font-playfair text-sm text-white">
                     {String(compactIndex + 1).padStart(2, "0")}
@@ -549,7 +533,6 @@ const BlogList = ({ variant = "compact" }) => {
               </div>
 
               {/* CONTENT */}
-
               <div
                 className={`
                   flex
@@ -567,7 +550,6 @@ const BlogList = ({ variant = "compact" }) => {
                 `}
               >
                 {/* Category */}
-
                 <div className="mb-5 flex items-center gap-3">
                   <span className="font-montserrat text-[10px] font-semibold uppercase tracking-[0.2em] text-[#b83b6b]">
                     {getCategory(activeBlog)}
@@ -577,7 +559,6 @@ const BlogList = ({ variant = "compact" }) => {
                 </div>
 
                 {/* Date */}
-
                 <div className="mb-5 flex items-center gap-2 text-[#777]">
                   <CalendarDays size={14} strokeWidth={1.5} />
 
@@ -587,13 +568,11 @@ const BlogList = ({ variant = "compact" }) => {
                 </div>
 
                 {/* Title */}
-
                 <h3 className="max-w-2xl font-playfair text-3xl font-medium leading-[1.15] text-[#171310] sm:text-4xl lg:text-5xl">
                   {activeBlog?.title}
                 </h3>
 
                 {/* Description */}
-
                 <p className="mt-6 max-w-xl font-montserrat text-sm leading-7 text-[#666] sm:text-[15px]">
                   {activeBlog?.short_description
                     ? normalizeText(
@@ -603,7 +582,6 @@ const BlogList = ({ variant = "compact" }) => {
                 </p>
 
                 {/* Read More */}
-
                 <div className="mt-8">
                   <button
                     type="button"
@@ -647,7 +625,6 @@ const BlogList = ({ variant = "compact" }) => {
                 </div>
 
                 {/* Slider indicators */}
-
                 <div className="mt-10 flex items-center gap-2">
                   {compactBlogs.map((_, index) => (
                     <button
@@ -684,10 +661,7 @@ const BlogList = ({ variant = "compact" }) => {
             </article>
           </div>
 
-          {/* =================================================
-              BOTTOM DECORATIVE TEXT
-          ================================================== */}
-
+          {/* BOTTOM DECORATIVE TEXT */}
           <div className="mt-12 flex items-center justify-center gap-4">
             <span className="h-[1px] w-10 bg-[#d8d1ca]" />
 
@@ -710,7 +684,6 @@ const BlogList = ({ variant = "compact" }) => {
     <section className="bg-white px-5 py-20 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
         {/* HEADER */}
-
         <div className="mb-12">
           <p className="mb-3 font-montserrat text-[10px] font-semibold uppercase tracking-[0.3em] text-[#b83b6b]">
             From the Himalayas
@@ -725,7 +698,6 @@ const BlogList = ({ variant = "compact" }) => {
         </div>
 
         {/* SEARCH */}
-
         <div className="mb-8">
           <input
             type="text"
@@ -752,7 +724,6 @@ const BlogList = ({ variant = "compact" }) => {
         </div>
 
         {/* CATEGORIES */}
-
         <div className="mb-12 flex flex-wrap gap-2">
           {categories.map((category) => (
             <button
@@ -785,7 +756,6 @@ const BlogList = ({ variant = "compact" }) => {
         </div>
 
         {/* BLOG GRID */}
-
         {paginatedBlogs.length === 0 ? (
           <div className="py-20 text-center">
             <p className="font-montserrat text-sm text-gray-500">
@@ -888,7 +858,6 @@ const BlogList = ({ variant = "compact" }) => {
         )}
 
         {/* PAGINATION */}
-
         {totalPages > 1 && (
           <div className="mt-12 flex items-center justify-center gap-2">
             <button
@@ -959,4 +928,121 @@ const BlogList = ({ variant = "compact" }) => {
   );
 };
 
+/* =========================================================
+   NAMED EXPORT FOR MostReadBlog.jsx
+========================================================= */
+
+export const getCategory = (blog) => {
+  const normalizeText = (value) => {
+    if (!value) return "";
+
+    return String(value)
+      .toLowerCase()
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
+  const title = normalizeText(blog?.title);
+  const tags = normalizeText(blog?.tags);
+
+  const text = `${title} ${tags}`;
+
+  // Travel News
+  if (
+    text.includes("news") ||
+    text.includes("flood") ||
+    text.includes("earthquake") ||
+    text.includes("weather") ||
+    text.includes("rescue") ||
+    text.includes("accident") ||
+    text.includes("government") ||
+    text.includes("announcement") ||
+    text.includes("update")
+  ) {
+    return "Travel News";
+  }
+
+  // Trekking Guides
+  if (
+    text.includes("trek") ||
+    text.includes("trekking") ||
+    text.includes("itinerary") ||
+    text.includes("route") ||
+    text.includes("trail") ||
+    text.includes("guide") ||
+    text.includes("camp") ||
+    text.includes("base camp") ||
+    text.includes("everest") ||
+    text.includes("annapurna") ||
+    text.includes("manaslu") ||
+    text.includes("langtang")
+  ) {
+    return "Trekking Guides";
+  }
+
+  // Permits & Planning
+  if (
+    text.includes("permit") ||
+    text.includes("visa") ||
+    text.includes("planning") ||
+    text.includes("budget") ||
+    text.includes("cost") ||
+    text.includes("insurance") ||
+    text.includes("packing") ||
+    text.includes("gear") ||
+    text.includes("equipment")
+  ) {
+    return "Permits & Planning";
+  }
+
+  // Culture & Heritage
+  if (
+    text.includes("culture") ||
+    text.includes("heritage") ||
+    text.includes("festival") ||
+    text.includes("temple") ||
+    text.includes("monastery") ||
+    text.includes("tradition") ||
+    text.includes("religion") ||
+    text.includes("community") ||
+    text.includes("history")
+  ) {
+    return "Culture & Heritage";
+  }
+
+  // Nature & Wildlife
+  if (
+    text.includes("wildlife") ||
+    text.includes("nature") ||
+    text.includes("bird") ||
+    text.includes("animal") ||
+    text.includes("forest") ||
+    text.includes("national park") ||
+    text.includes("conservation") ||
+    text.includes("mountain")
+  ) {
+    return "Nature & Wildlife";
+  }
+
+  // Adventure & Activities
+  if (
+    text.includes("adventure") ||
+    text.includes("motorbike") ||
+    text.includes("motorbiking") ||
+    text.includes("rafting") ||
+    text.includes("climbing") ||
+    text.includes("paragliding") ||
+    text.includes("bungee") ||
+    text.includes("cycling") ||
+    text.includes("activities")
+  ) {
+    return "Adventure & Activities";
+  }
+
+  return "Stories & People";
+};
+
 export default BlogList;
+
+

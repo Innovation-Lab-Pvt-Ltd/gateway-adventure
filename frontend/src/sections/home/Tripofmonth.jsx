@@ -149,18 +149,11 @@ const Tripofmonth = () => {
         const rawList =
           data?.packages?.data ?? [];
 
-<<<<<<< HEAD
-        // Only packages with is_month_featured = 1 are shown. If none match,
-        // trips stays empty and the component renders nothing.
-        const featuredEntries = rawList
-          .filter((pkg) => Number(pkg.is_month_featured) === 1)
-=======
         const featuredEntries = rawList
           .filter(
             (pkg) =>
               Number(pkg.is_month_featured) === 1
           )
->>>>>>> 144711a (newely)
           .reduce((acc, pkg) => {
             const key =
               pkg.slug || String(pkg.id);
