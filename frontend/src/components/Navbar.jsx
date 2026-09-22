@@ -14,6 +14,10 @@ const PACKAGE_ROUTE = "/package";
 // <Route path="/activity/:slug" element={<ActivitiesDetail />} />
 const ACTIVITY_ROUTE = "/activity";
 
+// Route that renders the destination detail page
+// <Route path="/destination/:slug" element={<DestinationDetail />} />
+const DESTINATION_ROUTE = "/destination";
+
 // =========================================================
 // DATA LOADING
 // ---------------------------------------------------------
@@ -294,7 +298,8 @@ const Navbar = () => {
   // =========================================================
   const isSolidPage =
     location.pathname.startsWith("/package/") ||
-    location.pathname.startsWith("/activity/");
+    location.pathname.startsWith("/activity/") ||
+    location.pathname.startsWith("/destination/");
 
   // =========================================================
   // SCROLL DETECTION
@@ -513,6 +518,7 @@ const Navbar = () => {
           <MegaMenu
             label="Destinations"
             to="/destinations"
+            itemRoute={DESTINATION_ROUTE}
             items={menuData.destinations}
             packagesByItem={menuData.byDestination}
             status={menuData.status}

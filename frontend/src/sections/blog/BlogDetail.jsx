@@ -621,7 +621,7 @@ const BlogDetail = () => {
   // ===================================================
 
   return (
-    <main className="min-h-screen bg-[#F4F0E7]">
+    <main className="min-h-screen bg-[#F4F0E7] pt-6">
 
       {/* =================================================
           HEADER

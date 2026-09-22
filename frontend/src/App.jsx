@@ -10,6 +10,7 @@ import TripDetail from "./pages/TripDetail.jsx";
 import PageDetail from "./pages/PageDetail.jsx";
 import FAQ from "./sections/home/FAQ.jsx";
 import ActivitiesDetail from "./sections/activities/activitiesdetail.jsx";
+import DestinationDetail from "./sections/destination/DestinationDetail.jsx";
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
             <Route path="/package/:slug" element={<TripDetail />} />
             <Route path="/pagedetail/:slug" element={<PageDetail />} />
             <Route path="/activity/:slug" element={<ActivitiesDetail />} />
-
+            <Route path="/destination/:slug" element={<DestinationDetail />} />
           </Routes>
         </MainLayout>
       </div>

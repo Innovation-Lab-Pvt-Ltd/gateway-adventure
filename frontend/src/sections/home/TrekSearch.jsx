@@ -5,6 +5,7 @@ import {
   ChevronDown,
   X,
   ArrowUpRight,
+  Compass,
 } from "lucide-react";
 
 const API_URL = "/api/v1/allpackages";
@@ -221,66 +222,94 @@ const TrekSearch = () => {
   };
 
   // =====================================================
-  // PACKAGE RESULT CARD
+  // WAYPOINT RESULT ROW
+  // A trail-style row: a small route line + marker on the
+  // left connects each result, standing in for the generic
+  // floating white card.
   // =====================================================
 
-  const PackageResult = ({ pkg }) => {
+  const PackageResult = ({ pkg, isLast }) => {
     return (
       <button
         type="button"
         onClick={() => handlePackageClick(pkg)}
         className="
+          group
+          relative
           flex
           w-full
           items-center
           gap-4
-          rounded-2xl
-          bg-white
-          p-3
+          py-3
+          pl-8
+          pr-2
           text-left
-          shadow-lg
           transition
-          duration-300
-          hover:-translate-y-0.5
-          hover:shadow-xl
+          duration-200
         "
       >
+        {/* ROUTE LINE + MARKER */}
+
+        <span
+          className="
+            pointer-events-none
+            absolute
+            left-2
+            top-0
+            h-full
+            w-px
+            bg-[#D3CBB4]
+          "
+          style={{ display: isLast ? "none" : "block" }}
+        />
+
+        <span
+          className="
+            absolute
+            left-[5px]
+            top-1/2
+            h-2.5
+            w-2.5
+            -translate-y-1/2
+            rounded-full
+            border-2
+            border-[#9BE564]
+            bg-[#F4F0E7]
+            transition
+            group-hover:bg-[#9BE564]
+          "
+        />
+
         {/* IMAGE */}
 
-        <div className="h-16 w-24 shrink-0 overflow-hidden rounded-xl">
+        <div className="h-16 w-24 shrink-0 overflow-hidden rounded-md">
           <img
             src={getImage(pkg)}
             alt={pkg.name || pkg.title}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           />
         </div>
 
         {/* CONTENT */}
 
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 border-b border-[#E4DCC8] pb-3 group-last:border-none">
 
-          <h3 className="truncate text-sm font-bold text-[#0b2418] sm:text-base">
+          <h3 className="truncate font-montserrat text-sm font-bold text-[#0b2418] sm:text-base">
             {pkg.name || pkg.title}
           </h3>
 
-          <div className="mt-1 flex flex-wrap gap-3 text-xs text-gray-500">
+          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-montserrat text-xs text-[#6B7568]">
 
             {pkg.duration && (
-              <span>
-                {pkg.duration} Days
-              </span>
+              <span>{pkg.duration} Days</span>
             )}
 
             {pkg.destname && (
-              <span>
-                {pkg.destname}
-              </span>
+              <span>{pkg.destname}</span>
             )}
 
             {pkg.gradename && (
-              <span>
-                {pkg.gradename}
-              </span>
+              <span>{pkg.gradename}</span>
             )}
 
           </div>
@@ -289,455 +318,333 @@ const TrekSearch = () => {
         {/* ARROW */}
 
         <ArrowUpRight
-          size={18}
-          className="mr-2 shrink-0 text-gray-400"
+          size={17}
+          className="shrink-0 self-start pt-1 text-[#B9B198] transition group-hover:text-[#0b2418]"
         />
       </button>
     );
   };
 
   return (
-    <div className="relative z-20 mx-auto w-full max-w-5xl px-4">
+    <section
+      className="relative overflow-hidden bg-[#F4F0E7] py-16 sm:py-20"
+      style={{
+        backgroundImage:
+          "repeating-radial-gradient(circle at 88% 8%, rgba(11,36,24,0.05) 0px, rgba(11,36,24,0.05) 1px, transparent 1px, transparent 34px)",
+      }}
+    >
+      <div className="relative z-10 mx-auto w-full max-w-5xl px-4">
 
-      {/* =================================================
-          SEARCH BY PACKAGE NAME
-          ================================================= */}
+        {/* =================================================
+            HEADING
+            ================================================= */}
 
-      <div className="relative">
+        <div className="mb-8 flex items-center gap-3">
 
-        <div
-          className="
-            flex
-            w-full
-            items-center
-            rounded-3xl
-            bg-white
-            p-3
-            shadow-2xl
-          "
-        >
-
-          {/* SEARCH ICON */}
-
-          <Search
-            size={21}
-            className="ml-3 shrink-0 text-gray-400"
+          <Compass
+            size={22}
+            strokeWidth={1.5}
+            className="text-[#9BE564]"
           />
 
-          {/* INPUT */}
-
-          <input
-            type="text"
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-            placeholder="Search package by name..."
-            className="
-              w-full
-              bg-transparent
-              px-3
-              py-2
-              text-sm
-              text-gray-800
-              outline-none
-              sm:text-base
-            "
-          />
-
-          {/* CLEAR */}
-
-          {search && (
-            <button
-              type="button"
-              onClick={clearSearch}
-              className="
-                mr-2
-                flex
-                h-8
-                w-8
-                shrink-0
-                items-center
-                justify-center
-                rounded-full
-                text-gray-400
-                transition
-                hover:bg-gray-100
-                hover:text-gray-600
-              "
-            >
-              <X size={17} />
-            </button>
-          )}
+          <h2 className="font-playfair text-3xl font-medium text-[#0b2418] sm:text-4xl">
+            Find your trek
+          </h2>
 
         </div>
 
         {/* =================================================
-            NAME SEARCH RESULTS
+            THE TRAIL PANEL
+            One bold, dark, confident element — search input
+            on top, filters + CTA below, divided by hairlines
+            instead of separate boxed cards.
             ================================================= */}
 
-        {search.trim() && (
-          <div
-            className="
-              absolute
-              left-0
-              right-0
-              top-full
-              z-50
-              mt-2
-              max-h-80
-              space-y-2
-              overflow-y-auto
-            "
-          >
+        <div className="relative rounded-lg bg-[#0b2418] px-5 pt-5 pb-2 shadow-[0_20px_50px_-20px_rgba(11,36,24,0.5)] sm:px-8 sm:pt-6">
 
-            {loading ? (
+          {/* NAME SEARCH */}
 
-              <div className="rounded-2xl bg-white p-5 text-center text-sm text-gray-500 shadow-xl">
-                Loading packages...
+          <div className="relative flex items-center border-b border-white/15 pb-4 focus-within:border-[#9BE564]">
+
+            <Search
+              size={19}
+              className="shrink-0 text-white/40"
+            />
+
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search a trek by name — Everest Base Camp, Annapurna…"
+              className="
+                w-full
+                bg-transparent
+                px-3
+                py-1
+                font-montserrat
+                text-sm
+                text-white
+                placeholder-white/40
+                outline-none
+                sm:text-base
+              "
+            />
+
+            {search && (
+              <button
+                type="button"
+                onClick={clearSearch}
+                className="
+                  flex
+                  h-7
+                  w-7
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  text-white/50
+                  transition
+                  hover:bg-white/10
+                  hover:text-white
+                "
+              >
+                <X size={16} />
+              </button>
+            )}
+
+          </div>
+
+          {/* NAME SEARCH RESULTS */}
+
+          {search.trim() && (
+            <div className="max-h-72 overflow-y-auto rounded-md bg-[#F4F0E7] px-2 py-2 my-4">
+
+              {loading ? (
+                <div className="px-4 py-4 text-center font-montserrat text-sm text-[#6B7568]">
+                  Loading treks…
+                </div>
+              ) : searchResults.length === 0 ? (
+                <div className="px-4 py-4 text-center font-montserrat text-sm text-[#6B7568]">
+                  No trek matches “{search}”.
+                </div>
+              ) : (
+                searchResults.map((pkg, i) => (
+                  <PackageResult
+                    key={pkg.id}
+                    pkg={pkg}
+                    isLast={i === searchResults.length - 1}
+                  />
+                ))
+              )}
+
+            </div>
+          )}
+
+          {/* FILTERS ROW */}
+
+          <div className="flex flex-col divide-y divide-white/10 sm:flex-row sm:items-stretch sm:divide-x sm:divide-y-0">
+
+            {/* DESTINATION */}
+
+            <div className="flex-1 py-4 sm:pr-5">
+
+              <label className="mb-1 block font-montserrat text-[11px] font-medium text-white/40">
+                Destination
+              </label>
+
+              <div className="relative">
+                <select
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  className="
+                    w-full
+                    appearance-none
+                    bg-transparent
+                    py-1
+                    pr-6
+                    font-montserrat
+                    text-sm
+                    font-semibold
+                    text-white
+                    outline-none
+                  "
+                >
+                  <option className="text-[#0b2418]" value="">
+                    Anywhere
+                  </option>
+                  <option className="text-[#0b2418]" value="1">
+                    Nepal
+                  </option>
+                  <option className="text-[#0b2418]" value="2">
+                    Tibet
+                  </option>
+                </select>
+
+                <ChevronDown
+                  size={15}
+                  className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-white/40"
+                />
               </div>
+            </div>
 
-            ) : searchResults.length === 0 ? (
+            {/* DURATION */}
 
-              <div className="rounded-2xl bg-white p-5 text-center text-sm text-gray-500 shadow-xl">
-                No package found.
+            <div className="flex-1 py-4 sm:px-5">
+
+              <label className="mb-1 block font-montserrat text-[11px] font-medium text-white/40">
+                Duration
+              </label>
+
+              <div className="relative">
+                <select
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  className="
+                    w-full
+                    appearance-none
+                    bg-transparent
+                    py-1
+                    pr-6
+                    font-montserrat
+                    text-sm
+                    font-semibold
+                    text-white
+                    outline-none
+                  "
+                >
+                  <option className="text-[#0b2418]" value="">
+                    Any length
+                  </option>
+                  <option className="text-[#0b2418]" value="1-7">
+                    1 – 7 days
+                  </option>
+                  <option className="text-[#0b2418]" value="8-14">
+                    8 – 14 days
+                  </option>
+                  <option className="text-[#0b2418]" value="15-21">
+                    15 – 21 days
+                  </option>
+                  <option className="text-[#0b2418]" value="22+">
+                    22+ days
+                  </option>
+                </select>
+
+                <ChevronDown
+                  size={15}
+                  className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-white/40"
+                />
               </div>
+            </div>
 
+            {/* GRADE */}
+
+            <div className="flex-1 py-4 sm:px-5">
+
+              <label className="mb-1 block font-montserrat text-[11px] font-medium text-white/40">
+                Grade
+              </label>
+
+              <div className="relative">
+                <select
+                  value={grade}
+                  onChange={(e) => setGrade(e.target.value)}
+                  className="
+                    w-full
+                    appearance-none
+                    bg-transparent
+                    py-1
+                    pr-6
+                    font-montserrat
+                    text-sm
+                    font-semibold
+                    text-white
+                    outline-none
+                  "
+                >
+                  <option className="text-[#0b2418]" value="">
+                    Any grade
+                  </option>
+                  <option className="text-[#0b2418]" value="1">
+                    Easy
+                  </option>
+                  <option className="text-[#0b2418]" value="2">
+                    Moderate
+                  </option>
+                  <option className="text-[#0b2418]" value="3">
+                    Strenuous
+                  </option>
+                  <option className="text-[#0b2418]" value="4">
+                    Very strenuous
+                  </option>
+                </select>
+
+                <ChevronDown
+                  size={15}
+                  className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-white/40"
+                />
+              </div>
+            </div>
+
+            {/* CTA */}
+
+            <div className="flex items-center py-4 sm:pl-5">
+              <button
+                type="button"
+                onClick={handleFindYourTrek}
+                className="
+                  flex
+                  w-full
+                  shrink-0
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-md
+                  bg-[#9BE564]
+                  px-6
+                  py-2.5
+                  font-montserrat
+                  text-sm
+                  font-semibold
+                  text-[#0b2418]
+                  transition
+                  hover:bg-white
+                  sm:w-auto
+                "
+              >
+                <Search size={16} strokeWidth={2.5} />
+                Find your trek
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        {/* =================================================
+            FILTER RESULTS
+            ================================================= */}
+
+        {showFilterResults && (
+          <div className="mt-6 max-h-96 overflow-y-auto rounded-lg border border-[#E4DCC8] bg-white/60 px-4 py-2">
+
+            {filterResults.length === 0 ? (
+              <div className="px-4 py-6 text-center font-montserrat text-sm text-[#6B7568]">
+                No treks match those filters — try widening your search.
+              </div>
             ) : (
-
-              searchResults.map((pkg) => (
+              filterResults.map((pkg, i) => (
                 <PackageResult
                   key={pkg.id}
                   pkg={pkg}
+                  isLast={i === filterResults.length - 1}
                 />
               ))
-
             )}
 
           </div>
         )}
 
       </div>
-
-      {/* =================================================
-          FILTER SEARCH
-          ================================================= */}
-
-      <div
-        className="
-          mt-3
-          flex
-          w-full
-          flex-col
-          gap-3
-          rounded-3xl
-          bg-white
-          p-4
-          shadow-xl
-          md:flex-row
-          md:items-end
-        "
-      >
-
-        {/* =================================================
-            DESTINATION
-            ================================================= */}
-
-        <div className="flex-1">
-
-          <label
-            className="
-              mb-1
-              block
-              text-[10px]
-              font-bold
-              uppercase
-              tracking-widest
-              text-gray-400
-            "
-          >
-            Destination
-          </label>
-
-          <div className="relative">
-
-            <select
-              value={destination}
-              onChange={(e) =>
-                setDestination(e.target.value)
-              }
-              className="
-                w-full
-                appearance-none
-                rounded-xl
-                border
-                border-gray-200
-                bg-white
-                px-3
-                py-2.5
-                pr-9
-                text-sm
-                font-medium
-                text-[#0b2418]
-                outline-none
-                focus:border-[#2F6B4F]
-              "
-            >
-
-              <option value="">
-                Any destination
-              </option>
-
-              <option value="1">
-                Nepal
-              </option>
-
-              <option value="2">
-                Tibet
-              </option>
-
-            </select>
-
-            <ChevronDown
-              size={16}
-              className="
-                pointer-events-none
-                absolute
-                right-3
-                top-1/2
-                -translate-y-1/2
-                text-gray-400
-              "
-            />
-
-          </div>
-        </div>
-
-        {/* =================================================
-            DURATION
-            ================================================= */}
-
-        <div className="flex-1">
-
-          <label
-            className="
-              mb-1
-              block
-              text-[10px]
-              font-bold
-              uppercase
-              tracking-widest
-              text-gray-400
-            "
-          >
-            Duration
-          </label>
-
-          <div className="relative">
-
-            <select
-              value={duration}
-              onChange={(e) =>
-                setDuration(e.target.value)
-              }
-              className="
-                w-full
-                appearance-none
-                rounded-xl
-                border
-                border-gray-200
-                bg-white
-                px-3
-                py-2.5
-                pr-9
-                text-sm
-                font-medium
-                text-[#0b2418]
-                outline-none
-                focus:border-[#2F6B4F]
-              "
-            >
-
-              <option value="">
-                Any duration
-              </option>
-
-              <option value="1-7">
-                1 - 7 Days
-              </option>
-
-              <option value="8-14">
-                8 - 14 Days
-              </option>
-
-              <option value="15-21">
-                15 - 21 Days
-              </option>
-
-              <option value="22+">
-                22+ Days
-              </option>
-
-            </select>
-
-            <ChevronDown
-              size={16}
-              className="
-                pointer-events-none
-                absolute
-                right-3
-                top-1/2
-                -translate-y-1/2
-                text-gray-400
-              "
-            />
-
-          </div>
-        </div>
-
-        {/* =================================================
-            GRADE
-            ================================================= */}
-
-        <div className="flex-1">
-
-          <label
-            className="
-              mb-1
-              block
-              text-[10px]
-              font-bold
-              uppercase
-              tracking-widest
-              text-gray-400
-            "
-          >
-            Grade
-          </label>
-
-          <div className="relative">
-
-            <select
-              value={grade}
-              onChange={(e) =>
-                setGrade(e.target.value)
-              }
-              className="
-                w-full
-                appearance-none
-                rounded-xl
-                border
-                border-gray-200
-                bg-white
-                px-3
-                py-2.5
-                pr-9
-                text-sm
-                font-medium
-                text-[#0b2418]
-                outline-none
-                focus:border-[#2F6B4F]
-              "
-            >
-
-              <option value="">
-                Any grade
-              </option>
-
-              <option value="1">
-                Easy
-              </option>
-
-              <option value="2">
-                Moderate
-              </option>
-
-              <option value="3">
-                Strenuous
-              </option>
-
-              <option value="4">
-                Very Strenuous
-              </option>
-
-            </select>
-
-            <ChevronDown
-              size={16}
-              className="
-                pointer-events-none
-                absolute
-                right-3
-                top-1/2
-                -translate-y-1/2
-                text-gray-400
-              "
-            />
-
-          </div>
-        </div>
-
-        {/* =================================================
-            FIND YOUR TREK
-            ================================================= */}
-
-        <button
-          type="button"
-          onClick={handleFindYourTrek}
-          className="
-            flex
-            shrink-0
-            items-center
-            justify-center
-            gap-2
-            rounded-xl
-            bg-[#0b2418]
-            px-6
-            py-2.5
-            text-sm
-            font-semibold
-            text-white
-            transition
-            hover:bg-black
-          "
-        >
-
-          <Search size={16} />
-
-          Find Your Trek
-
-        </button>
-
-      </div>
-
-      {/* =================================================
-          FILTER RESULTS
-          ================================================= */}
-
-      {showFilterResults && (
-        <div className="mt-3 max-h-96 space-y-2 overflow-y-auto">
-
-          {filterResults.length === 0 ? (
-
-            <div className="rounded-2xl bg-white p-5 text-center text-sm text-gray-500 shadow-xl">
-              No packages match your selected filters.
-            </div>
-
-          ) : (
-
-            filterResults.map((pkg) => (
-              <PackageResult
-                key={pkg.id}
-                pkg={pkg}
-              />
-            ))
-
-          )}
-
-        </div>
-      )}
-
-    </div>
+    </section>
   );
 };
 
