@@ -70,7 +70,7 @@ const Hero = () => {
             </div>
 
             {/* ================= MAIN HEADING ================= */}
-            <h1 className="font-playfair text-5xl font-medium leading-tight text-white sm:text-6xl md:text-7xl lg:text-8xl">
+            {/* <h1 className="font-playfair text-5xl font-medium leading-tight text-white sm:text-6xl md:text-7xl lg:text-8xl">
 
               Explore
 
@@ -78,7 +78,7 @@ const Hero = () => {
                 Nepal
               </span>
 
-            </h1>
+            </h1> */}
 
             {/* ================= SCRIPT TEXT ================= */}
             <p className="mt-3 font-greatvibes text-4xl text-white sm:text-5xl md:text-6xl">

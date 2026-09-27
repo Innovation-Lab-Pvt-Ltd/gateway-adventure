@@ -13,8 +13,7 @@ import {
 
 const API_URL = "/api/v1/allpackages";
 
-const IMAGE_BASE =
-  "https://gatewaytreks.com/public/uploads/frontend/full/";
+const IMAGE_BASE = "https://gatewaytreks.com/public/uploads/frontend/full/";
 
 const GRADE_LABELS = {
   1: "Easy",
@@ -67,43 +66,32 @@ const getDiscountLabel = (pkg) => {
 const toTripEntry = (pkg) => ({
   title: pkg.title || pkg.name || "Untitled Trip",
 
-  image: pkg.image
-    ? `${IMAGE_BASE}${pkg.image}`
-    : "/images/placeholder.jpg",
+  image: pkg.image ? `${IMAGE_BASE}${pkg.image}` : "/images/placeholder.jpg",
 
   discount: getDiscountLabel(pkg),
 
-  price:
-    pkg.price != null
-      ? `$${pkg.price}`
-      : "N/A",
+  price: pkg.price != null ? `$${pkg.price}` : "N/A",
 
   details: [
     {
       icon: Clock3,
       label: "Duration",
-      text: pkg.duration
-        ? `${pkg.duration} Days`
-        : "N/A",
+      text: pkg.duration ? `${pkg.duration} Days` : "N/A",
     },
     {
       icon: Gauge,
       label: "Difficulty",
-      text:
-        GRADE_LABELS[pkg.grade_id] ||
-        "N/A",
+      text: GRADE_LABELS[pkg.grade_id] || "N/A",
     },
     {
       icon: Mountain,
       label: "Altitude",
-      text:
-        pkg.max_altitude || "N/A",
+      text: pkg.max_altitude || "N/A",
     },
     {
       icon: Star,
       label: "Rating",
-      text:
-        pkg.rating || "N/A",
+      text: pkg.rating || "N/A",
     },
   ],
 
@@ -139,24 +127,17 @@ const Tripofmonth = () => {
         const res = await fetch(API_URL);
 
         if (!res.ok) {
-          throw new Error(
-            `Request failed with status ${res.status}`
-          );
+          throw new Error(`Request failed with status ${res.status}`);
         }
 
         const data = await res.json();
 
-        const rawList =
-          data?.packages?.data ?? [];
+        const rawList = data?.packages?.data ?? [];
 
         const featuredEntries = rawList
-          .filter(
-            (pkg) =>
-              Number(pkg.is_month_featured) === 1
-          )
+          .filter((pkg) => Number(pkg.is_act_featured) === 1)
           .reduce((acc, pkg) => {
-            const key =
-              pkg.slug || String(pkg.id);
+            const key = pkg.slug || String(pkg.id);
 
             acc[key] = toTripEntry(pkg);
 
@@ -166,17 +147,12 @@ const Tripofmonth = () => {
         if (!cancelled) {
           setTrips(featuredEntries);
 
-          const firstKey =
-            Object.keys(featuredEntries)[0] ||
-            null;
+          const firstKey = Object.keys(featuredEntries)[0] || null;
 
           setSelectedTrip(firstKey);
         }
       } catch (error) {
-        console.error(
-          "Trip of the month error:",
-          error
-        );
+        console.error("Trip of the month error:", error);
 
         if (!cancelled) {
           setTrips({});
@@ -198,19 +174,14 @@ const Tripofmonth = () => {
 
   const tripKeys = Object.keys(trips);
 
-  const trip = selectedTrip
-    ? trips[selectedTrip]
-    : null;
+  const trip = selectedTrip ? trips[selectedTrip] : null;
 
   /* =======================================================
      CHANGE TRIP
   ======================================================= */
 
   const changeTrip = (key) => {
-    if (
-      key === selectedTrip ||
-      isChanging
-    ) {
+    if (key === selectedTrip || isChanging) {
       return;
     }
 
@@ -229,16 +200,13 @@ const Tripofmonth = () => {
      NEXT
   ======================================================= */
 
-  const currentIndex =
-    tripKeys.indexOf(selectedTrip);
+  const currentIndex = tripKeys.indexOf(selectedTrip);
 
   const goNext = () => {
     if (tripKeys.length <= 1) return;
 
     const nextIndex =
-      currentIndex === tripKeys.length - 1
-        ? 0
-        : currentIndex + 1;
+      currentIndex === tripKeys.length - 1 ? 0 : currentIndex + 1;
 
     changeTrip(tripKeys[nextIndex]);
   };
@@ -251,9 +219,7 @@ const Tripofmonth = () => {
     if (tripKeys.length <= 1) return;
 
     const previousIndex =
-      currentIndex <= 0
-        ? tripKeys.length - 1
-        : currentIndex - 1;
+      currentIndex <= 0 ? tripKeys.length - 1 : currentIndex - 1;
 
     changeTrip(tripKeys[previousIndex]);
   };
@@ -268,7 +234,6 @@ const Tripofmonth = () => {
 
   return (
     <section className="relative overflow-hidden bg-[#f8f3ed] text-[#172019]">
-
       {/* ===================================================
           CHECKERBOARD BACKGROUND
       =================================================== */}
@@ -298,8 +263,7 @@ const Tripofmonth = () => {
             )
           `,
           backgroundSize: "90px 90px",
-          backgroundPosition:
-            "0 0, 135px 135px",
+          backgroundPosition: "0 0, 135px 135px",
         }}
       />
 
@@ -364,7 +328,6 @@ const Tripofmonth = () => {
           lg:py-16
         "
       >
-
         {/* =================================================
             HEADER
         ================================================= */}
@@ -377,9 +340,7 @@ const Tripofmonth = () => {
             justify-between
           "
         >
-
           <div>
-
             <p
               className="
                 mb-0
@@ -414,7 +375,6 @@ const Tripofmonth = () => {
                 bg-[#b83b6b]
               "
             />
-
           </div>
 
           {/* Desktop arrows */}
@@ -427,7 +387,6 @@ const Tripofmonth = () => {
                 sm:flex
               "
             >
-
               <button
                 onClick={goPrevious}
                 className="
@@ -468,10 +427,8 @@ const Tripofmonth = () => {
               >
                 <ChevronRight size={18} />
               </button>
-
             </div>
           )}
-
         </div>
 
         {/* =================================================
@@ -495,13 +452,11 @@ const Tripofmonth = () => {
             }
           `}
         >
-
           {/* =================================================
               LEFT
           ================================================= */}
 
           <div>
-
             {/* Label */}
 
             <div
@@ -512,7 +467,6 @@ const Tripofmonth = () => {
                 gap-3
               "
             >
-
               <span
                 className="
                   font-montserrat
@@ -533,7 +487,6 @@ const Tripofmonth = () => {
                   bg-[#b83b6b]/40
                 "
               />
-
             </div>
 
             {/* =================================================
@@ -549,20 +502,14 @@ const Tripofmonth = () => {
                   gap-2
                 "
               >
+                {tripKeys.map((key, index) => {
+                  const active = selectedTrip === key;
 
-                {tripKeys.map(
-                  (key, index) => {
-
-                    const active =
-                      selectedTrip === key;
-
-                    return (
-                      <button
-                        key={key}
-                        onClick={() =>
-                          changeTrip(key)
-                        }
-                        className={`
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => changeTrip(key)}
+                      className={`
                           flex
                           items-center
                           gap-2
@@ -581,10 +528,9 @@ const Tripofmonth = () => {
                               : "border border-[#172019]/10 bg-white/60 text-[#172019]/60 hover:bg-white hover:text-[#172019]"
                           }
                         `}
-                      >
-
-                        <span
-                          className={`
+                    >
+                      <span
+                        className={`
                             flex
                             h-5
                             w-5
@@ -598,19 +544,16 @@ const Tripofmonth = () => {
                                 : "bg-[#172019]/5"
                             }
                           `}
-                        >
-                          0{index + 1}
-                        </span>
+                      >
+                        0{index + 1}
+                      </span>
 
-                        <span className="max-w-[110px] truncate">
-                          {trips[key].title}
-                        </span>
-
-                      </button>
-                    );
-                  }
-                )}
-
+                      <span className="max-w-[110px] truncate">
+                        {trips[key].title}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             )}
 
@@ -648,40 +591,34 @@ const Tripofmonth = () => {
                 sm:grid-cols-4
               "
             >
+              {trip.details.map((detail, index) => {
+                const Icon = detail.icon;
 
-              {trip.details.map(
-                (detail, index) => {
-
-                  const Icon =
-                    detail.icon;
-
-                  return (
-                    <div
-                      key={index}
-                      className="
+                return (
+                  <div
+                    key={index}
+                    className="
                         border-l
                         border-[#172019]/15
                         pl-3
                       "
-                    >
-
-                      <div
-                        className="
+                  >
+                    <div
+                      className="
                           mb-1.5
                           flex
                           items-center
                           gap-1.5
                         "
-                      >
+                    >
+                      <Icon
+                        size={14}
+                        strokeWidth={1.8}
+                        className="text-[#b83b6b]"
+                      />
 
-                        <Icon
-                          size={14}
-                          strokeWidth={1.8}
-                          className="text-[#b83b6b]"
-                        />
-
-                        <span
-                          className="
+                      <span
+                        className="
                             font-montserrat
                             text-[9px]
                             font-bold
@@ -689,28 +626,24 @@ const Tripofmonth = () => {
                             tracking-[0.12em]
                             text-[#172019]/40
                           "
-                        >
-                          {detail.label}
-                        </span>
+                      >
+                        {detail.label}
+                      </span>
+                    </div>
 
-                      </div>
-
-                      <p
-                        className="
+                    <p
+                      className="
                           font-montserrat
                           text-xs
                           font-semibold
                           text-[#172019]
                         "
-                      >
-                        {detail.text}
-                      </p>
-
-                    </div>
-                  );
-                }
-              )}
-
+                    >
+                      {detail.text}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
 
             {/* =================================================
@@ -748,9 +681,7 @@ const Tripofmonth = () => {
                 backdrop-blur-sm
               "
             >
-
               <div className="flex gap-3">
-
                 <div
                   className="
                     flex
@@ -771,7 +702,6 @@ const Tripofmonth = () => {
                 </div>
 
                 <div>
-
                   <h3
                     className="
                       font-playfair
@@ -795,30 +725,19 @@ const Tripofmonth = () => {
                   >
                     {trip.why}
                   </p>
-
                 </div>
-
               </div>
-
             </div>
 
             {/* =================================================
                 EXPLORE BUTTON
             ================================================= */}
 
-            <button
-              className="explore-btn mt-6"
-            >
-              <span>
-                Explore This Trek
-              </span>
+            <button className="explore-btn mt-6">
+              <span>Explore This Trek</span>
 
-              <ArrowUpRight
-                size={17}
-                strokeWidth={2}
-              />
+              <ArrowUpRight size={17} strokeWidth={2} />
             </button>
-
           </div>
 
           {/* =================================================
@@ -826,7 +745,6 @@ const Tripofmonth = () => {
           ================================================= */}
 
           <div className="relative">
-
             <div
               className="
                 relative
@@ -838,7 +756,6 @@ const Tripofmonth = () => {
                 sm:pt-4
               "
             >
-
               {/* Decorative frame */}
 
               <div
@@ -869,7 +786,6 @@ const Tripofmonth = () => {
                   lg:h-[430px]
                 "
               >
-
                 <img
                   src={trip.image}
                   alt={trip.title}
@@ -909,9 +825,7 @@ const Tripofmonth = () => {
                     justify-between
                   "
                 >
-
                   <div>
-
                     <p
                       className="
                         font-montserrat
@@ -937,7 +851,6 @@ const Tripofmonth = () => {
                     >
                       Nepal awaits.
                     </p>
-
                   </div>
 
                   <div
@@ -957,9 +870,7 @@ const Tripofmonth = () => {
                   >
                     <ArrowUpRight size={16} />
                   </div>
-
                 </div>
-
               </div>
 
               {/* =================================================
@@ -989,7 +900,6 @@ const Tripofmonth = () => {
                     sm:w-36
                   "
                 >
-
                   {/* =================================================
                       ROTATING OUTER RING
                   ================================================= */}
@@ -1001,7 +911,6 @@ const Tripofmonth = () => {
                       animate-spin-slow
                     "
                   >
-
                     <svg
                       viewBox="0 0 200 200"
                       className="
@@ -1010,9 +919,7 @@ const Tripofmonth = () => {
                         overflow-visible
                       "
                     >
-
                       <defs>
-
                         <path
                           id="discountPath"
                           d="
@@ -1022,7 +929,6 @@ const Tripofmonth = () => {
                             a 78,78 0 1,1 -156,0
                           "
                         />
-
                       </defs>
 
                       {/* Outer circle */}
@@ -1047,18 +953,11 @@ const Tripofmonth = () => {
                         letterSpacing="3"
                         fontFamily="Montserrat, sans-serif"
                       >
-
-                        <textPath
-                          href="#discountPath"
-                          startOffset="0%"
-                        >
+                        <textPath href="#discountPath" startOffset="0%">
                           SPECIAL OFFER • SPECIAL OFFER • SPECIAL OFFER •
                         </textPath>
-
                       </text>
-
                     </svg>
-
                   </div>
 
                   {/* =================================================
@@ -1091,7 +990,6 @@ const Tripofmonth = () => {
                       items-center
                     "
                   >
-
                     <span
                       className="
                         font-playfair
@@ -1118,9 +1016,7 @@ const Tripofmonth = () => {
                     >
                       OFF
                     </span>
-
                   </div>
-
                 </div>
               )}
 
@@ -1147,7 +1043,6 @@ const Tripofmonth = () => {
                   sm:py-5
                 "
               >
-
                 <div
                   className="
                     flex
@@ -1158,11 +1053,9 @@ const Tripofmonth = () => {
                     sm:justify-between
                   "
                 >
-
                   {/* PRICE */}
 
                   <div>
-
                     <p
                       className="
                         font-montserrat
@@ -1184,7 +1077,6 @@ const Tripofmonth = () => {
                         gap-2
                       "
                     >
-
                       <span
                         className="
                           font-playfair
@@ -1206,9 +1098,7 @@ const Tripofmonth = () => {
                       >
                         / person
                       </span>
-
                     </div>
-
                   </div>
 
                   {/* Divider */}
@@ -1232,7 +1122,6 @@ const Tripofmonth = () => {
                       gap-2.5
                     "
                   >
-
                     <div
                       className="
                         flex
@@ -1252,7 +1141,6 @@ const Tripofmonth = () => {
                     </div>
 
                     <div>
-
                       <p
                         className="
                           font-montserrat
@@ -1276,19 +1164,12 @@ const Tripofmonth = () => {
                       >
                         All Included
                       </p>
-
                     </div>
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
-
         </div>
 
         {/* ===================================================
@@ -1305,7 +1186,6 @@ const Tripofmonth = () => {
               sm:hidden
             "
           >
-
             <button
               onClick={goPrevious}
               className="
@@ -1339,7 +1219,6 @@ const Tripofmonth = () => {
             >
               <ChevronRight size={17} />
             </button>
-
           </div>
         )}
 
@@ -1356,7 +1235,6 @@ const Tripofmonth = () => {
               gap-2
             "
           >
-
             {tripKeys.map((key) => (
               <button
                 key={key}
@@ -1374,10 +1252,8 @@ const Tripofmonth = () => {
                 `}
               />
             ))}
-
           </div>
         )}
-
       </div>
     </section>
   );

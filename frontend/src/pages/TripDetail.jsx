@@ -1793,13 +1793,13 @@ const TripDetail = () => {
                             }}
                             className="flex w-full items-center gap-4 p-5 text-left transition hover:bg-gray-50"
                           >
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0b2418] text-sm font-bold text-white">
+                            <div className="flex h-11 w-16 shrink-0 items-center justify-center rounded-full bg-[#0b2418] text-sm font-bold text-white py-4">
                               {dayNumber}
                             </div>
 
                             <div className="min-w-0 flex-1">
                               <p className="mb-1 text-xs font-bold uppercase tracking-wider text-[#4f8f3a]">
-                                Day {dayNumber}
+                                {dayNumber}
                               </p>
 
                               <h3 className="font-serif text-xl font-semibold text-[#0b2418]">
