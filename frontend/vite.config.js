@@ -9,6 +9,9 @@ export default defineConfig({
   ],
 
   server: {
+    hmr: {
+      overlay: true
+    },
     proxy: {
       // Gateway Treks API
       "/api": {

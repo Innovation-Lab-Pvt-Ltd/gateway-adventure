@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/home.jsx";
+import Home from "./pages/Home.jsx";
 import Everest from "./pages/Everest.jsx";
 import Blogs from "./pages/Blogs.jsx";
 import MainLayout from "./layout/MainLayout.jsx";
@@ -9,7 +9,7 @@ import BlogDetail from "./sections/blog/BlogDetail.jsx";
 import TripDetail from "./pages/TripDetail.jsx";
 import PageDetail from "./pages/PageDetail.jsx";
 import FAQ from "./sections/home/FAQ.jsx";
-import ActivitiesDetail from "./sections/activities/activitiesdetail.jsx";
+import ActivitiesDetail from "./sections/activities/ActivitiesDetail.jsx";
 import DestinationDetail from "./sections/destination/DestinationDetail.jsx";
 
 function App() {
