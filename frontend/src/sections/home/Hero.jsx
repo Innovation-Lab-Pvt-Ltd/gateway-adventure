@@ -9,7 +9,6 @@ import HomepageSlider from "./HomepageSlider";
 import BlogList from "../blog/BlogList";
 import TrekSearch from "./TrekSearch";
 import Whatsapp from "./Whatsapp";
-import TrekExplorer from "./Trekexplorer";
 import Reveal from "./Reveal";
 import {
   Mountain,
