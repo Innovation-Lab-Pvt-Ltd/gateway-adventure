@@ -3,7 +3,7 @@ import { getCategory } from "./BlogList";
 import { useNavigate } from "react-router-dom";
 
 // Gateway Treks API
-const API_URL = "/api/v1/blogs";
+const API_URL = `${import.meta.env.VITE_BASE_API_URL}blogs`;
 
 const MostReadBlog = () => {
   const [blogs, setBlogs] = useState([]);

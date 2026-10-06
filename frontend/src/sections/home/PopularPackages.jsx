@@ -13,8 +13,8 @@ const PopularPackages = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const IMAGE_BASE_URL =
-    "https://gatewaytreks.com/public/uploads/frontend/full/";
+  const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
+  const API_URL = `${import.meta.env.VITE_BASE_API_URL}popular-packages`;
 
   // =====================================================
   // FETCH POPULAR PACKAGES
@@ -26,12 +26,10 @@ const PopularPackages = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch("/api/v1/popular-packages");
+        const response = await fetch(API_URL);
 
         if (!response.ok) {
-          throw new Error(
-            `API request failed with status ${response.status}`
-          );
+          throw new Error(`API request failed with status ${response.status}`);
         }
 
         const data = await response.json();
@@ -68,9 +66,7 @@ const PopularPackages = () => {
         setShowPopup(false);
       }, 2000);
     } else {
-      setWishlist((prev) =>
-        prev.filter((item) => item !== id)
-      );
+      setWishlist((prev) => prev.filter((item) => item !== id));
     }
   };
 
@@ -112,10 +108,7 @@ const PopularPackages = () => {
   // VISIBLE PACKAGES
   // =====================================================
 
-  const visiblePackages = packages.slice(
-    currentIndex,
-    currentIndex + 3
-  );
+  const visiblePackages = packages.slice(currentIndex, currentIndex + 3);
 
   // =====================================================
   // LOADING
@@ -125,7 +118,6 @@ const PopularPackages = () => {
     return (
       <section className="bg-white px-6 py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
-
           <div className="mb-14 text-center">
             <h2 className="font-playfair text-4xl font-semibold leading-tight text-[#0b2418] md:text-5xl">
               Start Your Journey
@@ -144,13 +136,9 @@ const PopularPackages = () => {
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((item) => (
-              <div
-                key={item}
-                className="h-[600px] animate-pulse bg-gray-200"
-              />
+              <div key={item} className="h-[600px] animate-pulse bg-gray-200" />
             ))}
           </div>
-
         </div>
       </section>
     );
@@ -164,7 +152,6 @@ const PopularPackages = () => {
     return (
       <section className="bg-white px-6 py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
-
           <div className="mb-14 text-center">
             <h2 className="font-playfair text-4xl font-semibold text-[#0b2418] md:text-5xl">
               Start Your Journey
@@ -176,21 +163,16 @@ const PopularPackages = () => {
           </div>
 
           <div className="py-10 text-center">
-            <p className="font-montserrat text-gray-500">
-              {error}
-            </p>
+            <p className="font-montserrat text-gray-500">{error}</p>
           </div>
-
         </div>
       </section>
     );
   }
 
   return (
-    <section className="bg-white px-6 py-24 lg:px-8">
-
+    <section className="bg-transparent px-6 py-24 lg:px-8">
       <div className="mx-auto max-w-7xl">
-
         {/* =====================================================
             WISHLIST POPUP
         ====================================================== */}
@@ -215,11 +197,7 @@ const PopularPackages = () => {
               shadow-xl
             "
           >
-            <Heart
-              size={17}
-              fill="currentColor"
-            />
-
+            <Heart size={17} fill="currentColor" />
             Added to wishlist
           </div>
         )}
@@ -229,7 +207,6 @@ const PopularPackages = () => {
         ====================================================== */}
 
         <div className="mb-14 text-center">
-
           <h2
             className="
               font-playfair
@@ -255,7 +232,6 @@ const PopularPackages = () => {
           >
             Discover unforgettable adventures across Nepal
           </p>
-
         </div>
 
         {/* =====================================================
@@ -263,7 +239,6 @@ const PopularPackages = () => {
         ====================================================== */}
 
         <div className="mb-8 flex items-center justify-between">
-
           <h3
             className="
               font-montserrat
@@ -278,16 +253,12 @@ const PopularPackages = () => {
           {/* ARROWS */}
 
           <div className="flex items-center gap-5">
-
             {/* PREVIOUS */}
 
             <button
               type="button"
               onClick={handlePrevious}
-              disabled={
-                currentIndex === 0 ||
-                isAnimating
-              }
+              disabled={currentIndex === 0 || isAnimating}
               className="
                 text-[#0b2418]
                 transition-colors
@@ -297,10 +268,7 @@ const PopularPackages = () => {
                 disabled:opacity-30
               "
             >
-              <ChevronLeft
-                size={30}
-                strokeWidth={1.5}
-              />
+              <ChevronLeft size={30} strokeWidth={1.5} />
             </button>
 
             {/* NEXT */}
@@ -308,10 +276,7 @@ const PopularPackages = () => {
             <button
               type="button"
               onClick={handleNext}
-              disabled={
-                currentIndex + 3 >= packages.length ||
-                isAnimating
-              }
+              disabled={currentIndex + 3 >= packages.length || isAnimating}
               className="
                 text-[#0b2418]
                 transition-colors
@@ -321,14 +286,9 @@ const PopularPackages = () => {
                 disabled:opacity-30
               "
             >
-              <ChevronRight
-                size={30}
-                strokeWidth={1.5}
-              />
+              <ChevronRight size={30} strokeWidth={1.5} />
             </button>
-
           </div>
-
         </div>
 
         {/* =====================================================
@@ -336,9 +296,7 @@ const PopularPackages = () => {
         ====================================================== */}
 
         {packages.length === 0 ? (
-
           <div className="py-16 text-center">
-
             <p
               className="
                 font-montserrat
@@ -349,17 +307,13 @@ const PopularPackages = () => {
             >
               No popular packages found.
             </p>
-
           </div>
-
         ) : (
-
           /* =====================================================
              PACKAGE CARDS
           ====================================================== */
 
           <div className="overflow-hidden">
-
             <div
               className={`
                 grid
@@ -370,16 +324,10 @@ const PopularPackages = () => {
                 transition-transform
                 duration-[650ms]
                 ease-[cubic-bezier(0.65,0,0.35,1)]
-                ${
-                  isAnimating
-                    ? "translate-x-[-100%]"
-                    : "translate-x-0"
-                }
+                ${isAnimating ? "translate-x-[-100%]" : "translate-x-0"}
               `}
             >
-
               {visiblePackages.map((pkg) => (
-
                 <div
                   key={pkg.id}
                   className="
@@ -391,18 +339,13 @@ const PopularPackages = () => {
                     bg-gray-200
                   "
                 >
-
                   {/* =================================================
                       IMAGE
                   ================================================== */}
 
                   <img
                     src={`${IMAGE_BASE_URL}${pkg.image}`}
-                    alt={
-                      pkg.title ||
-                      pkg.name ||
-                      "Nepal adventure"
-                    }
+                    alt={pkg.title || pkg.name || "Nepal adventure"}
                     className="
                       absolute
                       inset-0
@@ -412,8 +355,7 @@ const PopularPackages = () => {
                     "
                     onError={(e) => {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src =
-                        "/images/MOUNT.jpg";
+                      e.currentTarget.src = "/images/MOUNT.jpg";
                     }}
                   />
 
@@ -455,9 +397,7 @@ const PopularPackages = () => {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      handleWishlist(pkg.id)
-                    }
+                    onClick={() => handleWishlist(pkg.id)}
                     className={`
                       absolute
                       right-5
@@ -473,21 +413,11 @@ const PopularPackages = () => {
                       shadow-md
                       transition
                       duration-300
-                      hover:scale-110
-                      ${
-                        wishlist.includes(pkg.id)
-                          ? "text-red-500"
-                          : "text-gray-700"
-                      }
-                    `}
+                      hover:scale-110 ${wishlist.includes(pkg.id) ? "text-red-500" : "text-gray-700"}`}
                   >
                     <Heart
                       size={19}
-                      fill={
-                        wishlist.includes(pkg.id)
-                          ? "currentColor"
-                          : "none"
-                      }
+                      fill={wishlist.includes(pkg.id) ? "currentColor" : "none"}
                     />
                   </button>
 
@@ -496,7 +426,6 @@ const PopularPackages = () => {
                   ================================================== */}
 
                   <div className="absolute inset-0 flex items-center justify-center">
-
                     <span
                       className="
                         font-montserrat
@@ -509,7 +438,6 @@ const PopularPackages = () => {
                     >
                       {pkg.actname || "Adventure"}
                     </span>
-
                   </div>
 
                   {/* =================================================
@@ -525,7 +453,6 @@ const PopularPackages = () => {
                       p-7
                     "
                   >
-
                     {/* TITLE */}
 
                     <h4
@@ -550,7 +477,6 @@ const PopularPackages = () => {
                         justify-between
                       "
                     >
-
                       {/* DURATION */}
 
                       {pkg.duration && (
@@ -580,7 +506,6 @@ const PopularPackages = () => {
                           ${pkg.price}
                         </span>
                       )}
-
                     </div>
 
                     {/* VIEW TRIP */}
@@ -607,17 +532,11 @@ const PopularPackages = () => {
                     >
                       View Trip
                     </Link>
-
                   </div>
-
                 </div>
-
               ))}
-
             </div>
-
           </div>
-
         )}
 
         {/* =====================================================
@@ -625,7 +544,6 @@ const PopularPackages = () => {
         ====================================================== */}
 
         <div className="mt-12 flex justify-center">
-
           <Link
             to="/trekking-tours"
             className="
@@ -644,11 +562,8 @@ const PopularPackages = () => {
           >
             View More
           </Link>
-
         </div>
-
       </div>
-
     </section>
   );
 };

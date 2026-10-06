@@ -11,10 +11,12 @@ import PageDetail from "./pages/PageDetail.jsx";
 import FAQ from "./sections/home/FAQ.jsx";
 import ActivitiesDetail from "./sections/activities/activitiesdetail.jsx";
 import DestinationDetail from "./sections/destination/DestinationDetail.jsx";
+import ScrollToTop from "./ScrollToTop.jsx";
 
 function App() {
   return (
     <BrowserRouter>
+     <ScrollToTop />
       <div className="">
         <MainLayout>
           <Routes>

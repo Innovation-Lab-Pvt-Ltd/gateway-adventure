@@ -11,9 +11,9 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-const API_URL = "/api/v1/allpackages";
+const API_URL = `${import.meta.env.VITE_BASE_API_URL}allpackages`;
 
-const IMAGE_BASE = "https://gatewaytreks.com/public/uploads/frontend/full/";
+const IMAGE_BASE = import.meta.env.VITE_IMAGE_BASE_URL;
 
 const GRADE_LABELS = {
   1: "Easy",

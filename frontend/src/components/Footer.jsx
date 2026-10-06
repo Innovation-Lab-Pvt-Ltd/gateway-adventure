@@ -11,8 +11,8 @@ const Footer = () => {
   const [showWhatsapp, setShowWhatsapp] = useState(false);
 
   return (
-    <div>
-      <img className="bg-[#2F2F2F]" src="Green Illustration Nature Quote Poster.png"/>
+    <div className="relative">
+      <img className="bg-[#2F2F2F] absolute z-10 " src="Green Illustration Nature Quote Poster.png"/>
       <footer className="relative overflow-hidden bg-[#2F2F2F] text-[#ADADAD]">
       
       {/* =====================================================
@@ -23,9 +23,9 @@ const Footer = () => {
       {/* =====================================================
           MAIN FOOTER
       ====================================================== */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-10 lg:py-20">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 sm:px-8 lg:px-10 lg:py-10">
 
-        <div className="grid grid-cols-1 gap-14 md:grid-cols-2 lg:grid-cols-12 lg:gap-10">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
 
           {/* =================================================
               BRAND
@@ -61,7 +61,7 @@ const Footer = () => {
 
 
             {/* Description */}
-            <p className="mt-7 max-w-md text-sm leading-7 text-[#ADADAD]">
+            <p className="mt-4 max-w-md text-sm leading-6 text-[#ADADAD]">
               Discover Nepal through unforgettable journeys, breathtaking
               landscapes, rich culture, and experiences designed to stay with
               you forever.
@@ -69,7 +69,7 @@ const Footer = () => {
 
 
             {/* Social Links */}
-            <div className="mt-8 flex items-center gap-3">
+            <div className="mt-5 flex items-center gap-3">
 
               {/* Instagram */}
               <a
@@ -156,11 +156,11 @@ const Footer = () => {
           ================================================== */}
           <div className="lg:col-span-2">
 
-            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white">
               Company
             </h3>
 
-            <ul className="space-y-4 text-sm">
+            <ul className="space-y-2 text-sm">
 
               <li>
                 <a
@@ -208,11 +208,11 @@ const Footer = () => {
           ================================================== */}
           <div className="lg:col-span-2">
 
-            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white">
               Explore
             </h3>
 
-            <ul className="space-y-4 text-sm">
+            <ul className="space-y-2 text-sm">
 
               <li>
                 <a
@@ -260,11 +260,11 @@ const Footer = () => {
           ================================================== */}
           <div className="lg:col-span-2">
 
-            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white">
               Resources
             </h3>
 
-            <ul className="space-y-4 text-sm">
+            <ul className="space-y-2 text-sm">
 
               <li>
                 <a
@@ -312,11 +312,11 @@ const Footer = () => {
           ================================================== */}
           <div className="lg:col-span-2">
 
-            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white">
               Contact
             </h3>
 
-            <div className="space-y-5">
+            <div className="space-y-3">
 
               {/* Location */}
               <div className="flex items-start gap-3">
@@ -393,7 +393,7 @@ const Footer = () => {
               type="button"
               onClick={() => setShowWhatsapp(true)}
               className="
-                mt-7
+                mt-4
                 flex
                 w-full
                 items-center
@@ -404,7 +404,7 @@ const Footer = () => {
                 border-[#ADADAD]/30
                 bg-transparent
                 px-5
-                py-3
+                py-2
                 text-sm
                 font-medium
                 text-[#ADADAD]
@@ -430,21 +430,21 @@ const Footer = () => {
         {/* =====================================================
             DIVIDER
         ====================================================== */}
-        <div className="my-14 h-px w-full bg-[#ADADAD]/15" />
+        <div className="my-6 h-px w-full bg-[#ADADAD]/15" />
 
 
         {/* =====================================================
             FOOTER STATEMENT
         ====================================================== */}
-        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+        <div className="flex flex-col items-start justify-between gap-3 md:flex-row md:items-end">
 
           <div>
 
-            <p className="font-playfair text-3xl leading-tight text-white sm:text-4xl">
+            <p className="font-playfair text-2xl leading-tight text-white sm:text-3xl">
               Explore more.
             </p>
 
-            <p className="font-playfair text-3xl italic leading-tight text-[#ADADAD] sm:text-4xl">
+            <p className="font-playfair text-2xl italic leading-tight text-[#ADADAD] sm:text-3xl">
               Experience more.
             </p>
 
@@ -473,9 +473,9 @@ const Footer = () => {
           flex-col
           items-center
           justify-between
-          gap-3
+          gap-2
           px-6
-          py-5
+          py-3
           text-xs
           text-[#ADADAD]
           sm:px-8

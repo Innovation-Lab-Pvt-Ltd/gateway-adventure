@@ -9,7 +9,8 @@ import HomepageSlider from "./HomepageSlider";
 import BlogList from "../blog/BlogList";
 import TrekSearch from "./TrekSearch";
 import Whatsapp from "./Whatsapp";
-
+import TrekExplorer from "./Trekexplorer";
+import Reveal from "./Reveal";
 import {
   Mountain,
   Star,
@@ -180,43 +181,52 @@ const Hero = () => {
         </div>
       </section>
 
+      {/* =====================================================
+          Every section below fades + slides in once when it
+          scrolls into view (see Reveal.jsx).
+      ====================================================== */}
+
       {/* ================= TREK SEARCH ================= */}
-      <section id="trek-search">
+      <Reveal as="section" id="trek-search">
         <TrekSearch />
-      </section>
+      </Reveal>
 
       {/* ================= PACKAGES ================= */}
-      <section
+      <Reveal
+        as="section"
         id="trekking"
         className="bg-[#F4F0E7]"
       >
         <PopularPackages />
-      </section>
+      </Reveal>
+       {/* <section id="trek-search">
+        <TrekExplorer />
+      </section> */}
 
       {/* ================= TOURS ================= */}
-      <section id="tours">
+      <Reveal as="section" id="tours">
         <Tripofmonth />
-      </section>
+      </Reveal>
 
       {/* ================= BLOG ================= */}
-      <section id="Blog">
+      <Reveal as="section" id="Blog">
         <BlogList variant="compact" />
-      </section>
+      </Reveal>
 
       {/* ================= DESTINATIONS ================= */}
-      <section id="destinations">
+      <Reveal as="section" id="destinations">
         <NepalMap />
-      </section>
+      </Reveal>
 
       {/* ================= GUIDE ================= */}
-      <section id="GuideExpert">
+      <Reveal as="section" id="GuideExpert">
         <GuideExpert />
-      </section>
+      </Reveal>
 
       {/* ================= CATEGORIES ================= */}
-      <section id="Categories">
+      <Reveal as="section" id="Categories">
         <TourCategories />
-      </section>
+      </Reveal>
 
       {/* ================= WHATSAPP STICKY BUTTON ================= */}
       <button

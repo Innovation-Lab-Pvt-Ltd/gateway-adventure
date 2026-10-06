@@ -13,10 +13,9 @@ import {
 } from "react-router-dom";
 import BlogTOC from "./BlogTOC";
 
-const API_URL = "/api/v1/blogs";
+const API_URL = `${import.meta.env.VITE_BASE_API_URL}blogs`;
 
-const IMAGE_BASE_URL =
-  "https://gatewaytreks.com/public/uploads/frontend/full/";
+const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
 // =====================================================
 // FORMAT DATE

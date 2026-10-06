@@ -8,10 +8,17 @@ import {
   Compass,
 } from "lucide-react";
 
-const API_URL = "/api/v1/allpackages";
+// =====================================================
+// ENVIRONMENT VARIABLES
+// =====================================================
 
-const IMAGE_BASE_URL =
-  "https://gatewaytreks.com/public/uploads/frontend/full/";
+const API_URL = `${import.meta.env.VITE_BASE_API_URL}allpackages`;
+
+const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
+
+// =====================================================
+// TREK SEARCH
+// =====================================================
 
 const TrekSearch = () => {
   const navigate = useNavigate();
@@ -223,9 +230,6 @@ const TrekSearch = () => {
 
   // =====================================================
   // WAYPOINT RESULT ROW
-  // A trail-style row: a small route line + marker on the
-  // left connects each result, standing in for the generic
-  // floating white card.
   // =====================================================
 
   const PackageResult = ({ pkg, isLast }) => {
@@ -260,7 +264,9 @@ const TrekSearch = () => {
             w-px
             bg-[#D3CBB4]
           "
-          style={{ display: isLast ? "none" : "block" }}
+          style={{
+            display: isLast ? "none" : "block",
+          }}
         />
 
         <span
@@ -286,20 +292,25 @@ const TrekSearch = () => {
           <img
             src={getImage(pkg)}
             alt={pkg.name || pkg.title}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            className="
+              h-full
+              w-full
+              object-cover
+              transition
+              duration-500
+              group-hover:scale-105
+            "
           />
         </div>
 
         {/* CONTENT */}
 
         <div className="min-w-0 flex-1 border-b border-[#E4DCC8] pb-3 group-last:border-none">
-
           <h3 className="truncate font-montserrat text-sm font-bold text-[#0b2418] sm:text-base">
             {pkg.name || pkg.title}
           </h3>
 
           <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-montserrat text-xs text-[#6B7568]">
-
             {pkg.duration && (
               <span>{pkg.duration} Days</span>
             )}
@@ -311,7 +322,6 @@ const TrekSearch = () => {
             {pkg.gradename && (
               <span>{pkg.gradename}</span>
             )}
-
           </div>
         </div>
 
@@ -319,7 +329,14 @@ const TrekSearch = () => {
 
         <ArrowUpRight
           size={17}
-          className="shrink-0 self-start pt-1 text-[#B9B198] transition group-hover:text-[#0b2418]"
+          className="
+            shrink-0
+            self-start
+            pt-1
+            text-[#B9B198]
+            transition
+            group-hover:text-[#0b2418]
+          "
         />
       </button>
     );
@@ -340,7 +357,6 @@ const TrekSearch = () => {
             ================================================= */}
 
         <div className="mb-8 flex items-center gap-3">
-
           <Compass
             size={22}
             strokeWidth={1.5}
@@ -350,14 +366,10 @@ const TrekSearch = () => {
           <h2 className="font-playfair text-3xl font-medium text-[#0b2418] sm:text-4xl">
             Find your trek
           </h2>
-
         </div>
 
         {/* =================================================
             THE TRAIL PANEL
-            One bold, dark, confident element — search input
-            on top, filters + CTA below, divided by hairlines
-            instead of separate boxed cards.
             ================================================= */}
 
         <div className="relative rounded-lg bg-[#0b2418] px-5 pt-5 pb-2 shadow-[0_20px_50px_-20px_rgba(11,36,24,0.5)] sm:px-8 sm:pt-6">
@@ -374,7 +386,9 @@ const TrekSearch = () => {
             <input
               type="text"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
               placeholder="Search a trek by name — Everest Base Camp, Annapurna…"
               className="
                 w-full
@@ -411,13 +425,12 @@ const TrekSearch = () => {
                 <X size={16} />
               </button>
             )}
-
           </div>
 
           {/* NAME SEARCH RESULTS */}
 
           {search.trim() && (
-            <div className="max-h-72 overflow-y-auto rounded-md bg-[#F4F0E7] px-2 py-2 my-4">
+            <div className="my-4 max-h-72 overflow-y-auto rounded-md bg-[#F4F0E7] px-2 py-2">
 
               {loading ? (
                 <div className="px-4 py-4 text-center font-montserrat text-sm text-[#6B7568]">
@@ -432,7 +445,9 @@ const TrekSearch = () => {
                   <PackageResult
                     key={pkg.id}
                     pkg={pkg}
-                    isLast={i === searchResults.length - 1}
+                    isLast={
+                      i === searchResults.length - 1
+                    }
                   />
                 ))
               )}
@@ -455,7 +470,9 @@ const TrekSearch = () => {
               <div className="relative">
                 <select
                   value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
+                  onChange={(e) =>
+                    setDestination(e.target.value)
+                  }
                   className="
                     w-full
                     appearance-none
@@ -469,20 +486,38 @@ const TrekSearch = () => {
                     outline-none
                   "
                 >
-                  <option className="text-[#0b2418]" value="">
+                  <option
+                    className="text-[#0b2418]"
+                    value=""
+                  >
                     Anywhere
                   </option>
-                  <option className="text-[#0b2418]" value="1">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="1"
+                  >
                     Nepal
                   </option>
-                  <option className="text-[#0b2418]" value="2">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="2"
+                  >
                     Tibet
                   </option>
                 </select>
 
                 <ChevronDown
                   size={15}
-                  className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-white/40"
+                  className="
+                    pointer-events-none
+                    absolute
+                    right-0
+                    top-1/2
+                    -translate-y-1/2
+                    text-white/40
+                  "
                 />
               </div>
             </div>
@@ -498,7 +533,9 @@ const TrekSearch = () => {
               <div className="relative">
                 <select
                   value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
+                  onChange={(e) =>
+                    setDuration(e.target.value)
+                  }
                   className="
                     w-full
                     appearance-none
@@ -512,26 +549,52 @@ const TrekSearch = () => {
                     outline-none
                   "
                 >
-                  <option className="text-[#0b2418]" value="">
+                  <option
+                    className="text-[#0b2418]"
+                    value=""
+                  >
                     Any length
                   </option>
-                  <option className="text-[#0b2418]" value="1-7">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="1-7"
+                  >
                     1 – 7 days
                   </option>
-                  <option className="text-[#0b2418]" value="8-14">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="8-14"
+                  >
                     8 – 14 days
                   </option>
-                  <option className="text-[#0b2418]" value="15-21">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="15-21"
+                  >
                     15 – 21 days
                   </option>
-                  <option className="text-[#0b2418]" value="22+">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="22+"
+                  >
                     22+ days
                   </option>
                 </select>
 
                 <ChevronDown
                   size={15}
-                  className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-white/40"
+                  className="
+                    pointer-events-none
+                    absolute
+                    right-0
+                    top-1/2
+                    -translate-y-1/2
+                    text-white/40
+                  "
                 />
               </div>
             </div>
@@ -547,7 +610,9 @@ const TrekSearch = () => {
               <div className="relative">
                 <select
                   value={grade}
-                  onChange={(e) => setGrade(e.target.value)}
+                  onChange={(e) =>
+                    setGrade(e.target.value)
+                  }
                   className="
                     w-full
                     appearance-none
@@ -561,26 +626,52 @@ const TrekSearch = () => {
                     outline-none
                   "
                 >
-                  <option className="text-[#0b2418]" value="">
+                  <option
+                    className="text-[#0b2418]"
+                    value=""
+                  >
                     Any grade
                   </option>
-                  <option className="text-[#0b2418]" value="1">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="1"
+                  >
                     Easy
                   </option>
-                  <option className="text-[#0b2418]" value="2">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="2"
+                  >
                     Moderate
                   </option>
-                  <option className="text-[#0b2418]" value="3">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="3"
+                  >
                     Strenuous
                   </option>
-                  <option className="text-[#0b2418]" value="4">
+
+                  <option
+                    className="text-[#0b2418]"
+                    value="4"
+                  >
                     Very strenuous
                   </option>
                 </select>
 
                 <ChevronDown
                   size={15}
-                  className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-white/40"
+                  className="
+                    pointer-events-none
+                    absolute
+                    right-0
+                    top-1/2
+                    -translate-y-1/2
+                    text-white/40
+                  "
                 />
               </div>
             </div>
@@ -588,6 +679,7 @@ const TrekSearch = () => {
             {/* CTA */}
 
             <div className="flex items-center py-4 sm:pl-5">
+
               <button
                 type="button"
                 onClick={handleFindYourTrek}
@@ -611,11 +703,15 @@ const TrekSearch = () => {
                   sm:w-auto
                 "
               >
-                <Search size={16} strokeWidth={2.5} />
+                <Search
+                  size={16}
+                  strokeWidth={2.5}
+                />
+
                 Find your trek
               </button>
-            </div>
 
+            </div>
           </div>
         </div>
 
@@ -635,7 +731,9 @@ const TrekSearch = () => {
                 <PackageResult
                   key={pkg.id}
                   pkg={pkg}
-                  isLast={i === filterResults.length - 1}
+                  isLast={
+                    i === filterResults.length - 1
+                  }
                 />
               ))
             )}
