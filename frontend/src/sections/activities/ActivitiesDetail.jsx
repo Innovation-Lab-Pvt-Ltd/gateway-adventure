@@ -11,9 +11,8 @@ const ActivitiesDetail = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const IMAGE_BASE_URL =
-    "https://gatewaytreks.com/public/uploads/frontend/full/";
+  const API_URL = `${import.meta.env.VITE_BASE_API_URL}allpackages`;
+  const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
   useEffect(() => {
     const fetchActivityPackages = async () => {
@@ -24,7 +23,7 @@ const ActivitiesDetail = () => {
         // --------------------------------------------------
         // 1. Get first page
         // --------------------------------------------------
-        const firstResponse = await fetch("/api/v1/allpackages");
+        const firstResponse = await fetch(API_URL);
 
         if (!firstResponse.ok) {
           throw new Error("Failed to fetch packages");

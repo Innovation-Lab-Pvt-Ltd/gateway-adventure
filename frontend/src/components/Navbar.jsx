@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import MobileMenu from "./MobileMenu";
 
 // =========================================================
 // CONFIG
 // =========================================================
-const API_URL = "/api/v1/allpackages";
+const API_URL = `${import.meta.env.VITE_BASE_API_URL}allpackages`;
 
 // Route that renders TripDetail.jsx (must match your router,
 // e.g. <Route path="/package/:slug" element={<TripDetail />} />)
@@ -92,7 +93,7 @@ const loadMenuData = () => {
 };
 
 // =========================================================
-// MEGA MENU
+// MEGA MENU (desktop)
 // ---------------------------------------------------------
 // Level 1: trigger link (Activity / Destinations)
 // Level 2: item names   (shown on hover of the trigger)
@@ -200,7 +201,6 @@ const MegaMenu = ({
                 return (
                   <li key={item.id} onMouseEnter={() => setActiveId(item.id)}>
                     {itemRoute ? (
-                      // Clickable: goes to the detail page for this item
                       <Link
                         to={`${itemRoute}/${item.slug}`}
                         onClick={onNavigate}
@@ -209,7 +209,6 @@ const MegaMenu = ({
                         {rowContent}
                       </Link>
                     ) : (
-                      // Hover-only (used by Destinations)
                       <div className={`${rowClass} cursor-default`}>
                         {rowContent}
                       </div>
@@ -282,6 +281,7 @@ const MegaMenu = ({
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState(null); // "activity" | "destinations" | null
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [menuData, setMenuData] = useState({
     status: "loading",
     destinations: [],
@@ -355,8 +355,10 @@ const Navbar = () => {
     setOpenMenu(null);
   };
 
+  // Close every menu (desktop + mobile) on page change
   useEffect(() => {
     closeNow();
+    setMobileOpen(false);
   }, [location.pathname]);
 
   useEffect(() => () => clearTimeout(closeTimer.current), []);
@@ -365,15 +367,12 @@ const Navbar = () => {
   // NAVBAR STATE
   // =========================================================
   //
-  // Package Detail:
-  // Always white
+  // Detail pages: always white
+  // Other pages:  top = transparent, scroll = white
+  // Any menu open (desktop mega menu or mobile drawer) = white
   //
-  // Other pages:
-  // Top = transparent
-  // Scroll = white
-  // Menu open = white (so it blends into the dropdown)
-  //
-  const navbarSolid = isSolidPage || scrolled || openMenu !== null;
+  const navbarSolid =
+    isSolidPage || scrolled || openMenu !== null || mobileOpen;
 
   const linkColor = navbarSolid ? "text-[#0b2418]" : "text-white";
 
@@ -444,15 +443,11 @@ const Navbar = () => {
         ===================================================== */}
 
         <Link to="/" className="flex items-center gap-3">
-          {/* Logo Image */}
-
           <img
             src="/TrekLogo.png"
             alt="Gateway Adventure"
             className="h-10 w-10 object-contain"
           />
-
-          {/* Logo Text */}
 
           <div>
             <h1
@@ -491,14 +486,11 @@ const Navbar = () => {
         ===================================================== */}
 
         <div className="hidden items-center gap-8 self-stretch md:flex">
-          {/* HOME */}
-
           <Link to="/" className={`${navLinkStyle} ${linkColor}`}>
             Home
           </Link>
 
           {/* ACTIVITY  ->  activity names  ->  packages */}
-
           <MegaMenu
             label="Activity"
             to="/activity"
@@ -514,7 +506,6 @@ const Navbar = () => {
           />
 
           {/* DESTINATIONS  ->  destination names  ->  packages */}
-
           <MegaMenu
             label="Destinations"
             to="/destinations"
@@ -529,15 +520,9 @@ const Navbar = () => {
             linkClass={`${navLinkStyle} ${linkColor}`}
           />
 
-          {/* ABOUT US */}
-
           <Link to="/AboutUs" className={`${navLinkStyle} ${linkColor}`}>
             About Us
           </Link>
-
-          {/* FAQ */}
-
-          {/* BLOGS */}
 
           <Link to="/Blogs" className={`${navLinkStyle} ${linkColor}`}>
             Blogs
@@ -550,7 +535,6 @@ const Navbar = () => {
 
         <div className="flex items-center gap-3">
           {/* CONTACT / ENQUIRE */}
-
           <Link
             to="/ContactUs"
             className={`
@@ -583,11 +567,12 @@ const Navbar = () => {
             Enquire Now
           </Link>
 
-          {/* =================================================
-              MOBILE BUTTON
-          ================================================= */}
-
+          {/* MOBILE BUTTON */}
           <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
             className={`
               flex
               h-10
@@ -604,10 +589,22 @@ const Navbar = () => {
               }
             `}
           >
-            ☰
+            {mobileOpen ? "✕" : "☰"}
           </button>
         </div>
       </div>
+
+      {/* =====================================================
+          MOBILE MENU
+      ===================================================== */}
+      <MobileMenu
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        menuData={menuData}
+        activityRoute={ACTIVITY_ROUTE}
+        destinationRoute={DESTINATION_ROUTE}
+        packageRoute={PACKAGE_ROUTE}
+      />
     </nav>
   );
 };

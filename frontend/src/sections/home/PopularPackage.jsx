@@ -64,13 +64,13 @@ const PopularPackage = ({ packageData, onClose }) => {
       : Number(packageData.grade_id) === 3
       ? "Challenging"
       : "Moderate";
-
+const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
   // =====================================================
   // IMAGE
   // =====================================================
 
   const image = packageData.image
-    ? `https://gatewaytreks.com/public/uploads/frontend/full/${packageData.image}`
+    ? `${IMAGE_BASE_URL}${packageData.image}`
     : "/images/MOUNT.jpg";
 
   // =====================================================

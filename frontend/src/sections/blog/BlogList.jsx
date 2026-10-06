@@ -2,10 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, CalendarDays } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "/api/v1/blogs";
+const API_URL = `${import.meta.env.VITE_BASE_API_URL}blogs`;
 
-const IMAGE_BASE_URL =
-  "https://gatewaytreks.com/public/uploads/frontend/full/";
+const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
 const FALLBACK_IMAGE = "/images/MOUNT.jpg";
 

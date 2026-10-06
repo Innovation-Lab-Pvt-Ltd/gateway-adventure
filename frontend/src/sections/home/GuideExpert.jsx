@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Mail, Phone, ArrowUpRight } from "lucide-react";
 
-const API_URL = "/api/v1/teams";
+const API_URL = `${import.meta.env.VITE_BASE_API_URL}teams`;
 
-const IMAGE_BASE_URL =
-  "https://gatewaytreks.com/public/uploads/frontend/full/";
+
+const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
 const GuideExpert = () => {
   const [experts, setExperts] = useState([]);

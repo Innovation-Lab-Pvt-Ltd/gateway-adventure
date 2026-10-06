@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Compass } from "lucide-react";
 
-const API_BASE_URL = "/api/v1/pagedetail";
+const API_BASE_URL = `${import.meta.env.VITE_BASE_API_URL}pagedetail`;
 
 const PageDetail = () => {
   const { slug } = useParams();

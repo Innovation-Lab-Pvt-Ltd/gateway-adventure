@@ -9,9 +9,8 @@ const TourCategories = () => {
   const [category, setCategory] = useState("all");
 
   const sectionRef = useRef(null);
-
-  const IMAGE_BASE_URL =
-    "https://gatewaytreks.com/public/uploads/frontend/full/";
+  const API_URL = `${import.meta.env.VITE_BASE_API_URL}allpackages`;
+  const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
   // =====================================================
   // FETCH ALL PACKAGES
@@ -29,18 +28,16 @@ const TourCategories = () => {
 
         do {
           const response = await fetch(
-            `/api/v1/allpackages?page=${page}&sort=price-lowest`,
+            `${API_URL}?page=${page}&sort=price-lowest`,
             {
               headers: {
                 Accept: "application/json",
               },
-            }
+            },
           );
 
           if (!response.ok) {
-            throw new Error(
-              `Failed to fetch packages: ${response.status}`
-            );
+            throw new Error(`Failed to fetch packages: ${response.status}`);
           }
 
           const data = await response.json();
@@ -55,10 +52,7 @@ const TourCategories = () => {
 
           const pagePackages = packageData?.data || [];
 
-          collectedPackages = [
-            ...collectedPackages,
-            ...pagePackages,
-          ];
+          collectedPackages = [...collectedPackages, ...pagePackages];
 
           lastPage = packageData?.last_page || 1;
 
@@ -66,33 +60,22 @@ const TourCategories = () => {
           // ACTIVITIES
           // =================================================
 
-          if (
-            page === 1 &&
-            Array.isArray(data?.activities)
-          ) {
+          if (page === 1 && Array.isArray(data?.activities)) {
             fetchedActivities = data.activities;
           }
 
           page++;
         } while (page <= lastPage);
 
-        console.log(
-          "ALL COLLECTED PACKAGES:",
-          collectedPackages
-        );
+        console.log("ALL COLLECTED PACKAGES:", collectedPackages);
 
         setAllPackages(collectedPackages);
         setActivities(fetchedActivities);
-
       } catch (error) {
-        console.error(
-          "ERROR FETCHING PACKAGES:",
-          error
-        );
+        console.error("ERROR FETCHING PACKAGES:", error);
 
         setAllPackages([]);
         setActivities([]);
-
       } finally {
         setLoading(false);
       }
@@ -125,9 +108,7 @@ const TourCategories = () => {
     category === "all"
       ? allPackages
       : allPackages.filter(
-          (pkg) =>
-            String(pkg.activity_id) ===
-            String(category)
+          (pkg) => String(pkg.activity_id) === String(category),
         );
 
   // =====================================================
@@ -212,13 +193,11 @@ const TourCategories = () => {
         to-[#c98291]
       "
     >
-
       {/* =====================================================
           TOP CATEGORY NAVIGATION
       ===================================================== */}
 
       <div className="px-5 pt-10 sm:px-6 lg:px-12">
-
         <div
           className="
             flex
@@ -229,20 +208,14 @@ const TourCategories = () => {
             [&::-webkit-scrollbar]:hidden
           "
         >
-
           {categoryOptions.map((item) => {
-
-            const isActive =
-              String(category) ===
-              String(item.key);
+            const isActive = String(category) === String(item.key);
 
             return (
               <button
                 key={item.key}
                 type="button"
-                onClick={() =>
-                  handleCategoryChange(item.key)
-                }
+                onClick={() => handleCategoryChange(item.key)}
                 className={`
                   shrink-0
                   border
@@ -267,9 +240,7 @@ const TourCategories = () => {
               </button>
             );
           })}
-
         </div>
-
       </div>
 
       {/* =====================================================
@@ -295,7 +266,6 @@ const TourCategories = () => {
           [&::-webkit-scrollbar]:hidden
         "
       >
-
         {/* =====================================================
             INTRO
         ===================================================== */}
@@ -319,7 +289,6 @@ const TourCategories = () => {
             lg:w-[340px]
           "
         >
-
           <h1
             className="
               font-greatvibes
@@ -370,14 +339,11 @@ const TourCategories = () => {
             >
               {
                 activities.find(
-                  (activity) =>
-                    String(activity.id) ===
-                    String(category)
+                  (activity) => String(activity.id) === String(category),
                 )?.name
               }
             </div>
           )}
-
         </div>
 
         {/* =====================================================
@@ -420,10 +386,9 @@ const TourCategories = () => {
             EMPTY
         ===================================================== */}
 
-        {!loading &&
-          filteredPackages.length === 0 && (
-            <div
-              className="
+        {!loading && filteredPackages.length === 0 && (
+          <div
+            className="
                 flex
                 h-[460px]
                 w-[260px]
@@ -441,21 +406,20 @@ const TourCategories = () => {
                 lg:h-[550px]
                 lg:w-[310px]
               "
-            >
-              <p
-                className="
+          >
+            <p
+              className="
                   max-w-[220px]
                   font-montserrat
                   text-sm
                   leading-relaxed
                   text-[#351b24]/70
                 "
-              >
-                No trips are available in
-                this category.
-              </p>
-            </div>
-          )}
+            >
+              No trips are available in this category.
+            </p>
+          </div>
+        )}
 
         {/* =====================================================
             TRIP CARDS
@@ -463,7 +427,6 @@ const TourCategories = () => {
 
         {!loading &&
           filteredPackages.map((pkg) => (
-
             <div
               key={pkg.id}
               className="
@@ -485,18 +448,13 @@ const TourCategories = () => {
                 lg:w-[310px]
               "
             >
-
               {/* =================================================
                   IMAGE
               ================================================= */}
 
               <img
                 src={getImage(pkg)}
-                alt={
-                  pkg.title ||
-                  pkg.name ||
-                  "Nepal trip"
-                }
+                alt={pkg.title || pkg.name || "Nepal trip"}
                 className="
                   absolute
                   inset-0
@@ -510,8 +468,7 @@ const TourCategories = () => {
                 "
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src =
-                    "/images/MOUNT.jpg";
+                  e.currentTarget.src = "/images/MOUNT.jpg";
                 }}
               />
 
@@ -563,7 +520,6 @@ const TourCategories = () => {
                   sm:p-6
                 "
               >
-
                 {/* =================================================
                     DESTINATION
                 ================================================= */}
@@ -599,9 +555,7 @@ const TourCategories = () => {
                     sm:text-2xl
                   "
                 >
-                  {pkg.title ||
-                    pkg.name ||
-                    "Untitled Trip"}
+                  {pkg.title || pkg.name || "Untitled Trip"}
                 </h2>
 
                 {/* =================================================
@@ -620,27 +574,13 @@ const TourCategories = () => {
                     sm:text-xs
                   "
                 >
-
-                  {pkg.duration && (
-                    <span>
-                      {pkg.duration} Days
-                    </span>
-                  )}
+                  {pkg.duration && <span>{pkg.duration} Days</span>}
 
                   {pkg.price !== null &&
                     pkg.price !== undefined &&
-                    pkg.price !== "" && (
-                      <span>
-                        ${pkg.price}
-                      </span>
-                    )}
+                    pkg.price !== "" && <span>${pkg.price}</span>}
 
-                  {pkg.rating && (
-                    <span>
-                      ★ {pkg.rating}
-                    </span>
-                  )}
-
+                  {pkg.rating && <span>★ {pkg.rating}</span>}
                 </div>
 
                 {/* =================================================
@@ -708,19 +648,12 @@ const TourCategories = () => {
                 >
                   EXPLORE TRIP
                 </Link>
-
               </div>
-
             </div>
-
           ))}
-
       </div>
-
     </section>
   );
 };
 
 export default TourCategories;
-
-

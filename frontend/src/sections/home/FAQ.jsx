@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ChevronDown, Loader2 } from "lucide-react";
 
-const API_URL = "/api/v1/faqs";
+const API_URL = `${import.meta.env.VITE_BASE_API_URL}faqs` ;
 
 const FAQ = () => {
   const [faqs, setFaqs] = useState([]);
