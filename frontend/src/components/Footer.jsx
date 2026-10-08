@@ -11,8 +11,8 @@ const Footer = () => {
   const [showWhatsapp, setShowWhatsapp] = useState(false);
 
   return (
-    <div className="relative">
-      <img className="bg-[#2F2F2F] absolute z-10 " src="Green Illustration Nature Quote Poster.png"/>
+    <div className="">
+      <img className="bg-[#2F2F2F]  " src="Green Illustration Nature Quote Poster.png"/>
       <footer className="relative overflow-hidden bg-[#2F2F2F] text-[#ADADAD]">
       
       {/* =====================================================

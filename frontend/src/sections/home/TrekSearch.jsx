@@ -6,6 +6,7 @@ import {
   X,
   ArrowUpRight,
   Compass,
+  RotateCw,
 } from "lucide-react";
 
 // =====================================================
@@ -15,6 +16,13 @@ import {
 const API_URL = `${import.meta.env.VITE_BASE_API_URL}allpackages`;
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
+
+// =====================================================
+// COLOR PALETTE
+// =====================================================
+// Navy  : #021861
+// Blue  : #255DCE
+// Green : #3DDE11
 
 // =====================================================
 // TREK SEARCH
@@ -45,6 +53,9 @@ const TrekSearch = () => {
     useState(false);
 
   const [loading, setLoading] = useState(true);
+
+  // Refresh button spin state
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // =====================================================
   // FETCH ALL PACKAGES
@@ -197,6 +208,28 @@ const TrekSearch = () => {
   };
 
   // =====================================================
+  // REFRESH / RESET EVERYTHING
+  // =====================================================
+
+  const handleRefresh = () => {
+    setSearch("");
+    setSearchResults([]);
+
+    setDestination("");
+    setDuration("");
+    setGrade("");
+
+    setFilterResults([]);
+    setShowFilterResults(false);
+
+    setIsRefreshing(true);
+
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 600);
+  };
+
+  // =====================================================
   // PACKAGE CLICK
   // =====================================================
 
@@ -262,7 +295,7 @@ const TrekSearch = () => {
             top-0
             h-full
             w-px
-            bg-[#D3CBB4]
+            bg-white/20
           "
           style={{
             display: isLast ? "none" : "block",
@@ -279,16 +312,16 @@ const TrekSearch = () => {
             -translate-y-1/2
             rounded-full
             border-2
-            border-[#9BE564]
-            bg-[#F4F0E7]
+            border-[#3DDE11]
+            bg-[#021861]
             transition
-            group-hover:bg-[#9BE564]
+            group-hover:bg-[#3DDE11]
           "
         />
 
         {/* IMAGE */}
 
-        <div className="h-16 w-24 shrink-0 overflow-hidden rounded-md">
+        <div className="h-16 w-24 shrink-0 overflow-hidden rounded-md ring-1 ring-white/20">
           <img
             src={getImage(pkg)}
             alt={pkg.name || pkg.title}
@@ -305,12 +338,12 @@ const TrekSearch = () => {
 
         {/* CONTENT */}
 
-        <div className="min-w-0 flex-1 border-b border-[#E4DCC8] pb-3 group-last:border-none">
-          <h3 className="truncate font-montserrat text-sm font-bold text-[#0b2418] sm:text-base">
+        <div className="min-w-0 flex-1 border-b border-white/10 pb-3 group-last:border-none">
+          <h3 className="truncate font-montserrat text-sm font-bold text-white sm:text-base">
             {pkg.name || pkg.title}
           </h3>
 
-          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-montserrat text-xs text-[#6B7568]">
+          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-montserrat text-xs text-white/60">
             {pkg.duration && (
               <span>{pkg.duration} Days</span>
             )}
@@ -333,9 +366,9 @@ const TrekSearch = () => {
             shrink-0
             self-start
             pt-1
-            text-[#B9B198]
+            text-white/40
             transition
-            group-hover:text-[#0b2418]
+            group-hover:text-[#3DDE11]
           "
         />
       </button>
@@ -344,12 +377,47 @@ const TrekSearch = () => {
 
   return (
     <section
-      className="relative overflow-hidden bg-[#F4F0E7] py-16 sm:py-20"
-      style={{
-        backgroundImage:
-          "repeating-radial-gradient(circle at 88% 8%, rgba(11,36,24,0.05) 0px, rgba(11,36,24,0.05) 1px, transparent 1px, transparent 34px)",
-      }}
+      className="
+        relative
+        overflow-hidden
+        bg-gradient-to-br
+        from-[#021861]
+        via-[#021861]
+        to-[#255DCE]
+        py-16
+        sm:py-20
+      "
     >
+      {/* BACKGROUND GLOW BLOBS (give the glass something to blur) */}
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -left-24
+          -top-24
+          h-80
+          w-80
+          rounded-full
+          bg-[#255DCE]/50
+          blur-3xl
+        "
+      />
+
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -bottom-28
+          right-0
+          h-96
+          w-96
+          rounded-full
+          bg-[#3DDE11]/20
+          blur-3xl
+        "
+      />
+
       <div className="relative z-10 mx-auto w-full max-w-5xl px-4">
 
         {/* =================================================
@@ -360,27 +428,42 @@ const TrekSearch = () => {
           <Compass
             size={22}
             strokeWidth={1.5}
-            className="text-[#9BE564]"
+            className="text-[#3DDE11]"
           />
 
-          <h2 className="font-playfair text-3xl font-medium text-[#0b2418] sm:text-4xl">
+          <h2 className="font-playfair text-3xl font-medium text-white sm:text-4xl">
             Find your trek
           </h2>
         </div>
 
         {/* =================================================
-            THE TRAIL PANEL
+            THE GLASS PANEL
             ================================================= */}
 
-        <div className="relative rounded-lg bg-[#0b2418] px-5 pt-5 pb-2 shadow-[0_20px_50px_-20px_rgba(11,36,24,0.5)] sm:px-8 sm:pt-6">
+        <div
+          className="
+            relative
+            rounded-2xl
+            border
+            border-white/20
+            bg-white/10
+            px-5
+            pb-2
+            pt-5
+            shadow-[0_20px_60px_-20px_rgba(2,24,97,0.8)]
+            backdrop-blur-xl
+            sm:px-8
+            sm:pt-6
+          "
+        >
 
           {/* NAME SEARCH */}
 
-          <div className="relative flex items-center border-b border-white/15 pb-4 focus-within:border-[#9BE564]">
+          <div className="relative flex items-center border-b border-white/20 pb-4 focus-within:border-[#3DDE11]">
 
             <Search
               size={19}
-              className="shrink-0 text-white/40"
+              className="shrink-0 text-white/50"
             />
 
             <input
@@ -398,16 +481,19 @@ const TrekSearch = () => {
                 font-montserrat
                 text-sm
                 text-white
-                placeholder-white/40
+                placeholder-white/50
                 outline-none
                 sm:text-base
               "
             />
 
+            {/* CLEAR (only when typing) */}
+
             {search && (
               <button
                 type="button"
                 onClick={clearSearch}
+                aria-label="Clear search"
                 className="
                   flex
                   h-7
@@ -416,28 +502,76 @@ const TrekSearch = () => {
                   items-center
                   justify-center
                   rounded-full
-                  text-white/50
+                  text-white/60
                   transition
-                  hover:bg-white/10
+                  hover:bg-white/15
                   hover:text-white
                 "
               >
                 <X size={16} />
               </button>
             )}
+
+            {/* REFRESH (always visible) */}
+
+            <button
+              type="button"
+              onClick={handleRefresh}
+              aria-label="Refresh search"
+              title="Refresh search"
+              className="
+                ml-1
+                flex
+                h-8
+                w-8
+                shrink-0
+                items-center
+                justify-center
+                rounded-full
+                border
+                border-white/20
+                bg-white/10
+                text-white/80
+                transition
+                hover:border-[#3DDE11]
+                hover:bg-[#3DDE11]
+                hover:text-[#021861]
+              "
+            >
+              <RotateCw
+                size={15}
+                strokeWidth={2.2}
+                className={
+                  isRefreshing ? "animate-spin" : ""
+                }
+              />
+            </button>
           </div>
 
           {/* NAME SEARCH RESULTS */}
 
           {search.trim() && (
-            <div className="my-4 max-h-72 overflow-y-auto rounded-md bg-[#F4F0E7] px-2 py-2">
+            <div
+              className="
+                my-4
+                max-h-72
+                overflow-y-auto
+                rounded-xl
+                border
+                border-white/20
+                bg-white/10
+                px-2
+                py-2
+                backdrop-blur-md
+              "
+            >
 
               {loading ? (
-                <div className="px-4 py-4 text-center font-montserrat text-sm text-[#6B7568]">
+                <div className="px-4 py-4 text-center font-montserrat text-sm text-white/70">
                   Loading treks…
                 </div>
               ) : searchResults.length === 0 ? (
-                <div className="px-4 py-4 text-center font-montserrat text-sm text-[#6B7568]">
+                <div className="px-4 py-4 text-center font-montserrat text-sm text-white/70">
                   No trek matches “{search}”.
                 </div>
               ) : (
@@ -457,13 +591,13 @@ const TrekSearch = () => {
 
           {/* FILTERS ROW */}
 
-          <div className="flex flex-col divide-y divide-white/10 sm:flex-row sm:items-stretch sm:divide-x sm:divide-y-0">
+          <div className="flex flex-col divide-y divide-white/15 sm:flex-row sm:items-stretch sm:divide-x sm:divide-y-0">
 
             {/* DESTINATION */}
 
             <div className="flex-1 py-4 sm:pr-5">
 
-              <label className="mb-1 block font-montserrat text-[11px] font-medium text-white/40">
+              <label className="mb-1 block font-montserrat text-[11px] font-medium text-white/60">
                 Destination
               </label>
 
@@ -487,21 +621,21 @@ const TrekSearch = () => {
                   "
                 >
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value=""
                   >
                     Anywhere
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="1"
                   >
                     Nepal
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="2"
                   >
                     Tibet
@@ -516,7 +650,7 @@ const TrekSearch = () => {
                     right-0
                     top-1/2
                     -translate-y-1/2
-                    text-white/40
+                    text-white/50
                   "
                 />
               </div>
@@ -526,7 +660,7 @@ const TrekSearch = () => {
 
             <div className="flex-1 py-4 sm:px-5">
 
-              <label className="mb-1 block font-montserrat text-[11px] font-medium text-white/40">
+              <label className="mb-1 block font-montserrat text-[11px] font-medium text-white/60">
                 Duration
               </label>
 
@@ -550,35 +684,35 @@ const TrekSearch = () => {
                   "
                 >
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value=""
                   >
                     Any length
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="1-7"
                   >
                     1 – 7 days
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="8-14"
                   >
                     8 – 14 days
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="15-21"
                   >
                     15 – 21 days
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="22+"
                   >
                     22+ days
@@ -593,7 +727,7 @@ const TrekSearch = () => {
                     right-0
                     top-1/2
                     -translate-y-1/2
-                    text-white/40
+                    text-white/50
                   "
                 />
               </div>
@@ -603,7 +737,7 @@ const TrekSearch = () => {
 
             <div className="flex-1 py-4 sm:px-5">
 
-              <label className="mb-1 block font-montserrat text-[11px] font-medium text-white/40">
+              <label className="mb-1 block font-montserrat text-[11px] font-medium text-white/60">
                 Grade
               </label>
 
@@ -627,35 +761,35 @@ const TrekSearch = () => {
                   "
                 >
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value=""
                   >
                     Any grade
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="1"
                   >
                     Easy
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="2"
                   >
                     Moderate
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="3"
                   >
                     Strenuous
                   </option>
 
                   <option
-                    className="text-[#0b2418]"
+                    className="text-[#021861]"
                     value="4"
                   >
                     Very strenuous
@@ -670,7 +804,7 @@ const TrekSearch = () => {
                     right-0
                     top-1/2
                     -translate-y-1/2
-                    text-white/40
+                    text-white/50
                   "
                 />
               </div>
@@ -691,13 +825,14 @@ const TrekSearch = () => {
                   justify-center
                   gap-2
                   rounded-md
-                  bg-[#9BE564]
+                  bg-[#3DDE11]
                   px-6
                   py-2.5
                   font-montserrat
                   text-sm
                   font-semibold
-                  text-[#0b2418]
+                  text-[#021861]
+                  shadow-[0_8px_24px_-8px_rgba(61,222,17,0.7)]
                   transition
                   hover:bg-white
                   sm:w-auto
@@ -716,14 +851,28 @@ const TrekSearch = () => {
         </div>
 
         {/* =================================================
-            FILTER RESULTS
+            FILTER RESULTS (GLASS)
             ================================================= */}
 
         {showFilterResults && (
-          <div className="mt-6 max-h-96 overflow-y-auto rounded-lg border border-[#E4DCC8] bg-white/60 px-4 py-2">
+          <div
+            className="
+              mt-6
+              max-h-96
+              overflow-y-auto
+              rounded-2xl
+              border
+              border-white/20
+              bg-white/10
+              px-4
+              py-2
+              shadow-[0_20px_60px_-20px_rgba(2,24,97,0.8)]
+              backdrop-blur-xl
+            "
+          >
 
             {filterResults.length === 0 ? (
-              <div className="px-4 py-6 text-center font-montserrat text-sm text-[#6B7568]">
+              <div className="px-4 py-6 text-center font-montserrat text-sm text-white/70">
                 No treks match those filters — try widening your search.
               </div>
             ) : (

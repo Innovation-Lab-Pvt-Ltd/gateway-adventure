@@ -19,7 +19,6 @@ import {
   Star,
   Sun,
   Users,
-  Hotel,
   X,
   MessageSquareText,
   ThumbsUp,
@@ -31,6 +30,23 @@ const API_URL = `${import.meta.env.VITE_BASE_API_URL}tripdetail`;
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
 /* =========================================================
+   ALTITUDE HELPER
+========================================================= */
+
+const formatAltitude = (value) => {
+  if (
+    value === null ||
+    value === undefined ||
+    value === "" ||
+    Number(value) === 0
+  ) {
+    return "-";
+  }
+
+  return `${value} m`;
+};
+
+/* =========================================================
    TRIP FACTS
 ========================================================= */
 
@@ -38,7 +54,7 @@ const TripFacts = ({ trip }) => {
   const duration = trip.duration ?? "N/A";
   const rating = trip.rating ?? "N/A";
   const groupSize = trip.group_size ?? "N/A";
-  const altitude = trip.max_altitude ?? "N/A";
+  const altitude = formatAltitude(trip.max_altitude);
   const walkHours = trip.walk_in_hours ?? "N/A";
 
   const season = trip.best_season || "Spring & Autumn";
@@ -67,10 +83,12 @@ const TripFacts = ({ trip }) => {
   const hasRegion = regionName && Number(trip.region_id) !== 0;
 
   return (
-    <section className="mb-12">
-      <h2 className="mb-6 text-2xl font-bold text-[#0b2418]">Trip Facts</h2>
+    <section className="mb-8 sm:mb-12">
+      <h2 className="mb-4 text-xl font-bold text-[#0b2418] sm:mb-6 sm:text-2xl">
+        Trip Facts
+      </h2>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         <TripFact
           icon={<CalendarDays size={22} />}
           label="Duration"
@@ -130,14 +148,22 @@ const TripFacts = ({ trip }) => {
 
 const TripFact = ({ icon, label, value, star = false }) => {
   return (
-    <div className="rounded-xl bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-      <div className={`mb-3 ${star ? "text-[#f5b942]" : "text-[#4f8f3a]"}`}>
+    <div className="min-w-0 rounded-xl bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:p-5">
+      <div
+        className={`mb-2 sm:mb-3 [&>svg]:h-5 [&>svg]:w-5 sm:[&>svg]:h-[22px] sm:[&>svg]:w-[22px] ${
+          star ? "text-[#f5b942]" : "text-[#4f8f3a]"
+        }`}
+      >
         {icon}
       </div>
 
-      <p className="text-xs uppercase tracking-wide text-gray-400">{label}</p>
+      <p className="text-[10px] uppercase tracking-wide text-gray-400 sm:text-xs">
+        {label}
+      </p>
 
-      <p className="mt-1 font-bold text-[#0b2418]">{value}</p>
+      <p className="mt-0.5 break-words text-sm font-bold text-[#0b2418] sm:mt-1 sm:text-base">
+        {value}
+      </p>
     </div>
   );
 };
@@ -161,26 +187,28 @@ const TripRoute = ({ route }) => {
   }
 
   return (
-    <section className="mb-12 rounded-2xl bg-white p-6 shadow-sm md:p-10">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eaf6df] text-[#4f8f3a]">
-          <RouteIcon size={20} />
+    <section className="mb-8 rounded-xl bg-white p-4 shadow-sm sm:mb-12 sm:rounded-2xl sm:p-6 md:p-10">
+      <div className="mb-4 flex items-center gap-3 sm:mb-6">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#eaf6df] text-[#4f8f3a] sm:h-10 sm:w-10">
+          <RouteIcon size={18} />
         </div>
 
         <div>
-          <p className="mb-1 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+          <p className="mb-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-1 sm:text-xs">
             How you'll travel
           </p>
 
-          <h2 className="text-2xl font-bold text-[#0b2418]">Trip Route</h2>
+          <h2 className="text-xl font-bold text-[#0b2418] sm:text-2xl">
+            Trip Route
+          </h2>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-3">
+      <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2 sm:gap-x-2 sm:gap-y-3">
         {stops.map((stop, index) => (
           <React.Fragment key={`${stop}-${index}`}>
             <span
-              className={`rounded-full px-4 py-2 text-sm font-semibold ${
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm ${
                 index === 0 || index === stops.length - 1
                   ? "bg-[#0b2418] text-white"
                   : "bg-[#FBF9F4] text-[#0b2418]"
@@ -190,7 +218,7 @@ const TripRoute = ({ route }) => {
             </span>
 
             {index < stops.length - 1 && (
-              <ArrowRight size={16} className="shrink-0 text-[#4f8f3a]" />
+              <ArrowRight size={14} className="shrink-0 text-[#4f8f3a]" />
             )}
           </React.Fragment>
         ))}
@@ -201,6 +229,8 @@ const TripRoute = ({ route }) => {
 
 /* =========================================================
    HTML CONTENT
+   Smaller text on mobile, normal size from sm and up.
+   Images/tables from the API can never overflow the screen.
 ========================================================= */
 
 const HtmlContent = ({ content, className = "trip-description" }) => {
@@ -210,7 +240,7 @@ const HtmlContent = ({ content, className = "trip-description" }) => {
 
   return (
     <div
-      className={className}
+      className={`${className} break-words text-sm leading-6 sm:text-base sm:leading-7 [&_img]:h-auto [&_img]:max-w-full [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto`}
       dangerouslySetInnerHTML={{
         __html: content,
       }}
@@ -219,7 +249,7 @@ const HtmlContent = ({ content, className = "trip-description" }) => {
 };
 
 /* =========================================================
-   ITINERARY SUMMARY TABLE (used in Overview)
+   ITINERARY SUMMARY TABLE
 ========================================================= */
 
 const ItinerarySummaryTable = ({
@@ -233,18 +263,26 @@ const ItinerarySummaryTable = ({
 
   const hasValue = (v) => v !== null && v !== undefined && v !== "";
 
-  // Only show columns that have data in at least one day.
-  // The Altitude column is shown only when show_altitude = 1.
   const columns = [
     ...(showAltitude
-      ? [{ key: "altitude", label: "Altitude", get: (d) => d.altitude }]
+      ? [
+          {
+            key: "altitude",
+            label: "Altitude",
+            get: (d) => formatAltitude(d.altitude),
+          },
+        ]
       : []),
     {
       key: "accommodation",
       label: "Accommodation",
       get: (d) => d.accomodation || d.accommodation,
     },
-    { key: "meal", label: "Meal", get: (d) => d.meal },
+    {
+      key: "meal",
+      label: "Meal",
+      get: (d) => d.meal,
+    },
     {
       key: "transportation",
       label: "Transport",
@@ -253,14 +291,14 @@ const ItinerarySummaryTable = ({
   ].filter((col) => itineraries.some((d) => hasValue(col.get(d))));
 
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm md:p-10">
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <section className="rounded-xl bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 md:p-10">
+      <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-2 sm:text-xs">
             At a glance
           </p>
 
-          <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+          <h2 className="font-serif text-2xl font-semibold text-[#0b2418] sm:text-3xl md:text-4xl">
             Itinerary Summary
           </h2>
         </div>
@@ -268,29 +306,29 @@ const ItinerarySummaryTable = ({
         <button
           type="button"
           onClick={onViewFull}
-          className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#0b2418] px-4 py-2.5 text-sm font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white"
+          className="inline-flex w-fit items-center gap-2 rounded-lg border border-[#0b2418] px-3 py-2 text-xs font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm"
         >
           Full Itinerary
-          <ArrowRight size={16} />
+          <ArrowRight size={15} />
         </button>
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-gray-100">
-        <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+        <table className="w-full min-w-[560px] border-collapse text-left text-xs sm:min-w-[640px] sm:text-sm">
           <thead>
             <tr className="bg-[#0b2418] text-white">
-              <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+              <th className="whitespace-nowrap px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider sm:px-4 sm:py-3 sm:text-xs">
                 Day
               </th>
 
-              <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+              <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider sm:px-4 sm:py-3 sm:text-xs">
                 Activity
               </th>
 
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider"
+                  className="whitespace-nowrap px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider sm:px-4 sm:py-3 sm:text-xs"
                 >
                   {col.label}
                 </th>
@@ -315,13 +353,13 @@ const ItinerarySummaryTable = ({
                     index % 2 === 0 ? "bg-white" : "bg-[#FBF9F4]"
                   }`}
                 >
-                  <td className="whitespace-nowrap px-4 py-4">
-                    <span className="inline-flex h-8 min-w-[2rem] items-center justify-center rounded-full bg-[#eaf6df] px-2 text-xs font-bold text-[#0b2418]">
+                  <td className="whitespace-nowrap px-3 py-3 sm:px-4 sm:py-4">
+                    <span className="inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-full bg-[#eaf6df] px-2 text-[11px] font-bold text-[#0b2418] sm:h-8 sm:min-w-[2rem] sm:text-xs">
                       {dayNumber}
                     </span>
                   </td>
 
-                  <td className="px-4 py-4 font-semibold text-[#0b2418]">
+                  <td className="px-3 py-3 font-semibold text-[#0b2418] sm:px-4 sm:py-4">
                     {dayTitle}
                   </td>
 
@@ -329,7 +367,10 @@ const ItinerarySummaryTable = ({
                     const value = col.get(day);
 
                     return (
-                      <td key={col.key} className="px-4 py-4 text-gray-600">
+                      <td
+                        key={col.key}
+                        className="px-3 py-3 text-gray-600 sm:px-4 sm:py-4"
+                      >
                         {hasValue(value) ? value : "—"}
                       </td>
                     );
@@ -381,17 +422,19 @@ const RatingBar = ({ label, average }) => {
   const percent = Math.max(0, Math.min(100, (value / 5) * 100));
 
   return (
-    <div className="flex items-center gap-4 s">
-      <span className="w-40 shrink-0 text-sm text-gray-500">{label}</span>
+    <div className="flex items-center gap-3 sm:gap-4">
+      <span className="w-28 shrink-0 text-xs text-gray-500 sm:w-40 sm:text-sm">
+        {label}
+      </span>
 
-      <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100 sm:h-2">
         <div
           className="h-full rounded-full bg-[#4f8f3a]"
           style={{ width: `${percent}%` }}
         />
       </div>
 
-      <span className="w-16 shrink-0 text-right text-sm font-semibold text-[#0b2418]">
+      <span className="w-8 shrink-0 text-right text-xs font-semibold text-[#0b2418] sm:w-16 sm:text-sm">
         {value > 0 ? value.toFixed(1) : "—"}
       </span>
     </div>
@@ -414,29 +457,35 @@ const ReviewCard = ({ review }) => {
   const message = review.review || review.message || review.comment || "";
 
   return (
-    <div className="rounded-2xl border border-gray-100 p-5">
+    <div className="rounded-xl border border-gray-100 p-4 sm:rounded-2xl sm:p-5">
       <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#eaf6df] text-sm font-bold text-[#0b2418]">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#eaf6df] text-sm font-bold text-[#0b2418] sm:h-10 sm:w-10">
             {name.charAt(0).toUpperCase()}
           </div>
 
-          <div>
-            <p className="text-sm font-semibold text-[#0b2418]">{name}</p>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-[#0b2418]">
+              {name}
+            </p>
 
             {country && <p className="text-xs text-gray-400">{country}</p>}
           </div>
         </div>
 
         {rating > 0 && (
-          <div className="flex items-center gap-1 rounded-full bg-[#f5b942]/15 px-2.5 py-1 text-xs font-semibold text-[#0b2418]">
+          <div className="flex shrink-0 items-center gap-1 rounded-full bg-[#f5b942]/15 px-2.5 py-1 text-xs font-semibold text-[#0b2418]">
             <Star size={13} fill="currentColor" className="text-[#f5b942]" />
             {rating}
           </div>
         )}
       </div>
 
-      {message && <p className="text-sm leading-6 text-gray-600">{message}</p>}
+      {message && (
+        <p className="text-[13px] leading-6 text-gray-600 sm:text-sm">
+          {message}
+        </p>
+      )}
 
       {date && <p className="mt-3 text-xs text-gray-400">{date}</p>}
     </div>
@@ -453,21 +502,21 @@ const Reviews = ({ trip }) => {
   const overallAverage = Number(rates?.rating?.average) || 0;
 
   return (
-    <section className="mt-10 rounded-2xl bg-white p-6 shadow-sm md:p-10">
-      <div className="mb-8 flex flex-col gap-6 border-b border-gray-100 pb-8 md:flex-row md:items-center md:justify-between">
+    <section className="mt-8 rounded-xl bg-white p-4 shadow-sm sm:mt-10 sm:rounded-2xl sm:p-6 md:p-10">
+      <div className="mb-6 flex flex-col gap-4 border-b border-gray-100 pb-6 sm:mb-8 sm:gap-6 sm:pb-8 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-2 sm:text-xs">
             Traveller feedback
           </p>
 
-          <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+          <h2 className="font-serif text-2xl font-semibold text-[#0b2418] sm:text-3xl md:text-4xl">
             Reviews
           </h2>
         </div>
 
-        <div className="flex items-center gap-4 rounded-2xl bg-[#FBF9F4] px-6 py-4">
+        <div className="flex items-center gap-3 rounded-xl bg-[#FBF9F4] px-4 py-3 sm:gap-4 sm:rounded-2xl sm:px-6 sm:py-4">
           <div className="text-center">
-            <p className="text-3xl font-bold text-[#0b2418]">
+            <p className="text-2xl font-bold text-[#0b2418] sm:text-3xl">
               {overallAverage > 0 ? overallAverage.toFixed(1) : "—"}
             </p>
 
@@ -475,7 +524,7 @@ const Reviews = ({ trip }) => {
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
-                  size={14}
+                  size={13}
                   fill={
                     i < Math.round(overallAverage) ? "currentColor" : "none"
                   }
@@ -491,7 +540,7 @@ const Reviews = ({ trip }) => {
 
           <div className="h-10 w-px bg-gray-200" />
 
-          <div className="text-sm text-gray-500">
+          <div className="text-xs text-gray-500 sm:text-sm">
             Based on{" "}
             <span className="font-semibold text-[#0b2418]">{revCount}</span>{" "}
             {revCount === 1 ? "review" : "reviews"}
@@ -500,7 +549,7 @@ const Reviews = ({ trip }) => {
       </div>
 
       {revCount > 0 && (
-        <div className="mb-8 space-y-3">
+        <div className="mb-6 space-y-2.5 sm:mb-8 sm:space-y-3">
           {RATING_ROW_LABELS.map(({ key, label }) => (
             <RatingBar
               key={key}
@@ -512,29 +561,31 @@ const Reviews = ({ trip }) => {
       )}
 
       {reviews.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {reviews.map((review, index) => (
             <ReviewCard key={review.id || index} review={review} />
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center rounded-2xl bg-[#FBF9F4] px-6 py-12 text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#4f8f3a] shadow-sm">
-            <MessageSquareText size={22} />
+        <div className="flex flex-col items-center rounded-xl bg-[#FBF9F4] px-4 py-8 text-center sm:rounded-2xl sm:px-6 sm:py-12">
+          <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#4f8f3a] shadow-sm sm:mb-4 sm:h-12 sm:w-12">
+            <MessageSquareText size={20} />
           </div>
 
-          <p className="mb-1 font-semibold text-[#0b2418]">No reviews yet</p>
+          <p className="mb-1 text-sm font-semibold text-[#0b2418] sm:text-base">
+            No reviews yet
+          </p>
 
-          <p className="max-w-sm text-sm text-gray-500">
+          <p className="max-w-sm text-xs text-gray-500 sm:text-sm">
             Be the first to share how this trip went, it helps future trekkers
             plan with confidence.
           </p>
 
           <button
             type="button"
-            className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#4f8f3a] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#3d762e]"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#4f8f3a] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#3d762e] sm:mt-5 sm:px-5 sm:text-sm"
           >
-            <ThumbsUp size={16} />
+            <ThumbsUp size={15} />
             Write a Review
           </button>
         </div>
@@ -544,7 +595,10 @@ const Reviews = ({ trip }) => {
 };
 
 /* =========================================================
-   BOOKING CARD
+   BOOKING CARD (featured trip)
+   Desktop: slim 300px sticky card in the right column.
+   Mobile : compact inline card + a fixed bottom bar with the
+            price and the two main actions.
 ========================================================= */
 
 const BookingCard = ({
@@ -584,51 +638,66 @@ const BookingCard = ({
 
   return (
     <>
-      <aside className="lg:sticky lg:top-[104px] lg:self-start lg:h-fit">
-        <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
-          <div className="bg-[#0b2418] px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white">
-            Featured Trip
-          </div>
+      {/* =================================================
+          CARD
+      ================================================= */}
 
-          <div className="p-5">
-            <p className="text-xs text-gray-500">Price per person</p>
+      <aside className="lg:sticky lg:top-[104px] lg:h-fit lg:self-start">
+        <div className="overflow-hidden rounded-xl border border-black/5 bg-white shadow-md sm:rounded-2xl">
+          {/* TOP: PRICE */}
 
-            <div className="mt-1 flex flex-wrap items-center gap-2">
-              {hasDiscount && discountAmount && pricePerPerson !== null && (
-                <span className="text-sm text-gray-400 line-through">
-                  {formatPrice(pricePerPerson)}
-                </span>
-              )}
+          <div className="flex items-start justify-between gap-3 bg-[#0b2418] px-4 py-3.5 text-white">
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/60">
+                {pricePerPerson !== null ? "From" : "Price"}
+              </p>
 
-              {pricePerPerson !== null ? (
-                <span className="text-3xl font-bold text-[#0b2418]">
-                  {formatPrice(pricePerPerson)}
-                </span>
-              ) : (
-                <span className="text-xl font-bold text-[#0b2418]">
-                  Contact us
-                </span>
-              )}
+              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2">
+                {pricePerPerson !== null ? (
+                  <>
+                    <span className="text-2xl font-bold leading-none">
+                      {formatPrice(pricePerPerson)}
+                    </span>
+
+                    {hasDiscount && discountAmount && (
+                      <span className="text-xs text-white/50 line-through">
+                        {formatPrice(pricePerPerson)}
+                      </span>
+                    )}
+
+                    <span className="text-[11px] text-white/60">/ person</span>
+                  </>
+                ) : (
+                  <span className="text-lg font-bold">Contact us</span>
+                )}
+              </div>
             </div>
 
-            <p className="mt-1 text-xs text-gray-500">
-              {duration ? `${duration} days` : "Flexible duration"} ·
-              all-inclusive
-            </p>
+            <span className="shrink-0 rounded-full bg-[#9be564] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0b2418]">
+              {duration ? `${duration} days` : "Flexible"}
+            </span>
+          </div>
+
+          <div className="p-4">
+            {/* PERSONS: label left, stepper right */}
 
             {pricePerPerson !== null && (
-              <div className="mt-5">
-                <p className="mb-2 text-sm font-semibold text-[#0b2418]">
-                  Number of Persons
-                </p>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold text-[#0b2418]">
+                    Travellers
+                  </p>
 
-                <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-[#FBF9F4] p-2">
+                  <p className="text-[11px] text-gray-400">All-inclusive</p>
+                </div>
+
+                <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-[#FBF9F4] p-1">
                   <button
                     type="button"
                     onClick={decreasePersons}
                     disabled={persons === 1}
                     aria-label="Decrease number of persons"
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg text-xl font-bold transition ${
+                    className={`flex h-7 w-7 items-center justify-center rounded-full text-base font-bold transition ${
                       persons === 1
                         ? "cursor-not-allowed text-gray-300"
                         : "bg-white text-[#0b2418] shadow-sm hover:bg-[#0b2418] hover:text-white"
@@ -637,21 +706,15 @@ const BookingCard = ({
                     −
                   </button>
 
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-[#0b2418]">
-                      {persons}
-                    </p>
-
-                    <p className="text-xs text-gray-500">
-                      {persons === 1 ? "Person" : "Persons"}
-                    </p>
-                  </div>
+                  <span className="w-6 text-center text-sm font-bold text-[#0b2418]">
+                    {persons}
+                  </span>
 
                   <button
                     type="button"
                     onClick={increasePersons}
                     aria-label="Increase number of persons"
-                    className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-xl font-bold text-[#0b2418] shadow-sm transition hover:bg-[#0b2418] hover:text-white"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-base font-bold text-[#0b2418] shadow-sm transition hover:bg-[#0b2418] hover:text-white"
                   >
                     +
                   </button>
@@ -659,104 +722,134 @@ const BookingCard = ({
               </div>
             )}
 
-            {totalPrice !== null && (
-              <div className="mt-4 rounded-xl bg-[#eaf6df] p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-gray-600">
-                    {formatPrice(pricePerPerson)} × {persons}
-                  </span>
+            {/* TOTAL */}
 
-                  <span className="text-xl font-bold text-[#0b2418]">
-                    {formatPrice(totalPrice)}
-                  </span>
+            {totalPrice !== null && (
+              <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-[#eaf6df] px-3 py-2.5">
+                <div>
+                  <p className="text-[11px] text-gray-600">
+                    {formatPrice(pricePerPerson)} × {persons}
+                  </p>
+
+                  <p className="text-[10px] text-gray-500">Estimated total</p>
                 </div>
 
-                <p className="mt-1 text-xs text-gray-500">
-                  Total estimated trip cost
-                </p>
+                <span className="text-lg font-bold text-[#0b2418]">
+                  {formatPrice(totalPrice)}
+                </span>
               </div>
             )}
 
-            <div className="mt-4 rounded-lg bg-[#eaf6df] p-3">
-              <p className="text-sm font-semibold text-[#0b2418]">
-                {discountMessage ? "Special Offer" : "Group discounts"}
-              </p>
+            {/* OFFER */}
 
-              <p className="mt-1 text-xs text-gray-500">
-                {discountMessage || "Contact us for group pricing."}
-              </p>
+            <p className="mt-3 rounded-lg border border-dashed border-[#4f8f3a]/40 px-3 py-2 text-[11px] leading-4 text-gray-600">
+              <span className="font-semibold text-[#0b2418]">
+                {discountMessage ? "Special offer: " : "Group discounts: "}
+              </span>
+
+              {discountMessage || "contact us for group pricing."}
+            </p>
+
+            {/* ACTIONS (desktop only, mobile uses the bottom bar) */}
+
+            <div className="mt-3 hidden gap-2 lg:grid">
+              <button
+                type="button"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4f8f3a] py-2.5 text-sm font-semibold text-white transition hover:bg-[#3d762e]"
+              >
+                Check Availability
+                <ArrowRight size={16} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowWhatsapp(true)}
+                className="w-full rounded-lg border-2 border-[#0b2418] py-2 text-sm font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white"
+              >
+                Make an Inquiry
+              </button>
             </div>
 
-            <button
-              type="button"
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[#4f8f3a] py-3 text-sm font-semibold text-white transition hover:bg-[#3d762e]"
-            >
-              Check Availability
-              <ArrowRight size={17} />
-            </button>
+            {/* TRUST POINTS */}
 
-            <button
-              type="button"
-              className="mt-2 w-full rounded-lg border-2 border-[#0b2418] py-3 text-sm font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white"
-              onClick={() => setShowWhatsapp(true)}
-            >
-              Make an Inquiry
-            </button>
-
-            <div className="mt-5 space-y-3 border-t border-gray-100 pt-4">
+            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 text-[11px] text-gray-600">
               {[
-                "Instant booking confirmed",
+                "Instant confirmation",
                 "Secure payments",
                 "No hidden costs",
               ].map((text) => (
-                <div key={text} className="flex items-center gap-2.5">
-                  <Check size={17} className="text-[#4f8f3a]" />
-
-                  <span className="text-xs text-gray-600">{text}</span>
-                </div>
+                <span key={text} className="flex items-center gap-1">
+                  <Check size={13} className="shrink-0 text-[#4f8f3a]" />
+                  {text}
+                </span>
               ))}
             </div>
 
-            {rating > 0 && (
-              <div className="mt-5 border-t border-gray-100 pt-4">
-                <div className="flex items-center gap-2">
+            {/* FOOTER: rating + dates */}
+
+            <div className="mt-3 flex items-center justify-between gap-3 border-t border-gray-100 pt-3">
+              {rating > 0 ? (
+                <div className="flex items-center gap-1.5 text-xs">
                   <Star
-                    size={16}
+                    size={14}
                     fill="currentColor"
                     className="text-[#f5b942]"
                   />
 
-                  <span className="text-sm font-bold text-[#0b2418]">
-                    {rating}
-                  </span>
+                  <span className="font-bold text-[#0b2418]">{rating}</span>
 
-                  <span className="text-xs text-gray-400">/ 5 rating</span>
+                  <span className="text-gray-400">/ 5</span>
                 </div>
+              ) : (
+                <span />
+              )}
 
-                <button
-                  type="button"
-                  className="mt-1 text-xs font-semibold text-[#4f8f3a] hover:underline"
-                >
-                  Read reviews
-                </button>
-              </div>
-            )}
-
-            <button
-              type="button"
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-xs font-semibold text-[#0b2418] transition hover:border-[#4f8f3a] hover:text-[#4f8f3a]"
-            >
-              <CalendarDays size={16} />
-              View Trip Dates
-            </button>
-
-            <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
-              <MapPin size={14} />
-              Need help? Contact us
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#4f8f3a] hover:underline"
+              >
+                <CalendarDays size={14} />
+                View trip dates
+              </button>
             </div>
           </div>
         </div>
       </aside>
+
+      {/* =================================================
+          MOBILE BOTTOM BAR
+      ================================================= */}
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 px-4 py-2.5 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur lg:hidden">
+        <div className="mx-auto flex max-w-7xl items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] uppercase tracking-wider text-gray-400">
+              {totalPrice !== null && persons > 1
+                ? `Total · ${persons} travellers`
+                : "From"}
+            </p>
+
+            <p className="truncate text-lg font-bold leading-tight text-[#0b2418]">
+              {totalPrice !== null ? formatPrice(totalPrice) : "Contact us"}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowWhatsapp(true)}
+            className="shrink-0 rounded-lg border-2 border-[#0b2418] px-3.5 py-2 text-xs font-semibold text-[#0b2418] active:scale-95"
+          >
+            Inquiry
+          </button>
+
+          <button
+            type="button"
+            className="shrink-0 rounded-lg bg-[#4f8f3a] px-4 py-2.5 text-xs font-semibold text-white active:scale-95"
+          >
+            Check Availability
+          </button>
+        </div>
+      </div>
 
       {showWhatsapp && <Whatsapp onClose={() => setShowWhatsapp(false)} />}
     </>
@@ -777,16 +870,8 @@ const TripDetail = () => {
 
   const [activeTab, setActiveTab] = useState("overview");
 
-  /*
-   * -1 means no itinerary is open.
-   * Otherwise it contains the currently opened
-   * itinerary index.
-   */
   const [openItinerary, setOpenItinerary] = useState(0);
 
-  /*
-   * -1 means no FAQ is open.
-   */
   const [openFaq, setOpenFaq] = useState(null);
 
   const [allItinerariesExpanded, setAllItinerariesExpanded] = useState(false);
@@ -882,7 +967,7 @@ const TripDetail = () => {
         <div className="text-center">
           <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-[#4f8f3a]" />
 
-          <p className="text-lg font-medium text-gray-500">
+          <p className="text-base font-medium text-gray-500 sm:text-lg">
             Loading trip details...
           </p>
         </div>
@@ -896,22 +981,22 @@ const TripDetail = () => {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FBF9F4] px-6">
-        <div className="w-full max-w-lg rounded-2xl bg-white p-8 text-center shadow-lg">
-          <h2 className="mb-3 text-2xl font-bold text-red-500">
+      <div className="flex min-h-screen items-center justify-center bg-[#FBF9F4] px-4 sm:px-6">
+        <div className="w-full max-w-lg rounded-2xl bg-white p-6 text-center shadow-lg sm:p-8">
+          <h2 className="mb-3 text-xl font-bold text-red-500 sm:text-2xl">
             Unable to load trip
           </h2>
 
-          <p className="mb-3 text-gray-500">{error}</p>
+          <p className="mb-3 text-sm text-gray-500 sm:text-base">{error}</p>
 
-          <p className="mb-6 rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-600">
+          <p className="mb-6 break-all rounded-lg bg-gray-100 px-4 py-3 text-xs text-gray-600 sm:text-sm">
             Slug: <strong>{slug}</strong>
           </p>
 
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#0b2418] px-6 py-3 font-semibold text-white transition hover:bg-[#4f8f3a]"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#0b2418] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#4f8f3a]"
           >
             <ArrowLeft size={18} />
             Go Back
@@ -974,7 +1059,6 @@ const TripDetail = () => {
 
   const featuredVideo = trip.featured_video_url || "";
 
-  // Altitude column in the itinerary table is shown only when show_altitude = 1
   const showAltitude =
     trip.show_altitude === true ||
     trip.show_altitude === 1 ||
@@ -1067,9 +1151,6 @@ const TripDetail = () => {
 
   /* =====================================================
      DOWNLOAD ITINERARY PDF
-     
-     Uses browser print dialog.
-     User can select "Save as PDF".
   ===================================================== */
 
   const downloadItineraryPDF = () => {
@@ -1124,7 +1205,7 @@ const TripDetail = () => {
         const details = [
           {
             label: "Altitude",
-            value: day.altitude,
+            value: formatAltitude(day.altitude),
           },
           {
             label: "Meal",
@@ -1461,13 +1542,13 @@ const TripDetail = () => {
   ===================================================== */
 
   return (
-    <div className="min-h-screen bg-[#FBF9F4] pt-[88px]">
+    <div className="min-h-screen overflow-x-clip bg-[#FBF9F4] pb-20 pt-[88px] lg:pb-0">
       {/* =================================================
           BREADCRUMB
       ================================================= */}
 
       <div className="border-b border-black/5 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-6 py-4 md:px-10">
+        <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-4 py-3 text-xs sm:px-6 sm:py-4 sm:text-base md:px-10">
           <button
             type="button"
             onClick={() => navigate("/")}
@@ -1479,7 +1560,7 @@ const TripDetail = () => {
           {breadcrumbs.length > 0 ? (
             breadcrumbs.map(([label, url], index) => (
               <React.Fragment key={`${label}-${index}`}>
-                <ArrowRight size={15} className="shrink-0 text-gray-400" />
+                <ArrowRight size={14} className="shrink-0 text-gray-400" />
 
                 {url && typeof url === "string" && url.startsWith("/") ? (
                   <button
@@ -1498,9 +1579,11 @@ const TripDetail = () => {
             ))
           ) : (
             <>
-              <ArrowRight size={15} className="text-gray-400" />
+              <ArrowRight size={14} className="text-gray-400" />
 
-              <span className="font-medium text-gray-500">{title}</span>
+              <span className="whitespace-nowrap font-medium text-gray-500">
+                {title}
+              </span>
             </>
           )}
         </div>
@@ -1510,7 +1593,7 @@ const TripDetail = () => {
           HERO
       ================================================= */}
 
-      <section className="relative h-[500px] overflow-hidden md:h-[620px]">
+      <section className="relative h-[380px] overflow-hidden sm:h-[500px] md:h-[620px]">
         {featuredVideo ? (
           <video
             src={featuredVideo}
@@ -1537,40 +1620,40 @@ const TripDetail = () => {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="absolute left-6 top-6 flex items-center gap-2 rounded-full bg-white/90 px-5 py-2.5 text-sm font-semibold text-[#0b2418] shadow-lg backdrop-blur transition hover:bg-white md:left-10"
+          className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-white/90 px-3.5 py-2 text-xs font-semibold text-[#0b2418] shadow-lg backdrop-blur transition hover:bg-white sm:left-6 sm:top-6 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm md:left-10"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft size={16} />
           Back
         </button>
 
-        <div className="absolute bottom-10 left-6 right-6 mx-auto max-w-7xl">
-          <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="absolute bottom-6 left-4 right-4 mx-auto max-w-7xl sm:bottom-10 sm:left-6 sm:right-6">
+          <div className="mb-3 flex flex-wrap items-center gap-2 sm:mb-4 sm:gap-3">
             {tripCode && (
-              <span className="rounded-full bg-[#9be564] px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0b2418]">
+              <span className="rounded-full bg-[#9be564] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0b2418] sm:px-4 sm:py-1.5 sm:text-xs">
                 {tripCode}
               </span>
             )}
 
             {grade && (
-              <span className="rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur">
+              <span className="rounded-full bg-white/15 px-3 py-1 text-[10px] font-semibold text-white backdrop-blur sm:px-4 sm:py-1.5 sm:text-xs">
                 {grade}
               </span>
             )}
 
             {rating > 0 && (
-              <span className="flex items-center gap-1 rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur">
-                <Star size={14} fill="currentColor" />
+              <span className="flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-[10px] font-semibold text-white backdrop-blur sm:px-4 sm:py-1.5 sm:text-xs">
+                <Star size={12} fill="currentColor" />
                 {rating}
               </span>
             )}
           </div>
 
-          <h1 className="max-w-5xl font-serif text-4xl font-semibold leading-tight text-white md:text-6xl lg:text-7xl">
+          <h1 className="max-w-5xl break-words font-serif text-2xl font-semibold leading-tight text-white sm:text-4xl md:text-6xl lg:text-7xl">
             {title}
           </h1>
 
           {shortDescription && (
-            <p className="mt-5 max-w-3xl text-base leading-7 text-white/80 md:text-lg">
+            <p className="mt-3 line-clamp-3 max-w-3xl text-[13px] leading-5 text-white/80 sm:mt-5 sm:line-clamp-none sm:text-base sm:leading-7 md:text-lg">
               {shortDescription}
             </p>
           )}
@@ -1581,35 +1664,21 @@ const TripDetail = () => {
           MAIN CONTENT
       ================================================= */}
 
-      <main className="mx-auto max-w-7xl px-6 py-14 md:px-10">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:px-10 md:py-14">
         <TripFacts trip={trip} />
 
         <TripRoute route={trip.trip_routes} />
 
-        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-3">
+        <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-8">
           {/* =================================================
               LEFT CONTENT
           ================================================= */}
 
-          <div className="min-w-0 lg:col-span-2">
+          <div className="min-w-0">
             {/* STICKY TABS */}
 
-            <div
-              className="
-                sticky
-                top-[88px]
-                z-30
-                mb-8
-                overflow-x-auto
-                rounded-2xl
-                bg-white
-                p-2
-                shadow-md
-                ring-1
-                ring-black/5
-              "
-            >
-              <div className="flex min-w-max gap-1.5">
+            <div className="sticky top-[88px] z-30 mb-5 overflow-x-auto rounded-xl bg-white p-1.5 shadow-md ring-1 ring-black/5 [scrollbar-width:none] sm:mb-8 sm:rounded-2xl sm:p-2 [&::-webkit-scrollbar]:hidden">
+              <div className="flex min-w-max gap-1 sm:gap-1.5">
                 {tabs.map((tab) => {
                   const isActive = activeTab === tab.id;
 
@@ -1618,7 +1687,7 @@ const TripDetail = () => {
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition ${
+                      className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition sm:gap-2 sm:rounded-xl sm:px-5 sm:py-3 sm:text-sm ${
                         isActive
                           ? "bg-[#0b2418] text-white shadow-md"
                           : "text-gray-500 hover:bg-[#0b2418]/5 hover:text-[#0b2418]"
@@ -1628,7 +1697,7 @@ const TripDetail = () => {
 
                       {tab.count !== undefined && (
                         <span
-                          className={`flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-bold ${
+                          className={`flex h-4 min-w-[1rem] items-center justify-center rounded-full px-1 text-[10px] font-bold sm:h-5 sm:min-w-[1.25rem] sm:px-1.5 sm:text-xs ${
                             isActive
                               ? "bg-white/20 text-white"
                               : "bg-gray-100 text-gray-500"
@@ -1648,24 +1717,24 @@ const TripDetail = () => {
             ================================================= */}
 
             {activeTab === "overview" && (
-              <div className="space-y-8">
-                <section className="rounded-2xl bg-white p-6 shadow-sm md:p-10">
-                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+              <div className="space-y-6 sm:space-y-8">
+                <section className="rounded-xl bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 md:p-10">
+                  <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-2 sm:text-xs">
                     About the trip
                   </p>
 
-                  <h2 className="mb-6 font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+                  <h2 className="mb-4 font-serif text-2xl font-semibold text-[#0b2418] sm:mb-6 sm:text-3xl md:text-4xl">
                     Overview
                   </h2>
 
                   {description ? (
                     <HtmlContent content={description} />
                   ) : (
-                    <p className="text-gray-500">No description available.</p>
+                    <p className="text-sm text-gray-500 sm:text-base">
+                      No description available.
+                    </p>
                   )}
                 </section>
-
-                {/* ITINERARY SUMMARY TABLE */}
 
                 <ItinerarySummaryTable
                   itineraries={itineraries}
@@ -1674,13 +1743,13 @@ const TripDetail = () => {
                 />
 
                 {complimentary && (
-                  <section className="rounded-2xl border border-[#9be564]/40 bg-[#9be564]/10 p-6 md:p-8">
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9be564] text-[#0b2418]">
-                        <Check size={20} />
+                  <section className="rounded-xl border border-[#9be564]/40 bg-[#9be564]/10 p-4 sm:rounded-2xl sm:p-6 md:p-8">
+                    <div className="mb-3 flex items-center gap-3 sm:mb-4">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#9be564] text-[#0b2418] sm:h-10 sm:w-10">
+                        <Check size={18} />
                       </div>
 
-                      <h2 className="font-serif text-2xl font-semibold text-[#0b2418]">
+                      <h2 className="font-serif text-xl font-semibold text-[#0b2418] sm:text-2xl">
                         What's Complimentary
                       </h2>
                     </div>
@@ -1696,69 +1765,59 @@ const TripDetail = () => {
             ================================================= */}
 
             {activeTab === "itinerary" && (
-              <section className="rounded-2xl bg-white p-6 shadow-sm md:p-10">
-                {/* HEADER */}
-
-                <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+              <section className="rounded-xl bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 md:p-10">
+                <div className="mb-5 flex flex-col gap-4 sm:mb-8 sm:gap-5 md:flex-row md:items-end md:justify-between">
                   <div>
-                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+                    <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-2 sm:text-xs">
                       Day by day
                     </p>
 
-                    <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+                    <h2 className="font-serif text-2xl font-semibold text-[#0b2418] sm:text-3xl md:text-4xl">
                       Itinerary
                     </h2>
 
                     {itineraries.length > 0 && (
-                      <p className="mt-2 text-sm text-gray-500">
+                      <p className="mt-1.5 text-xs text-gray-500 sm:mt-2 sm:text-sm">
                         {itineraries.length} day
                         {itineraries.length !== 1 ? "s" : ""} of your journey
                       </p>
                     )}
                   </div>
 
-                  {/* ACTION BUTTONS */}
-
                   {itineraries.length > 0 && (
                     <div className="flex flex-wrap items-center gap-2">
-                      {/* EXPAND / COLLAPSE ALL */}
-
                       <button
                         type="button"
                         onClick={toggleAllItineraries}
-                        className="inline-flex items-center gap-2 rounded-xl border border-[#0b2418] px-4 py-2.5 text-sm font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-[#0b2418] px-3 py-2 text-xs font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white sm:gap-2 sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm"
                       >
                         {allItinerariesExpanded ? (
                           <>
-                            <Minimize2 size={16} />
+                            <Minimize2 size={15} />
                             Collapse All
                           </>
                         ) : (
                           <>
-                            <Maximize2 size={16} />
+                            <Maximize2 size={15} />
                             Expand All
                           </>
                         )}
                       </button>
 
-                      {/* DOWNLOAD PDF */}
-
                       <button
                         type="button"
                         onClick={downloadItineraryPDF}
-                        className="inline-flex items-center gap-2 rounded-xl bg-[#4f8f3a] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#3d762e]"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-[#4f8f3a] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#3d762e] sm:gap-2 sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm"
                       >
-                        <Download size={16} />
+                        <Download size={15} />
                         Download PDF
                       </button>
                     </div>
                   )}
                 </div>
 
-                {/* ITINERARY LIST */}
-
                 {itineraries.length > 0 ? (
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     {itineraries.map((day, index) => {
                       const isOpen =
                         allItinerariesExpanded ||
@@ -1776,58 +1835,53 @@ const TripDetail = () => {
                       return (
                         <div
                           key={day.id || `${dayNumber}-${index}`}
-                          className="overflow-hidden rounded-2xl border border-gray-100"
+                          className="overflow-hidden rounded-xl border border-gray-100 sm:rounded-2xl"
                         >
-                          {/* DAY HEADER */}
-
                           <button
                             type="button"
                             onClick={() => {
                               if (allItinerariesExpanded) {
                                 setAllItinerariesExpanded(false);
-
                                 setOpenItinerary(index);
                               } else {
                                 setOpenItinerary(isOpen ? null : index);
                               }
                             }}
-                            className="flex w-full items-center gap-4 p-5 text-left transition hover:bg-gray-50"
+                            className="flex w-full items-center gap-3 p-3.5 text-left transition hover:bg-gray-50 sm:gap-4 sm:p-5"
                           >
-                            <div className="flex h-11 w-16 shrink-0 items-center justify-center rounded-full bg-[#0b2418] text-sm font-bold text-white py-4">
+                            <div className="flex h-9 min-w-[2.75rem] shrink-0 items-center justify-center rounded-full bg-[#0b2418] px-2 text-xs font-bold text-white sm:h-11 sm:w-16 sm:text-sm">
                               {dayNumber}
                             </div>
 
                             <div className="min-w-0 flex-1">
-                              <p className="mb-1 text-xs font-bold uppercase tracking-wider text-[#4f8f3a]">
+                              <p className="mb-0.5 text-[10px] font-bold uppercase tracking-wider text-[#4f8f3a] sm:mb-1 sm:text-xs">
                                 {dayNumber}
                               </p>
 
-                              <h3 className="font-serif text-xl font-semibold text-[#0b2418]">
+                              <h3 className="font-serif text-base font-semibold leading-snug text-[#0b2418] sm:text-xl">
                                 {dayTitle}
                               </h3>
                             </div>
 
                             <ChevronDown
-                              size={20}
+                              size={18}
                               className={`shrink-0 text-gray-500 transition-transform ${
                                 isOpen ? "rotate-180" : ""
                               }`}
                             />
                           </button>
 
-                          {/* DAY CONTENT */}
-
                           {isOpen && (
-                            <div className="border-t border-gray-100 px-5 pb-6 pt-5">
+                            <div className="border-t border-gray-100 px-3.5 pb-4 pt-4 sm:px-5 sm:pb-6 sm:pt-5">
                               {day.description && (
                                 <HtmlContent content={day.description} />
                               )}
 
-                              <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3">
+                              <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-3 md:grid-cols-3">
                                 {[
                                   {
                                     label: "Altitude",
-                                    value: day.altitude,
+                                    value: formatAltitude(day.altitude),
                                   },
                                   {
                                     label: "Meal",
@@ -1868,13 +1922,13 @@ const TripDetail = () => {
                                   .map((item) => (
                                     <div
                                       key={item.label}
-                                      className="rounded-xl bg-[#FBF9F4] p-4"
+                                      className="min-w-0 rounded-lg bg-[#FBF9F4] p-3 sm:rounded-xl sm:p-4"
                                     >
-                                      <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                                      <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs">
                                         {item.label}
                                       </p>
 
-                                      <p className="mt-1 text-sm font-semibold text-[#0b2418]">
+                                      <p className="mt-0.5 break-words text-[13px] font-semibold text-[#0b2418] sm:mt-1 sm:text-sm">
                                         {item.value}
                                       </p>
                                     </div>
@@ -1887,7 +1941,7 @@ const TripDetail = () => {
                     })}
                   </div>
                 ) : (
-                  <p className="text-gray-500">
+                  <p className="text-sm text-gray-500 sm:text-base">
                     Itinerary information is not available for this trip.
                   </p>
                 )}
@@ -1899,25 +1953,25 @@ const TripDetail = () => {
             ================================================= */}
 
             {activeTab === "includes" && (
-              <section className="rounded-2xl bg-white p-6 shadow-sm md:p-10">
-                <div className="mb-8">
-                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+              <section className="rounded-xl bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 md:p-10">
+                <div className="mb-5 sm:mb-8">
+                  <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-2 sm:text-xs">
                     What's covered
                   </p>
 
-                  <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+                  <h2 className="font-serif text-2xl font-semibold text-[#0b2418] sm:text-3xl md:text-4xl">
                     Cost Includes & Excludes
                   </h2>
                 </div>
 
-                <div className="grid gap-8 md:grid-cols-2">
-                  <div className="rounded-2xl border border-green-100 bg-green-50/50 p-6">
-                    <div className="mb-5 flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#9be564] text-[#0b2418]">
-                        <Check size={18} />
+                <div className="grid gap-5 sm:gap-8 md:grid-cols-2">
+                  <div className="rounded-xl border border-green-100 bg-green-50/50 p-4 sm:rounded-2xl sm:p-6">
+                    <div className="mb-4 flex items-center gap-3 sm:mb-5">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9be564] text-[#0b2418] sm:h-9 sm:w-9">
+                        <Check size={16} />
                       </div>
 
-                      <h3 className="font-serif text-2xl font-semibold text-[#0b2418]">
+                      <h3 className="font-serif text-xl font-semibold text-[#0b2418] sm:text-2xl">
                         Includes
                       </h3>
                     </div>
@@ -1928,19 +1982,19 @@ const TripDetail = () => {
                         className="trip-list text-gray-600"
                       />
                     ) : (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs text-gray-500 sm:text-sm">
                         No information available.
                       </p>
                     )}
                   </div>
 
-                  <div className="rounded-2xl border border-red-100 bg-red-50/40 p-6">
-                    <div className="mb-5 flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-100 text-red-600">
-                        <X size={18} />
+                  <div className="rounded-xl border border-red-100 bg-red-50/40 p-4 sm:rounded-2xl sm:p-6">
+                    <div className="mb-4 flex items-center gap-3 sm:mb-5">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-red-600 sm:h-9 sm:w-9">
+                        <X size={16} />
                       </div>
 
-                      <h3 className="font-serif text-2xl font-semibold text-[#0b2418]">
+                      <h3 className="font-serif text-xl font-semibold text-[#0b2418] sm:text-2xl">
                         Excludes
                       </h3>
                     </div>
@@ -1951,7 +2005,7 @@ const TripDetail = () => {
                         className="trip-list text-gray-600"
                       />
                     ) : (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs text-gray-500 sm:text-sm">
                         No information available.
                       </p>
                     )}
@@ -1965,12 +2019,12 @@ const TripDetail = () => {
             ================================================= */}
 
             {activeTab === "equipment" && (
-              <section className="rounded-2xl bg-white p-6 shadow-sm md:p-10">
-                <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+              <section className="rounded-xl bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 md:p-10">
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-2 sm:text-xs">
                   Prepare for your trip
                 </p>
 
-                <h2 className="mb-8 font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+                <h2 className="mb-5 font-serif text-2xl font-semibold text-[#0b2418] sm:mb-8 sm:text-3xl md:text-4xl">
                   Equipment & Packing List
                 </h2>
 
@@ -1980,7 +2034,7 @@ const TripDetail = () => {
                     className="trip-list text-gray-600"
                   />
                 ) : (
-                  <p className="text-gray-500">
+                  <p className="text-sm text-gray-500 sm:text-base">
                     Equipment information is not available.
                   </p>
                 )}
@@ -1992,36 +2046,32 @@ const TripDetail = () => {
             ================================================= */}
 
             {activeTab === "faq" && (
-              <section className="rounded-2xl bg-white p-6 shadow-sm md:p-10">
-                {/* FAQ HEADER */}
-
-                <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+              <section className="rounded-xl bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6 md:p-10">
+                <div className="mb-5 flex flex-col gap-4 sm:mb-8 sm:gap-5 md:flex-row md:items-end md:justify-between">
                   <div>
-                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+                    <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-2 sm:text-xs">
                       Frequently asked
                     </p>
 
-                    <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+                    <h2 className="font-serif text-2xl font-semibold text-[#0b2418] sm:text-3xl md:text-4xl">
                       Frequently Asked Questions
                     </h2>
                   </div>
-
-                  {/* EXPAND / COLLAPSE ALL */}
 
                   {faqs.length > 0 && (
                     <button
                       type="button"
                       onClick={toggleAllFaqs}
-                      className="inline-flex w-fit items-center gap-2 rounded-xl border border-[#0b2418] px-4 py-2.5 text-sm font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white"
+                      className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-[#0b2418] px-3 py-2 text-xs font-semibold text-[#0b2418] transition hover:bg-[#0b2418] hover:text-white sm:gap-2 sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm"
                     >
                       {allFaqsExpanded ? (
                         <>
-                          <Minimize2 size={16} />
+                          <Minimize2 size={15} />
                           Collapse All
                         </>
                       ) : (
                         <>
-                          <Maximize2 size={16} />
+                          <Maximize2 size={15} />
                           Expand All
                         </>
                       )}
@@ -2030,7 +2080,7 @@ const TripDetail = () => {
                 </div>
 
                 {faqs.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2.5 sm:space-y-3">
                     {faqs.map((faq, index) => {
                       const isOpen =
                         allFaqsExpanded ||
@@ -2040,25 +2090,24 @@ const TripDetail = () => {
                       return (
                         <div
                           key={faq.id || index}
-                          className="overflow-hidden rounded-xl border border-gray-100"
+                          className="overflow-hidden rounded-lg border border-gray-100 sm:rounded-xl"
                         >
                           <button
                             type="button"
                             onClick={() => {
                               if (allFaqsExpanded) {
                                 setAllFaqsExpanded(false);
-
                                 setOpenFaq(index);
                               } else {
                                 setOpenFaq(isOpen ? null : index);
                               }
                             }}
-                            className="flex w-full items-center justify-between gap-5 p-5 text-left font-semibold text-[#0b2418] transition hover:bg-gray-50"
+                            className="flex w-full items-center justify-between gap-4 p-4 text-left text-sm font-semibold text-[#0b2418] transition hover:bg-gray-50 sm:gap-5 sm:p-5 sm:text-base"
                           >
                             <span>{faq.question}</span>
 
                             <ChevronDown
-                              size={19}
+                              size={18}
                               className={`shrink-0 transition-transform ${
                                 isOpen ? "rotate-180" : ""
                               }`}
@@ -2066,7 +2115,7 @@ const TripDetail = () => {
                           </button>
 
                           {isOpen && (
-                            <div className="border-t border-gray-100 px-5 pb-5 pt-4">
+                            <div className="border-t border-gray-100 px-4 pb-4 pt-3 sm:px-5 sm:pb-5 sm:pt-4">
                               <HtmlContent content={faq.answer || ""} />
                             </div>
                           )}
@@ -2075,7 +2124,7 @@ const TripDetail = () => {
                     })}
                   </div>
                 ) : (
-                  <p className="text-gray-500">
+                  <p className="text-sm text-gray-500 sm:text-base">
                     No frequently asked questions are available.
                   </p>
                 )}
@@ -2087,29 +2136,29 @@ const TripDetail = () => {
             ================================================= */}
 
             {images.length > 0 && (
-              <section className="mt-10 rounded-2xl bg-white p-6 shadow-sm md:p-10">
-                <div className="mb-8 flex items-end justify-between">
+              <section className="mt-8 rounded-xl bg-white p-4 shadow-sm sm:mt-10 sm:rounded-2xl sm:p-6 md:p-10">
+                <div className="mb-5 flex items-end justify-between sm:mb-8">
                   <div>
-                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+                    <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-2 sm:text-xs">
                       Explore the journey
                     </p>
 
-                    <h2 className="font-serif text-3xl font-semibold text-[#0b2418]">
+                    <h2 className="font-serif text-2xl font-semibold text-[#0b2418] sm:text-3xl">
                       Photo Gallery
                     </h2>
                   </div>
 
-                  <ImageIcon size={24} className="text-[#4f8f3a]" />
+                  <ImageIcon size={22} className="text-[#4f8f3a]" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3">
                   {images.map((item, index) => {
                     const imageSrc = getImageUrl(item.image);
 
                     return (
                       <div
                         key={item.id || index}
-                        className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-gray-100"
+                        className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100 sm:rounded-2xl"
                       >
                         <img
                           src={imageSrc}
@@ -2121,8 +2170,8 @@ const TripDetail = () => {
                         />
 
                         {item.caption && (
-                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-10">
-                            <p className="text-sm font-medium text-white">
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2.5 pt-8 sm:p-4 sm:pt-10">
+                            <p className="line-clamp-2 text-[11px] font-medium text-white sm:text-sm">
                               {item.caption}
                             </p>
                           </div>
@@ -2160,18 +2209,18 @@ const TripDetail = () => {
         ================================================= */}
 
         {relatedPackages.length > 0 && (
-          <section className="mt-16">
-            <div className="mb-8">
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#4f8f3a]">
+          <section className="mt-10 sm:mt-16">
+            <div className="mb-5 sm:mb-8">
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8f3a] sm:mb-2 sm:text-xs">
                 You may also like
               </p>
 
-              <h2 className="font-serif text-3xl font-semibold text-[#0b2418] md:text-4xl">
+              <h2 className="font-serif text-2xl font-semibold text-[#0b2418] sm:text-3xl md:text-4xl">
                 Related Trips
               </h2>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
               {relatedPackages.map((pkg, index) => {
                 const relatedImage = getImageUrl(
                   pkg.image || pkg.social_image || pkg.featured_image,
@@ -2184,12 +2233,12 @@ const TripDetail = () => {
                     key={pkg.id || index}
                     onClick={() => {
                       if (pkg.slug) {
-                        navigate(`/trips/${pkg.slug}`);
+                        navigate(`/package/${pkg.slug}`);
                       }
                     }}
-                    className="group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                    className="group cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl sm:rounded-2xl"
                   >
-                    <div className="relative h-56 overflow-hidden">
+                    <div className="relative h-44 overflow-hidden sm:h-56">
                       <img
                         src={relatedImage}
                         alt={relatedTitle}
@@ -2202,22 +2251,22 @@ const TripDetail = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
                       {pkg.rating && (
-                        <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#0b2418]">
-                          <Star size={13} fill="currentColor" />
+                        <div className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-[#0b2418] sm:right-4 sm:top-4 sm:px-3 sm:text-xs">
+                          <Star size={12} fill="currentColor" />
                           {pkg.rating}
                         </div>
                       )}
                     </div>
 
-                    <div className="p-5">
-                      <h3 className="font-serif text-xl font-semibold leading-snug text-[#0b2418]">
+                    <div className="p-4 sm:p-5">
+                      <h3 className="font-serif text-lg font-semibold leading-snug text-[#0b2418] sm:text-xl">
                         {relatedTitle}
                       </h3>
 
-                      <div className="mt-3 flex items-center justify-between">
+                      <div className="mt-2.5 flex items-center justify-between sm:mt-3">
                         {pkg.duration && (
-                          <span className="flex items-center gap-1.5 text-sm text-gray-500">
-                            <Clock3 size={15} />
+                          <span className="flex items-center gap-1.5 text-xs text-gray-500 sm:text-sm">
+                            <Clock3 size={14} />
                             {pkg.duration} Days
                           </span>
                         )}
@@ -2225,16 +2274,17 @@ const TripDetail = () => {
                         {pkg.price !== undefined &&
                           pkg.price !== null &&
                           pkg.price !== "" && (
-                            <span className="font-semibold text-[#0b2418]">
+                            <span className="text-sm font-semibold text-[#0b2418] sm:text-base">
                               ${pkg.price}
                             </span>
                           )}
                       </div>
 
-                      <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-[#4f8f3a]">
+                      <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#4f8f3a] sm:mt-4 sm:text-sm">
                         View Trip
+
                         <ArrowRight
-                          size={16}
+                          size={15}
                           className="transition-transform group-hover:translate-x-1"
                         />
                       </div>

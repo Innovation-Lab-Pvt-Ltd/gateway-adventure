@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 
+// Cards per page: 3 on mobile, 4 from the md breakpoint (768px) and up
+const getPerPage = () =>
+  typeof window !== "undefined" && window.innerWidth >= 768 ? 4 : 3;
+
 const PopularPackages = () => {
   const [packages, setPackages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [perPage, setPerPage] = useState(getPerPage);
 
   const [wishlist, setWishlist] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
@@ -15,6 +20,25 @@ const PopularPackages = () => {
 
   const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
   const API_URL = `${import.meta.env.VITE_BASE_API_URL}popular-packages`;
+
+  // =====================================================
+  // RESPONSIVE PAGE SIZE
+  // =====================================================
+
+  useEffect(() => {
+    const updatePerPage = () => {
+      const next = getPerPage();
+      setPerPage((prev) => {
+        if (prev !== next) {
+          setCurrentIndex(0);
+        }
+        return next;
+      });
+    };
+
+    window.addEventListener("resize", updatePerPage);
+    return () => window.removeEventListener("resize", updatePerPage);
+  }, []);
 
   // =====================================================
   // FETCH POPULAR PACKAGES
@@ -75,14 +99,14 @@ const PopularPackages = () => {
   // =====================================================
 
   const handleNext = () => {
-    if (isAnimating || currentIndex + 3 >= packages.length) {
+    if (isAnimating || currentIndex + perPage >= packages.length) {
       return;
     }
 
     setIsAnimating(true);
 
     setTimeout(() => {
-      setCurrentIndex((prev) => prev + 3);
+      setCurrentIndex((prev) => prev + perPage);
       setIsAnimating(false);
     }, 650);
   };
@@ -99,7 +123,7 @@ const PopularPackages = () => {
     setIsAnimating(true);
 
     setTimeout(() => {
-      setCurrentIndex((prev) => Math.max(0, prev - 3));
+      setCurrentIndex((prev) => Math.max(0, prev - perPage));
       setIsAnimating(false);
     }, 650);
   };
@@ -108,7 +132,7 @@ const PopularPackages = () => {
   // VISIBLE PACKAGES
   // =====================================================
 
-  const visiblePackages = packages.slice(currentIndex, currentIndex + 3);
+  const visiblePackages = packages.slice(currentIndex, currentIndex + perPage);
 
   // =====================================================
   // LOADING
@@ -134,9 +158,14 @@ const PopularPackages = () => {
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="h-[600px] animate-pulse bg-gray-200" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
+            {[1, 2, 3, 4].map((item) => (
+              <div
+                key={item}
+                className={`h-[200px] animate-pulse bg-gray-200 md:h-[450px] ${
+                  item === 4 ? "hidden md:block" : ""
+                }`}
+              />
             ))}
           </div>
         </div>
@@ -178,25 +207,7 @@ const PopularPackages = () => {
         ====================================================== */}
 
         {showPopup && (
-          <div
-            className="
-              fixed
-              right-6
-              top-24
-              z-[100]
-              flex
-              items-center
-              gap-2
-              bg-[#0b2418]
-              px-5
-              py-3
-              font-montserrat
-              text-sm
-              font-medium
-              text-white
-              shadow-xl
-            "
-          >
+          <div className="fixed right-6 top-24 z-[100] flex items-center gap-2 bg-[#0b2418] px-5 py-3 font-montserrat text-sm font-medium text-white shadow-xl">
             <Heart size={17} fill="currentColor" />
             Added to wishlist
           </div>
@@ -207,29 +218,11 @@ const PopularPackages = () => {
         ====================================================== */}
 
         <div className="mb-14 text-center">
-          <h2
-            className="
-              font-playfair
-              text-4xl
-              font-semibold
-              leading-tight
-              text-[#0b2418]
-              md:text-5xl
-            "
-          >
+          <h2 className="font-playfair text-4xl font-semibold leading-tight text-[#0b2418] md:text-5xl">
             Start Your Journey
           </h2>
 
-          <p
-            className="
-              mt-4
-              font-montserrat
-              text-sm
-              tracking-wide
-              text-gray-500
-              md:text-base
-            "
-          >
+          <p className="mt-4 font-montserrat text-sm tracking-wide text-gray-500 md:text-base">
             Discover unforgettable adventures across Nepal
           </p>
         </div>
@@ -239,14 +232,7 @@ const PopularPackages = () => {
         ====================================================== */}
 
         <div className="mb-8 flex items-center justify-between">
-          <h3
-            className="
-              font-montserrat
-              text-2xl
-              font-semibold
-              text-[#0b2418]
-            "
-          >
+          <h3 className="font-montserrat text-2xl font-semibold text-[#0b2418]">
             Most Popular
           </h3>
 
@@ -259,14 +245,7 @@ const PopularPackages = () => {
               type="button"
               onClick={handlePrevious}
               disabled={currentIndex === 0 || isAnimating}
-              className="
-                text-[#0b2418]
-                transition-colors
-                duration-300
-                hover:text-pink-500
-                disabled:cursor-not-allowed
-                disabled:opacity-30
-              "
+              className="text-[#0b2418] transition-colors duration-300 hover:text-pink-500 disabled:cursor-not-allowed disabled:opacity-30"
             >
               <ChevronLeft size={30} strokeWidth={1.5} />
             </button>
@@ -276,15 +255,8 @@ const PopularPackages = () => {
             <button
               type="button"
               onClick={handleNext}
-              disabled={currentIndex + 3 >= packages.length || isAnimating}
-              className="
-                text-[#0b2418]
-                transition-colors
-                duration-300
-                hover:text-pink-500
-                disabled:cursor-not-allowed
-                disabled:opacity-30
-              "
+              disabled={currentIndex + perPage >= packages.length || isAnimating}
+              className="text-[#0b2418] transition-colors duration-300 hover:text-pink-500 disabled:cursor-not-allowed disabled:opacity-30"
             >
               <ChevronRight size={30} strokeWidth={1.5} />
             </button>
@@ -297,14 +269,7 @@ const PopularPackages = () => {
 
         {packages.length === 0 ? (
           <div className="py-16 text-center">
-            <p
-              className="
-                font-montserrat
-                text-sm
-                tracking-wide
-                text-gray-500
-              "
-            >
+            <p className="font-montserrat text-sm tracking-wide text-gray-500">
               No popular packages found.
             </p>
           </div>
@@ -318,9 +283,10 @@ const PopularPackages = () => {
               className={`
                 grid
                 grid-cols-1
-                gap-6
+                gap-4
                 md:grid-cols-2
-                lg:grid-cols-3
+                md:gap-6
+                lg:grid-cols-4
                 transition-transform
                 duration-[650ms]
                 ease-[cubic-bezier(0.65,0,0.35,1)]
@@ -333,202 +299,136 @@ const PopularPackages = () => {
                   className="
                     group
                     relative
-                    block
-                    h-[600px]
+                    flex
                     overflow-hidden
-                    bg-gray-200
+                    border
+                    border-gray-200
+                    bg-white
+                    shadow-sm
+                    md:block
+                    md:h-[450px]
+                    md:border-0
+                    md:bg-gray-200
+                    md:shadow-none
                   "
                 >
                   {/* =================================================
-                      IMAGE
+                      IMAGE WRAPPER
+                      Mobile: 200x200 on the left
+                      Desktop: fills the whole card
                   ================================================== */}
 
-                  <img
-                    src={`${IMAGE_BASE_URL}${pkg.image}`}
-                    alt={pkg.title || pkg.name || "Nepal adventure"}
-                    className="
-                      absolute
-                      inset-0
-                      h-full
-                      w-full
-                      object-cover
-                    "
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = "/images/MOUNT.jpg";
-                    }}
-                  />
-
-                  {/* =================================================
-                      HOVER OVERLAY
-                  ================================================== */}
-
-                  <div
-                    className="
-                      absolute
-                      inset-0
-                      bg-black/0
-                      transition-colors
-                      duration-500
-                      group-hover:bg-black/20
-                    "
-                  />
-
-                  {/* =================================================
-                      BOTTOM GRADIENT
-                  ================================================== */}
-
-                  <div
-                    className="
-                      absolute
-                      inset-x-0
-                      bottom-0
-                      h-1/2
-                      bg-gradient-to-t
-                      from-black/85
-                      via-black/30
-                      to-transparent
-                    "
-                  />
-
-                  {/* =================================================
-                      WISHLIST
-                  ================================================== */}
-
-                  <button
-                    type="button"
-                    onClick={() => handleWishlist(pkg.id)}
-                    className={`
-                      absolute
-                      right-5
-                      top-5
-                      z-20
-                      flex
-                      h-10
-                      w-10
-                      items-center
-                      justify-center
-                      rounded-full
-                      bg-white/90
-                      shadow-md
-                      transition
-                      duration-300
-                      hover:scale-110 ${wishlist.includes(pkg.id) ? "text-red-500" : "text-gray-700"}`}
-                  >
-                    <Heart
-                      size={19}
-                      fill={wishlist.includes(pkg.id) ? "currentColor" : "none"}
+                  <div className="relative h-[200px] w-[200px] shrink-0 overflow-hidden md:absolute md:inset-0 md:h-full md:w-full">
+                    <img
+                      src={`${IMAGE_BASE_URL}${pkg.image}`}
+                      alt={pkg.title || pkg.name || "Nepal adventure"}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/images/MOUNT.jpg";
+                      }}
                     />
-                  </button>
 
-                  {/* =================================================
-                      ACTIVITY
-                  ================================================== */}
+                    {/* HOVER OVERLAY (desktop only) */}
 
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span
-                      className="
-                        font-montserrat
-                        text-sm
-                        font-medium
-                        uppercase
-                        tracking-[0.2em]
-                        text-white
-                      "
+                    <div className="absolute inset-0 hidden bg-black/0 transition-colors duration-500 group-hover:bg-black/20 md:block" />
+
+                    {/* BOTTOM GRADIENT (desktop only) */}
+
+                    <div className="absolute inset-x-0 bottom-0 hidden h-1/2 bg-gradient-to-t from-black/85 via-black/30 to-transparent md:block" />
+
+                    {/* WISHLIST */}
+
+                    <button
+                      type="button"
+                      onClick={() => handleWishlist(pkg.id)}
+                      className={`
+                        absolute
+                        right-2
+                        top-2
+                        z-20
+                        flex
+                        h-8
+                        w-8
+                        items-center
+                        justify-center
+                        rounded-full
+                        bg-white/90
+                        shadow-md
+                        transition
+                        duration-300
+                        hover:scale-110
+                        md:right-4
+                        md:top-4
+                        md:h-10
+                        md:w-10
+                        ${wishlist.includes(pkg.id) ? "text-red-500" : "text-gray-700"}`}
                     >
-                      {pkg.actname || "Adventure"}
-                    </span>
+                      <Heart
+                        size={17}
+                        fill={
+                          wishlist.includes(pkg.id) ? "currentColor" : "none"
+                        }
+                      />
+                    </button>
+
+                    {/* ACTIVITY (centered, desktop only) */}
+
+                    <div className="absolute inset-0 hidden items-center justify-center md:flex">
+                      <span className="font-montserrat text-sm font-medium uppercase tracking-[0.2em] text-white">
+                        {pkg.actname || "Adventure"}
+                      </span>
+                    </div>
                   </div>
 
                   {/* =================================================
                       PACKAGE INFORMATION
+                      Mobile: right side of the image
+                      Desktop: bottom overlay
                   ================================================== */}
 
-                  <div
-                    className="
-                      absolute
-                      bottom-0
-                      left-0
-                      right-0
-                      p-7
-                    "
-                  >
-                    {/* TITLE */}
+                  <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-between p-4 md:absolute md:inset-x-0 md:bottom-0 md:block md:p-5">
+                    <div>
+                      {/* ACTIVITY (mobile only) */}
 
-                    <h4
-                      className="
-                        font-playfair
-                        text-2xl
-                        font-semibold
-                        leading-tight
-                        text-white
-                      "
-                    >
-                      {pkg.title || pkg.name}
-                    </h4>
+                      <span className="font-montserrat text-[10px] font-medium uppercase tracking-[0.15em] text-pink-500 md:hidden">
+                        {pkg.actname || "Adventure"}
+                      </span>
 
-                    {/* DETAILS */}
+                      {/* TITLE */}
 
-                    <div
-                      className="
-                        mt-4
-                        flex
-                        items-center
-                        justify-between
-                      "
-                    >
-                      {/* DURATION */}
+                      <h4 className="mt-1 line-clamp-3 font-playfair text-lg font-semibold leading-tight text-[#0b2418] md:mt-0 md:line-clamp-none md:text-xl md:text-white">
+                        {pkg.title || pkg.name}
+                      </h4>
 
-                      {pkg.duration && (
-                        <span
-                          className="
-                            font-montserrat
-                            text-xs
-                            tracking-wide
-                            text-white/80
-                          "
-                        >
-                          {pkg.duration} days
-                        </span>
-                      )}
+                      {/* DETAILS */}
 
-                      {/* PRICE */}
+                      <div className="mt-2 flex flex-col gap-1 md:mt-4 md:flex-row md:items-center md:justify-between">
+                        {/* DURATION */}
 
-                      {pkg.price && (
-                        <span
-                          className="
-                            font-montserrat
-                            text-sm
-                            font-semibold
-                            text-white
-                          "
-                        >
-                          ${pkg.price}
-                        </span>
-                      )}
+                        {pkg.duration && (
+                          <span className="font-montserrat text-xs tracking-wide text-gray-500 md:text-white/80">
+                            {pkg.duration} days
+                          </span>
+                        )}
+
+                        {/* PRICE */}
+
+                        {pkg.price && (
+                          <span className="font-montserrat text-sm font-semibold text-[#0b2418] md:text-white">
+                            ${pkg.price}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    {/* VIEW TRIP */}
+                    {/* VIEW TRIP
+                        Mobile: always visible
+                        Desktop: appears on hover */}
 
                     <Link
                       to={`/package/${pkg.slug}`}
-                      className="
-                        mt-5
-                        inline-block
-                        border-b
-                        border-white/70
-                        pb-1
-                        font-montserrat
-                        text-xs
-                        font-medium
-                        uppercase
-                        tracking-[0.15em]
-                        text-white
-                        opacity-0
-                        transition-all
-                        duration-300
-                        group-hover:opacity-100
-                      "
+                      className="mt-3 inline-block self-start border-b border-[#0b2418]/70 pb-1 font-montserrat text-xs font-medium uppercase tracking-[0.15em] text-[#0b2418] opacity-100 transition-all duration-300 md:mt-5 md:border-white/70 md:text-white md:opacity-0 md:group-hover:opacity-100"
                     >
                       View Trip
                     </Link>
@@ -546,19 +446,7 @@ const PopularPackages = () => {
         <div className="mt-12 flex justify-center">
           <Link
             to="/trekking-tours"
-            className="
-              bg-pink-500
-              px-6
-              py-3
-              font-montserrat
-              text-sm
-              font-semibold
-              text-white
-              transition
-              duration-300
-              hover:bg-white
-              hover:text-pink-500
-            "
+            className="bg-pink-500 px-6 py-3 font-montserrat text-sm font-semibold text-white transition duration-300 hover:bg-white hover:text-pink-500"
           >
             View More
           </Link>
